@@ -1,0 +1,47 @@
+# Validação de toda mudança antes de entrar na dev ou na main.
+# Roda em PRs (feature → dev e dev → main) e em pushes na dev.
+name: CI
+
+on:
+  pull_request:
+    branches: [dev, main]
+  push:
+    branches: [dev]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  # A main só recebe código vindo da dev (esteira dev → main)
+  origem:
+    name: Origem do PR
+    if: github.event_name == 'pull_request' && github.base_ref == 'main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: PR para a main precisa vir da dev
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          if [ "$HEAD_REF" != "dev" ]; then
+            echo "::error::PRs para a main devem sair da branch dev (recebido: $HEAD_REF). Abra o PR para a dev primeiro."
+            exit 1
+          fi
+          echo "Origem ok: dev → main"
+
+  front:
+    name: Lint, tipos e build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: yarn
+      - run: yarn install --frozen-lockfile
+      - run: yarn lint
+      - run: yarn typecheck
+      - run: yarn build
