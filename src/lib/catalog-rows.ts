@@ -6,7 +6,7 @@ export type ProductRow = {
   label_color: string; tile_color: string; label_text: 'dark' | 'light'
   price: number | string; compare_at_price: number | string | null; weight: string
   short: string; description: string | null; ingredients: string | null
-  badge: Product['badge'] | null; sold_out: boolean; image: string | null
+  badge: Product['badge'] | null; sold_out: boolean; image: string | null; stock?: number | null
 }
 
 export const productFromRow = (row: ProductRow): Product => ({
@@ -25,7 +25,8 @@ export const productFromRow = (row: ProductRow): Product => ({
   description: row.description ?? undefined,
   ingredients: row.ingredients ?? undefined,
   badge: row.badge ?? undefined,
-  soldOut: row.sold_out,
+  soldOut: row.sold_out || row.stock === 0,
+  stock: row.stock ?? undefined,
   image: row.image ?? undefined,
 })
 

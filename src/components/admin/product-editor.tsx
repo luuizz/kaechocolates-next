@@ -34,9 +34,10 @@ type Draft = {
   active: boolean
   soldOut: boolean
   sortOrder: string
+  stock: string
 }
 
-const EMPTY: Draft = { name: '', cacao: '', line: 'intensos', slug: '', price: '', compareAt: '', weight: '70 g', badge: '', short: '', description: '', ingredients: '', label: '#e8b630', tile: '#efb72d', labelText: 'dark', image: '', active: true, soldOut: false, sortOrder: '' }
+const EMPTY: Draft = { name: '', cacao: '', line: 'intensos', slug: '', price: '', compareAt: '', weight: '70 g', badge: '', short: '', description: '', ingredients: '', label: '#e8b630', tile: '#efb72d', labelText: 'dark', image: '', active: true, soldOut: false, sortOrder: '', stock: '' }
 
 const money = (value: string) => Number(value.replace(/\./g, '').replace(',', '.'))
 const toMoney = (value?: number) => (value === undefined ? '' : value.toFixed(2).replace('.', ','))
@@ -68,7 +69,7 @@ export function ProductEditor({ id }: { id: number | null }) {
         price: toMoney(product.price), compareAt: toMoney(product.compareAt), weight: product.weight, badge: product.badge ?? '',
         short: product.short, description: product.description ?? '', ingredients: product.ingredients ?? '',
         label: product.label, tile: product.tile, labelText: product.labelText ?? 'dark', image: product.image ?? '',
-        active: product.active, soldOut: Boolean(product.soldOut), sortOrder: String(product.sortOrder),
+        active: product.active, soldOut: product.soldOutFlag, sortOrder: String(product.sortOrder), stock: product.stock === undefined ? '' : String(product.stock),
       }
       setDraft(loaded)
       setOriginal(loaded)
@@ -152,6 +153,7 @@ export function ProductEditor({ id }: { id: number | null }) {
         weight: draft.weight.trim() || '70 g',
         active: draft.active,
         sortOrder: draft.sortOrder.trim() === '' ? 1000 : Number(draft.sortOrder) || 0,
+        stock: draft.stock.trim() === '' ? undefined : Number(draft.stock),
       })
       // Fotos trocadas antes de salvar (e a antiga, se mudou) saem do armazenamento
       const keep = saved.image
@@ -276,6 +278,7 @@ export function ProductEditor({ id }: { id: number | null }) {
             <div className="mt-4 flex flex-col gap-4">
               <label className="flex items-center justify-between gap-3 text-sm font-semibold">Visível na loja <Switch checked={draft.active} onChange={(value) => set('active', value)} label="Visível na loja" /></label>
               <label className="flex items-center justify-between gap-3 text-sm font-semibold">Esgotada <Switch checked={draft.soldOut} onChange={(value) => set('soldOut', value)} label="Esgotada" tone="danger" /></label>
+              <Field label="Estoque" hint={draft.stock === '0' ? 'Zerado: a barra aparece como esgotada.' : 'Vazio = não controla. Cada venda desconta daqui.'}><Input value={draft.stock} onChange={(event) => set('stock', event.target.value.replace(/\D/g, '').slice(0, 5))} inputMode="numeric" placeholder="Sem controle" /></Field>
               <Field label="Ordem na vitrine" hint="Menor aparece primeiro. Os 14 primeiros formam o mosaico da home."><Input value={draft.sortOrder} onChange={(event) => set('sortOrder', event.target.value.replace(/\D/g, ''))} inputMode="numeric" placeholder="Último" /></Field>
             </div>
           </Panel>

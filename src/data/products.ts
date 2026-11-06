@@ -25,6 +25,8 @@ export type Product = {
   ingredients?: string
   badge?: (typeof BADGES)[number]
   soldOut?: boolean
+  /** vazio = estoque não controlado */
+  stock?: number
   image?: string
 }
 
