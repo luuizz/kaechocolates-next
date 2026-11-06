@@ -2,6 +2,9 @@ import type { Metadata } from 'next'
 import { brand } from '@/config/brand'
 import { SiteHeader } from '@/components/layout/site-header'
 import { SiteFooter } from '@/components/layout/site-footer'
+import '@fontsource-variable/inter'
+import '@fontsource-variable/plus-jakarta-sans'
+import '@fontsource-variable/plus-jakarta-sans/wght-italic.css'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -16,7 +19,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="pt-BR">
       <body className="flex min-h-dvh flex-col font-sans">
         <SiteHeader />
-        <main className="flex-1">{children}</main>
+        <main className="flex-1 overflow-x-clip">{children}</main>
         <SiteFooter />
       </body>
     </html>
