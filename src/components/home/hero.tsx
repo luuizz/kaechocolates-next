@@ -67,7 +67,7 @@ export function Hero() {
                 className={`group absolute w-[34%] ${className}`}
                 style={{ ['--tilt' as string]: tilt, animationDelay: delay }}
               >
-                <div className="animate-float drop-shadow-[0_24px_30px_rgba(22,17,15,0.25)] transition-transform duration-300 group-hover:scale-105" style={{ ['--tilt' as string]: tilt, animationDelay: delay }}>
+                <div className="animate-float drop-shadow-[0_24px_30px_rgba(17,17,17,0.25)] transition-transform duration-300 group-hover:scale-105" style={{ ['--tilt' as string]: tilt, animationDelay: delay }}>
                   <Image src={product.image} alt="" width={311} height={405} priority className="h-auto w-full" />
                 </div>
               </Link>

@@ -4,38 +4,38 @@
 /*
  * Tokens da marca. Componentes usam só os nomes semânticos (primary, muted,
  * flavor-*...), então trocar a identidade é mexer aqui e em src/config/brand.ts.
- * Base: papel creme + tinta quase preta (do layout original) e as cores das
+ * Base: branco + preto (identidade atual da Kaê) e as cores das
  * embalagens como paleta de destaque, uma por sabor.
  */
 :root {
   --radius: 1.25rem;
 
-  --background: #fbf6ec;
-  --foreground: #16110f;
+  --background: #ffffff;
+  --foreground: #111111;
 
   --card: #ffffff;
   --card-foreground: var(--foreground);
   --popover: #ffffff;
   --popover-foreground: var(--foreground);
 
-  --primary: #16110f;
-  --primary-foreground: #fbf6ec;
+  --primary: #111111;
+  --primary-foreground: #ffffff;
 
-  --secondary: #f1e8d6;
-  --secondary-foreground: #16110f;
+  --secondary: #f4f4f2;
+  --secondary-foreground: #111111;
 
-  --muted: #f3ecdf;
-  --muted-foreground: #6b5f57;
+  --muted: #f4f4f2;
+  --muted-foreground: #5a5a58;
 
   --accent: #e8b630;
-  --accent-foreground: #16110f;
+  --accent-foreground: #111111;
 
   --destructive: #d01b2e;
   --success: #2f8a4c;
 
-  --border: #e3d8c5;
-  --input: #d9ccb6;
-  --ring: #16110f;
+  --border: #ebebeb;
+  --input: #dedede;
+  --ring: #111111;
 
   /* Cores das embalagens (uma por sabor) */
   --flavor-yellow: #e8b630;
