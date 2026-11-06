@@ -11,9 +11,11 @@ if (typeof window !== 'undefined' && publicKey) initMercadoPago(publicKey, { loc
 
 // Formulário de cartão do próprio Mercado Pago (Card Payment Brick): os dados do
 // cartão vão direto para eles e voltam como um token de uso único.
-export function CardForm({ amount, email, onPay, onError }: {
+export function CardForm({ amount, email, onPay, onError, maxInstallments = brand.commerce.maxInstallments, submitLabel = 'Pagar com cartão' }: {
   amount: number
   email: string
+  maxInstallments?: number
+  submitLabel?: string
   onPay: (card: { token: string; paymentMethodId: string; paymentTypeId?: string; installments: number; issuerId?: string }, cpf: string) => Promise<void>
   onError: (message: string) => void
 }) {
@@ -34,8 +36,8 @@ export function CardForm({ amount, email, onPay, onError }: {
         locale="pt-BR"
         initialization={{ amount, payer: { email } }}
         customization={{
-          paymentMethods: { maxInstallments: brand.commerce.maxInstallments, types: { excluded: ['debit_card', 'prepaid_card'] } },
-          visual: { style: { theme: 'default', customVariables: { baseColor: '#111111', borderRadiusMedium: '12px', borderRadiusLarge: '20px', fontWeightSemiBold: '600' } }, texts: { formSubmit: 'Pagar com cartão' } },
+          paymentMethods: { maxInstallments, types: { excluded: ['debit_card', 'prepaid_card'] } },
+          visual: { style: { theme: 'default', customVariables: { baseColor: '#111111', borderRadiusMedium: '12px', borderRadiusLarge: '20px', fontWeightSemiBold: '600' } }, texts: { formSubmit: submitLabel } },
         }}
         onReady={() => setReady(true)}
         onError={(error) => {

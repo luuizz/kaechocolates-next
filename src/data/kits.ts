@@ -1,3 +1,4 @@
+import { roundMoney } from '@/lib/utils'
 import { findProduct, type Product } from './products'
 
 // Caixas do "Monte seu kit" (tabela kit_boxes, editável em /admin/kits).
@@ -14,7 +15,7 @@ export const findBox = (boxes: Box[], id: string) => boxes.find((box) => box.id 
 
 export type KitSpec = { name: string; box: string; slugs: string[]; message?: string }
 
-const round = (value: number) => Math.round(value * 100) / 100
+const round = roundMoney
 
 // Soma as barras do kit e aplica o desconto da caixa (barras que saíram do
 // catálogo são ignoradas; caixa que saiu do catálogo fica sem desconto)
