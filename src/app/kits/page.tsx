@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { AwardKit } from '@/components/kits/award-kit'
 import { KitBuilder } from '@/components/kits/kit-builder'
 
-export const metadata: Metadata = { title: 'Kits e presentes', description: 'Kit dos premiados e Monte seu kit: escolha a caixa, as barras e o recado do cartão.' }
+export const metadata: Metadata = { title: 'Kits e presentes', description: 'Kit dos premiados e Monte seu kit: escolha a caixa, as barras e o recado do cartão.', alternates: { canonical: '/kits' } }
 
 export default function KitsPage() {
   return (

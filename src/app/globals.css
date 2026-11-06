@@ -121,3 +121,8 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Listas e links dentro dos textos legais */
+.legal-body ul { list-style: disc; padding-left: 1.25rem; display: flex; flex-direction: column; gap: 0.5rem; }
+.legal-body a { font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+.legal-body strong { color: var(--foreground); }

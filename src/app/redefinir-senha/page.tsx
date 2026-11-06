@@ -4,7 +4,7 @@ import { AuthShell } from '@/components/account/auth-shell'
 import { ResetPasswordForm } from '@/components/account/auth-forms'
 import { getCatalog } from '@/lib/catalog'
 
-export const metadata: Metadata = { title: 'Nova senha' }
+export const metadata: Metadata = { title: 'Nova senha', robots: { index: false } }
 
 export default async function ResetPasswordPage() {
   const { products } = await getCatalog()

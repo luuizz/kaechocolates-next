@@ -19,6 +19,12 @@ export const brand = {
     whatsapp: '5535984773733',
     email: 'contato@kaechocolates.com.br',
   },
+  // Dados da empresa nas páginas de privacidade e termos. Confirmar com a Kaê.
+  legal: {
+    company: 'Kaê Chocolates',
+    cnpj: '', // preencher; a linha some das páginas enquanto estiver vazio
+    updatedAt: '2026-11-06',
+  },
   commerce: {
     currency: 'BRL',
     freeShippingFrom: 300,

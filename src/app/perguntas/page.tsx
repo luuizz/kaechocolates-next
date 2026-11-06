@@ -5,14 +5,16 @@ import { PageHeader } from '@/components/layout/page-header'
 import { Button } from '@/components/ui/button'
 import { brand } from '@/config/brand'
 import { FAQ } from '@/data/faq'
+import { JsonLd, faqPage } from '@/lib/seo/json-ld'
 
-export const metadata: Metadata = { title: 'Perguntas dos chocólatras', description: 'Tudo sobre os chocolates, entregas, pagamento, presentes e o clube da Kaê.' }
+export const metadata: Metadata = { title: 'Perguntas dos chocólatras', description: 'Tudo sobre os chocolates, entregas, pagamento, presentes e o clube da Kaê.', alternates: { canonical: '/perguntas' } }
 
 const slug = (text: string) => text.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/\s+/g, '-')
 
 export default function FaqPage() {
   return (
     <>
+      <JsonLd data={faqPage(FAQ.flatMap((group) => group.items))} />
       <PageHeader title="Perguntas dos chocólatras" description="As dúvidas que mais chegam por aqui. Não achou a sua? Chama a gente no WhatsApp." />
       <div className="mx-auto grid max-w-7xl gap-10 px-5 pb-24 pt-10 md:px-8 lg:grid-cols-[14rem_1fr]">
         <nav aria-label="Assuntos" className="lg:sticky lg:top-36 lg:self-start">

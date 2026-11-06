@@ -132,7 +132,7 @@ export function SignUpForm() {
       <Field label="Nome" error={tried ? errors.name : null}><Input value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} autoComplete="name" required /></Field>
       <Field label="E-mail" error={tried ? errors.email : null}><Input type="email" value={form.email} onChange={(event) => setForm({ ...form, email: event.target.value })} autoComplete="email" required /></Field>
       <PasswordField label="Senha" hint={`Pelo menos ${MIN_PASSWORD} caracteres.`} error={tried ? errors.password : null} value={form.password} onChange={(password) => setForm({ ...form, password })} autoComplete="new-password" />
-      <p className="text-xs text-muted-foreground">Ao criar a conta você concorda com a <Link href="/politica-privacidade" className="underline">política de privacidade</Link>.</p>
+      <p className="text-xs text-muted-foreground">Ao criar a conta você concorda com os <Link href="/termos" className="underline">termos de uso</Link> e a <Link href="/politica-privacidade" className="underline">política de privacidade</Link>.</p>
       <Submit busy={busy}>Criar conta</Submit>
     </form>
   )
