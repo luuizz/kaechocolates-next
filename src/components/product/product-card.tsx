@@ -1,6 +1,6 @@
 import Link from 'next/link'
-import { Plus } from '@phosphor-icons/react/dist/ssr'
 import { BarPackage } from './bar-package'
+import { AddToCartIcon } from '@/components/cart/add-to-cart'
 import { formatBRL, installment, type Product } from '@/data/products'
 
 // Cartão da vitrine: embalagem sobre a cor do sabor, preço e botão de comprar
@@ -30,14 +30,7 @@ export function ProductCard({ product }: { product: Product }) {
           </p>
           <p className="text-xs text-muted-foreground">7x de {installment(product.price)} sem juros</p>
         </div>
-        <button
-          type="button"
-          disabled={product.soldOut}
-          aria-label={`Adicionar ${product.name} à sacola`}
-          className="grid size-10 shrink-0 place-items-center rounded-full bg-foreground text-background transition-transform hover:scale-110 disabled:opacity-30"
-        >
-          <Plus size={18} weight="bold" />
-        </button>
+        <AddToCartIcon slug={product.slug} name={product.name} disabled={product.soldOut} />
       </div>
     </article>
   )

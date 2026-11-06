@@ -7,6 +7,7 @@ import { CaretDown, List, MagnifyingGlass, ShoppingBagOpen, User, X } from '@pho
 import { Logo } from '@/components/brand/logo'
 import { brand } from '@/config/brand'
 import { cn } from '@/lib/utils'
+import { useCart } from '@/components/cart/cart-provider'
 
 type NavItem = { href: string; label: string; children?: { href: string; label: string }[] }
 
@@ -67,6 +68,7 @@ export function SiteHeader() {
   const [openOn, setOpenOn] = useState<string | null>(null)
   const open = openOn === pathname
   const [scrolled, setScrolled] = useState(false)
+  const cart = useCart()
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40)
@@ -97,10 +99,10 @@ export function SiteHeader() {
             <Link href="/conta" className="hidden h-11 items-center gap-2 rounded-full px-3 text-sm font-semibold transition-colors hover:bg-secondary md:flex">
               <User size={22} /> Entrar
             </Link>
-            <Link href="/carrinho" aria-label="Sacola" className="relative grid size-11 place-items-center rounded-full bg-foreground text-background transition-transform hover:scale-105">
+            <button type="button" onClick={() => cart.setOpen(true)} aria-label={`Abrir sacola, ${cart.count} ${cart.count === 1 ? 'item' : 'itens'}`} className="relative grid size-11 place-items-center rounded-full bg-foreground text-background transition-transform hover:scale-105">
               <ShoppingBagOpen size={22} weight="bold" />
-              <span className="absolute -right-1 -top-1 grid size-5 place-items-center rounded-full bg-flavor-yellow text-[0.68rem] font-bold text-foreground ring-2 ring-background">0</span>
-            </Link>
+              <span className="absolute -right-1 -top-1 grid min-w-5 place-items-center rounded-full bg-flavor-yellow px-1 text-[0.68rem] font-bold tabular-nums text-foreground ring-2 ring-background">{cart.count}</span>
+            </button>
           </div>
         </div>
 
