@@ -2,12 +2,14 @@
 
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
-import { ArrowRight, Barcode, CreditCard, Package, Sparkle, Users, WarningCircle } from '@phosphor-icons/react'
+import { ArrowRight, Barcode, CurrencyCircleDollar, Package, Users, WarningCircle } from '@phosphor-icons/react'
 import { useAuth } from '@/components/auth/auth-provider'
-import { listBoxes, listCustomers, listPlans, listProducts, type AdminProduct } from '@/lib/admin-api'
+import { StatusBadge } from '@/components/orders/order-parts'
+import { formatBRL } from '@/data/products'
+import { listBoxes, listCustomers, listOrders, listPlans, listProducts, type AdminOrderRow, type AdminProduct } from '@/lib/admin-api'
 import { AdminHeader, Panel } from './admin-shell'
 
-type Stats = { products: AdminProduct[]; boxes: number; plans: number; customers: number }
+type Stats = { products: AdminProduct[]; boxes: number; plans: number; customers: number; orders: AdminOrderRow[]; loadedAt: number }
 
 export function AdminOverview() {
   const { profile } = useAuth()
@@ -15,9 +17,11 @@ export function AdminOverview() {
   const [error, setError] = useState('')
 
   useEffect(() => {
-    Promise.all([listProducts(), listBoxes(), listPlans(), listCustomers()])
-      .then(([products, boxes, plans, customers]) => setStats({
+    Promise.all([listProducts(), listBoxes(), listPlans(), listCustomers(), listOrders()])
+      .then(([products, boxes, plans, customers, orders]) => setStats({
         products,
+        orders,
+        loadedAt: Date.now(),
         boxes: boxes.filter((box) => box.active).length,
         plans: plans.filter((plan) => plan.active).length,
         customers: customers.length,
@@ -29,10 +33,16 @@ export function AdminOverview() {
   const soldOut = active.filter((product) => product.soldOut)
   const noPhoto = active.filter((product) => !product.image)
 
+  const PAID = ['paid', 'preparing', 'shipped', 'delivered']
+  const since = (stats?.loadedAt ?? 0) - 30 * 24 * 60 * 60 * 1000
+  const toShip = stats?.orders.filter((order) => order.status === 'paid' || order.status === 'preparing') ?? []
+  const paid30 = stats?.orders.filter((order) => PAID.includes(order.status) && new Date(order.created_at).getTime() >= since) ?? []
+  const revenue = paid30.reduce((total, order) => total + order.total, 0)
+
   const cards = [
     { href: '/admin/produtos', label: 'Barras à venda', value: stats ? active.length - soldOut.length : null, note: stats ? `${soldOut.length} esgotada(s) · ${stats.products.length - active.length} oculta(s)` : '', icon: Barcode, color: 'bg-flavor-yellow' },
-    { href: '/admin/kits', label: 'Caixas de kit', value: stats?.boxes ?? null, note: 'no Monte seu kit', icon: Package, color: 'bg-[#a9d8ef]' },
-    { href: '/admin/clube', label: 'Planos do clube', value: stats?.plans ?? null, note: 'ativos na página do clube', icon: Sparkle, color: 'bg-flavor-pink' },
+    { href: '/admin/pedidos', label: 'Pedidos para enviar', value: stats ? toShip.length : null, note: stats ? `${stats.orders.filter((order) => order.status === 'pending_payment').length} aguardando pagamento` : '', icon: Package, color: 'bg-[#a9d8ef]' },
+    { href: '/admin/pedidos', label: 'Vendas em 30 dias', value: stats ? formatBRL(revenue) : null, note: stats ? `${paid30.length} pedido(s) pagos` : '', icon: CurrencyCircleDollar, color: 'bg-flavor-pink' },
     { href: '/admin/clientes', label: 'Contas criadas', value: stats?.customers ?? null, note: 'clientes e equipe', icon: Users, color: 'bg-[#5fc2b0]' },
   ]
 
@@ -46,7 +56,7 @@ export function AdminOverview() {
           <Link key={href} href={href} className="group rounded-[1.5rem] bg-background p-5 transition-shadow hover:shadow-lg">
             <span className={`grid size-11 place-items-center rounded-full ${color}`}><Icon size={22} weight="duotone" /></span>
             <p className="mt-4 text-sm text-muted-foreground">{label}</p>
-            {value === null ? <span className="mt-1 block h-9 w-14 animate-pulse rounded-lg bg-secondary" /> : <p className="font-display text-4xl font-extrabold tabular-nums">{value}</p>}
+            {value === null ? <span className="mt-1 block h-9 w-14 animate-pulse rounded-lg bg-secondary" /> : <p className="font-display text-4xl font-extrabold tracking-tight tabular-nums">{value}</p>}
             <p className="mt-1 text-xs text-muted-foreground">{note}</p>
           </Link>
         ))}
@@ -76,9 +86,26 @@ export function AdminOverview() {
           )}
         </Panel>
         <Panel className="self-start bg-foreground text-background">
-          <span className="grid size-11 place-items-center rounded-full bg-background/10"><CreditCard size={22} weight="duotone" /></span>
-          <h2 className="mt-4 font-display text-xl font-bold">Pedidos e assinaturas</h2>
-          <p className="mt-2 text-sm text-background/70">Entram com o checkout do Mercado Pago (Pix e cartão) e a cobrança recorrente do clube. Até lá, a sacola funciona, mas o botão de finalizar fica desligado.</p>
+          <div className="flex items-center justify-between">
+            <h2 className="font-display text-xl font-bold">Últimos pedidos</h2>
+            <Link href="/admin/pedidos" className="text-sm font-semibold text-background/75 hover:text-background">Ver todos</Link>
+          </div>
+          {!stats ? (
+            <div className="mt-4 h-24 animate-pulse rounded-xl bg-background/10" />
+          ) : stats.orders.length === 0 ? (
+            <p className="mt-3 text-sm text-background/70">Nenhum pedido ainda. Eles aparecem aqui assim que alguém finalizar uma compra.</p>
+          ) : (
+            <ul className="mt-3 divide-y divide-background/10">
+              {stats.orders.slice(0, 6).map((order) => (
+                <li key={order.id}>
+                  <Link href={`/admin/pedidos/${order.code}`} className="flex items-center justify-between gap-3 py-3 text-sm hover:underline">
+                    <span><strong>{order.code}</strong> <span className="text-background/60">· {order.customer.name.split(' ')[0]}</span></span>
+                    <span className="flex items-center gap-2"><StatusBadge status={order.status} /> <span className="tabular-nums">{formatBRL(order.total)}</span></span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
         </Panel>
       </div>
     </>

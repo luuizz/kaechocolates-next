@@ -38,10 +38,10 @@ export function CartPage() {
               <div className="mt-2 flex items-baseline justify-between border-t pt-4"><dt className="font-bold">Total</dt><dd className="font-display text-2xl font-extrabold">{formatBRL(subtotal)}</dd></div>
             </dl>
             <p className="mt-1 text-right text-xs text-muted-foreground">ou {brand.commerce.maxInstallments}x de {installment(subtotal)} sem juros</p>
-            <Button size="lg" className="mt-6 w-full" disabled title="O checkout chega com a integração do Mercado Pago">
-              <LockSimple weight="bold" /> Finalizar compra
+            <Button asChild size="lg" className="mt-6 w-full">
+              <Link href="/checkout"><LockSimple weight="bold" /> Finalizar compra</Link>
             </Button>
-            <p className="mt-3 text-center text-xs text-muted-foreground">Checkout com Pix e cartão chega na próxima etapa.</p>
+            <p className="mt-3 text-center text-xs text-muted-foreground">Pix ou cartão, pelo Mercado Pago.</p>
           </div>
           <Button asChild variant="ghost"><Link href="/produtos">Continuar comprando</Link></Button>
         </aside>

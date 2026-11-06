@@ -67,6 +67,42 @@ Tudo o que identifica a marca fica em `src/config/brand.ts` e nas cores de
 `src/app/globals.css`. Trocando esses dois arquivos, o logo em `public/brand`
 e as fotos, o projeto vira uma loja genérica.
 
+## Checkout e pedidos
+
+Checkout em uma página (`/checkout`): endereço, frete por região e pagamento com Pix ou
+cartão pelo Mercado Pago (API de Orders, Checkout Transparente).
+
+- **O banco decide o valor.** O navegador manda só o que está na sacola; preço, desconto
+  dos kits, frete e estoque são recalculados em `quote_order` / `place_order`
+  (`database/migrations/0003_pedidos.sql`). Essas funções só rodam com a connection
+  string do servidor: clientes não conseguem chamá-las.
+- **Estoque** é reservado na criação do pedido e devolvido se o pagamento falhar, o Pix
+  expirar ou o pedido for cancelado no painel.
+- **Status do pagamento**: a página do pedido confere no Mercado Pago a cada 5 segundos
+  enquanto o Pix está pendente; o webhook (`/api/mercadopago/webhook`) atualiza mesmo com
+  a página fechada. O site nunca confia no corpo do aviso: busca o pedido na API deles.
+- **Painel**: `/admin/pedidos` (andamento e rastreio) e `/admin/frete` (preço e prazo por região).
+
+### Variáveis (Vercel)
+
+| Variável | Tipo | O que é |
+| --- | --- | --- |
+| `DATABASE_URL` | Sensitive | Connection string do Neon **com `-pooler`** (a integração Neon + Vercel já cria) |
+| `NEXT_PUBLIC_MERCADOPAGO_PUBLIC_KEY` | comum | Public Key da aplicação |
+| `MERCADOPAGO_ACCESS_TOKEN` | Sensitive | Access Token da aplicação |
+| `MERCADOPAGO_WEBHOOK_SECRET` | Sensitive | Assinatura secreta dos webhooks |
+| `MERCADOPAGO_TEST_MODE` | comum | `true` enquanto usar a conta de teste: aprova o Pix sozinho |
+
+### Testar pagamentos
+
+Use as credenciais da conta **vendedora de teste** do Mercado Pago.
+
+- **Pix**: com `MERCADOPAGO_TEST_MODE=true`, o pedido é aprovado em alguns segundos.
+- **Cartão**: Mastercard `5031 4332 1540 6351`, validade `11/30`, CVV `123`, CPF `12345678909`.
+  O nome no cartão define o resultado: `APRO` aprova, `OTHE` recusa, `FUND` recusa por saldo.
+- **Webhook**: em Suas integrações → Webhooks, URL `https://<site>/api/mercadopago/webhook`,
+  evento **Order**. Copie a assinatura secreta para `MERCADOPAGO_WEBHOOK_SECRET`.
+
 ## SEO e páginas legais
 
 - `sitemap.xml` com as páginas e todas as barras do catálogo; `robots.txt` bloqueia painel, conta e login.
