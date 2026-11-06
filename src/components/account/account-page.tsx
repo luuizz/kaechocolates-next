@@ -3,13 +3,16 @@
 import Link from 'next/link'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
-import { CircleNotch, Gauge, IdentificationCard, Key, MapPin, Package, Sparkle, SignOut } from '@phosphor-icons/react'
+import { CaretRight, CircleNotch, Gauge, IdentificationCard, Key, MapPin, Package, Sparkle, SignOut } from '@phosphor-icons/react'
 import { useAuth } from '@/components/auth/auth-provider'
 import { Button } from '@/components/ui/button'
 import { Field, FormMessage, Input } from '@/components/ui/field'
 import { getNeon, unwrap } from '@/lib/neon'
 import { cn, formatPhone } from '@/lib/utils'
 import { AddressBook } from './address-book'
+import { StatusBadge } from '@/components/orders/order-parts'
+import { formatBRL } from '@/data/products'
+import { formatDateTime, type OrderStatus } from '@/lib/orders'
 
 const TABS = [
   { id: 'pedidos', label: 'Pedidos', icon: Package },
@@ -103,11 +106,49 @@ function Empty({ icon: Icon, title, text, action }: { icon: typeof Package; titl
 }
 
 // Pedidos e assinatura entram junto com o checkout (Mercado Pago)
+type OrderRow = { id: number; code: string; status: OrderStatus; total: number | string; created_at: string; payment_method: 'pix' | 'card'; order_items: { quantity: number }[] }
+
 function Orders() {
+  const [orders, setOrders] = useState<OrderRow[] | null>(null)
+  const [error, setError] = useState('')
+
+  useEffect(() => {
+    getNeon().from('orders').select('id,code,status,total,created_at,payment_method,order_items(quantity)').order('created_at', { ascending: false }).limit(50)
+      .then((result: { data: unknown; error: unknown }) => setOrders(unwrap(result) as OrderRow[]))
+      .catch((err: Error) => { setError(err.message); setOrders([]) })
+  }, [])
+
   return (
     <>
       <Title>Pedidos</Title>
-      <Empty icon={Package} title="Nenhum pedido ainda" text="Quando você fizer uma compra, o pedido e o rastreio aparecem aqui." action={<Button asChild><Link href="/produtos">Ver chocolates</Link></Button>} />
+      <FormMessage>{error}</FormMessage>
+      {orders === null ? (
+        <div className="flex flex-col gap-3">{[0, 1].map((index) => <div key={index} className="h-24 animate-pulse rounded-[1.5rem] bg-secondary" />)}</div>
+      ) : orders.length === 0 ? (
+        <Empty icon={Package} title="Nenhum pedido ainda" text="Quando você fizer uma compra, o pedido e o rastreio aparecem aqui." action={<Button asChild><Link href="/produtos">Ver chocolates</Link></Button>} />
+      ) : (
+        <ul className="flex flex-col gap-3">
+          {orders.map((order) => {
+            const count = order.order_items.reduce((total, item) => total + item.quantity, 0)
+            return (
+              <li key={order.id}>
+                <Link href={`/pedido/${order.code}`} className="flex flex-wrap items-center gap-x-6 gap-y-2 rounded-[1.5rem] border p-5 transition-colors hover:border-foreground">
+                  <span className="min-w-32">
+                    <span className="block font-display text-lg font-extrabold">{order.code}</span>
+                    <span className="text-sm text-muted-foreground">{formatDateTime(order.created_at)}</span>
+                  </span>
+                  <StatusBadge status={order.status} />
+                  <span className="ml-auto text-right text-sm">
+                    <span className="block font-semibold">{formatBRL(Number(order.total))}</span>
+                    <span className="text-muted-foreground">{count} {count === 1 ? 'item' : 'itens'} · {order.payment_method === 'pix' ? 'Pix' : 'Cartão'}</span>
+                  </span>
+                  <CaretRight size={18} className="text-muted-foreground" />
+                </Link>
+              </li>
+            )
+          })}
+        </ul>
+      )}
     </>
   )
 }
