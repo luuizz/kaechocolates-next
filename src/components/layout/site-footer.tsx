@@ -6,7 +6,7 @@ import { brand } from '@/config/brand'
 const columns = [
   { title: 'Loja', links: [{ href: '/produtos', label: 'Chocolates' }, { href: '/kits', label: 'Kits e presentes' }, { href: '/clube', label: 'Clube de assinatura' }] },
   { title: 'A Kaê', links: [{ href: '/quem-somos', label: 'Nossa história' }, { href: '/quem-somos#processo', label: 'Do grão à barra' }, { href: '/contato', label: 'Contato' }] },
-  { title: 'Ajuda', links: [{ href: '/perguntas', label: 'Perguntas dos chocólatras' }, { href: '/conta', label: 'Minha conta' }, { href: '/politica-privacidade', label: 'Política de privacidade' }] },
+  { title: 'Ajuda', links: [{ href: '/perguntas', label: 'Perguntas dos chocólatras' }, { href: '/conta', label: 'Minha conta' }, { href: '/termos', label: 'Trocas e devoluções' }] },
 ]
 
 export function SiteFooter() {
@@ -48,6 +48,10 @@ export function SiteFooter() {
       <div className="border-t border-background/10">
         <div className="mx-auto flex max-w-7xl flex-col gap-2 px-5 py-6 text-sm text-background/60 md:flex-row md:justify-between md:px-8">
           <p>© {new Date().getFullYear()} {brand.name} · {brand.contact.city}</p>
+          <p className="flex gap-4">
+            <Link href="/politica-privacidade" className="hover:text-background">Privacidade</Link>
+            <Link href="/termos" className="hover:text-background">Termos de uso</Link>
+          </p>
           <p>Desenvolvido por Luiz Ricardo</p>
         </div>
       </div>

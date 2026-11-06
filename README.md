@@ -67,6 +67,17 @@ Tudo o que identifica a marca fica em `src/config/brand.ts` e nas cores de
 `src/app/globals.css`. Trocando esses dois arquivos, o logo em `public/brand`
 e as fotos, o projeto vira uma loja genérica.
 
+## SEO e páginas legais
+
+- `sitemap.xml` com as páginas e todas as barras do catálogo; `robots.txt` bloqueia painel, conta e login.
+- Dados estruturados (schema.org): organização e busca do site na home, produto com preço e
+  estoque, trilha de navegação e perguntas frequentes.
+- Imagem de compartilhamento gerada para o site e para cada barra (`opengraph-image.tsx`).
+- Enquanto o projeto for conceito, o site pede para não ser indexado. Para liberar, crie
+  `NEXT_PUBLIC_INDEXABLE=true` na Vercel.
+- `/politica-privacidade` (LGPD) e `/termos` (CDC): textos-base que descrevem o que o site
+  faz hoje. Revisar com a Kaê antes de usar de verdade; o CNPJ entra em `src/config/brand.ts`.
+
 ## Fluxo de trabalho
 
 `feat/*` → `dev` → `main` (produção).

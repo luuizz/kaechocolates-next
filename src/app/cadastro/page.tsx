@@ -5,7 +5,7 @@ import { AuthShell } from '@/components/account/auth-shell'
 import { SignUpForm } from '@/components/account/auth-forms'
 import { getCatalog } from '@/lib/catalog'
 
-export const metadata: Metadata = { title: 'Criar conta' }
+export const metadata: Metadata = { title: 'Criar conta', robots: { index: false } }
 
 export default async function SignUpPage() {
   const { products } = await getCatalog()

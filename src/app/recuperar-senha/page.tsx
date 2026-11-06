@@ -4,7 +4,7 @@ import { AuthShell } from '@/components/account/auth-shell'
 import { ForgotPasswordForm } from '@/components/account/auth-forms'
 import { getCatalog } from '@/lib/catalog'
 
-export const metadata: Metadata = { title: 'Recuperar senha' }
+export const metadata: Metadata = { title: 'Recuperar senha', robots: { index: false } }
 
 export default async function ForgotPasswordPage() {
   const { products } = await getCatalog()

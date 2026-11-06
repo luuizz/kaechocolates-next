@@ -21,7 +21,7 @@ export const FAQ = [
     topic: 'Pagamento',
     items: [
       { q: 'Quais formas de pagamento vocês aceitam?', a: 'Pix, cartão de crédito em até 7x sem juros e boleto, tudo pelo Mercado Pago.' },
-      { q: 'Posso trocar ou devolver?', a: 'Por ser alimento, não aceitamos devolução de produtos abertos. Se algo chegar danificado, fale com a gente em até 7 dias que resolvemos.' },
+      { q: 'Posso trocar ou devolver?', a: 'Pode desistir em até 7 dias depois de receber, com as barras lacradas, e devolvemos tudo, frete incluso. Se algo chegar derretido, quebrado ou errado, avise em até 30 dias que reenviamos, trocamos ou devolvemos o dinheiro. Detalhes nos termos de uso.' },
     ],
   },
   {

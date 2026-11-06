@@ -19,8 +19,17 @@ const intro: Record<Line | 'todos', string> = {
 }
 
 export async function generateMetadata({ searchParams }: { searchParams: Promise<Search> }): Promise<Metadata> {
-  const { linha } = await searchParams
-  return { title: linha && linha in LINES ? `Chocolates ${LINES[linha as Line].toLowerCase()}` : 'Chocolates' }
+  const { linha, busca, ordem } = await searchParams
+  const line = linha && linha in LINES ? (linha as Line) : null
+  return {
+    title: line ? `Chocolates ${LINES[line].toLowerCase()}` : 'Chocolates',
+    description: line
+      ? `Chocolates ${LINES[line].toLowerCase()} bean to bar da Kaê, feitos com cacau da Bahia e ingredientes brasileiros.`
+      : 'Todas as barras bean to bar da Kaê: intensos, ao leite e brancos, com cacau da Bahia e ingredientes brasileiros.',
+    alternates: { canonical: line ? `/produtos?linha=${line}` : '/produtos' },
+    // Busca e ordenação são variações da mesma lista: o Google segue os links, mas não indexa
+    robots: busca || ordem ? { index: false, follow: true } : undefined,
+  }
 }
 
 export default async function ProductsPage({ searchParams }: { searchParams: Promise<Search> }) {
