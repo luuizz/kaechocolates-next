@@ -7,7 +7,7 @@ export const brand = {
   tagline: 'Um Brasil em cada barra',
   description:
     'Chocolate bean to bar brasileiro: do grão à barra, com cacau da Bahia, ingredientes amazônicos e jeitinho mineiro.',
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000',
+  url: process.env.NEXT_PUBLIC_SITE_URL ?? 'https://kaechocolates.luricweb.com.br',
   logo: { src: '/brand/logo.svg', inverted: '/brand/logo-negativo.svg', alt: 'Kaê Chocolates' },
   social: {
     instagram: 'https://www.instagram.com/kaechocolates/',
