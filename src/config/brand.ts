@@ -14,8 +14,10 @@ export const brand = {
   },
   contact: {
     city: 'Varginha, MG',
-    whatsapp: '',
-    email: '',
+    address: 'Praça Marechal Deodoro, 130, Centro · Varginha, MG · 37014-230',
+    phone: '(35) 98477-3733',
+    whatsapp: '5535984773733',
+    email: 'contato@kaechocolates.com.br',
   },
   commerce: {
     currency: 'BRL',

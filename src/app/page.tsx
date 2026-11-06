@@ -1,20 +1,20 @@
-import { Hero } from '@/components/home/hero'
-import { Marquee } from '@/components/home/marquee'
-import { FlavorRail } from '@/components/home/flavor-rail'
-import { BeanToBar } from '@/components/home/bean-to-bar'
+import { Bento } from '@/components/home/bento'
+import { Benefits } from '@/components/home/benefits'
+import { CatalogSection } from '@/components/home/catalog-section'
+import { About } from '@/components/home/about'
 import { ClubTeaser } from '@/components/home/club-teaser'
-import { Quality } from '@/components/home/quality'
+import { Reviews } from '@/components/home/reviews'
 
 export default function Home() {
   return (
     <>
-      <Hero />
-      <Marquee items={['Chocolate com axé e borogodó']} className="-rotate-1 bg-foreground text-background" />
-      <FlavorRail />
-      <BeanToBar />
+      <Bento />
+      <Benefits />
+      <CatalogSection />
+      <About />
       <ClubTeaser />
-      <Marquee items={['Um Brasil em cada barra']} className="rotate-1 bg-flavor-yellow text-foreground" invertIcon={false} />
-      <Quality />
+      {/* Avaliações entram quando houver dados reais (fase 2) */}
+      <Reviews reviews={[]} />
     </>
   )
 }

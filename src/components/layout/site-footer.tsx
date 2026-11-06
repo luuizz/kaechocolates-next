@@ -1,12 +1,12 @@
 import Link from 'next/link'
-import { InstagramLogo } from '@phosphor-icons/react/dist/ssr'
+import { EnvelopeSimple, InstagramLogo, MapPin, WhatsappLogo } from '@phosphor-icons/react/dist/ssr'
 import { Logo } from '@/components/brand/logo'
 import { brand } from '@/config/brand'
 
 const columns = [
   { title: 'Loja', links: [{ href: '/produtos', label: 'Chocolates' }, { href: '/kits', label: 'Kits e presentes' }, { href: '/clube', label: 'Clube de assinatura' }] },
-  { title: 'A Kaê', links: [{ href: '/quem-somos', label: 'Nossa história' }, { href: '/#processo', label: 'Do grão à barra' }, { href: '/contato', label: 'Contato' }] },
-  { title: 'Ajuda', links: [{ href: '/conta', label: 'Minha conta' }, { href: '/politica-privacidade', label: 'Política de privacidade' }] },
+  { title: 'A Kaê', links: [{ href: '/quem-somos', label: 'Nossa história' }, { href: '/quem-somos#processo', label: 'Do grão à barra' }, { href: '/contato', label: 'Contato' }] },
+  { title: 'Ajuda', links: [{ href: '/perguntas', label: 'Perguntas dos chocólatras' }, { href: '/conta', label: 'Minha conta' }, { href: '/politica-privacidade', label: 'Política de privacidade' }] },
 ]
 
 export function SiteFooter() {
@@ -16,6 +16,11 @@ export function SiteFooter() {
         <div className="flex flex-col items-start gap-5">
           <Logo inverted className="h-14" />
           <p className="max-w-xs text-background/70">{brand.description}</p>
+          <ul className="flex flex-col gap-2 text-sm text-background/75">
+            <li><a href={`https://wa.me/${brand.contact.whatsapp}`} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 hover:text-background"><WhatsappLogo size={18} /> {brand.contact.phone}</a></li>
+            <li><a href={`mailto:${brand.contact.email}`} className="inline-flex items-center gap-2 hover:text-background"><EnvelopeSimple size={18} /> {brand.contact.email}</a></li>
+            <li className="flex items-start gap-2"><MapPin size={18} className="mt-0.5 shrink-0" /> {brand.contact.address}</li>
+          </ul>
           <a href={brand.social.instagram} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 rounded-full border border-background/20 px-4 py-2 text-sm font-semibold transition-colors hover:bg-background hover:text-foreground">
             <InstagramLogo size={20} weight="bold" /> @kaechocolates
           </a>
