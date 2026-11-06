@@ -4,7 +4,7 @@ import { PageHeader } from '@/components/layout/page-header'
 import { ContactForm } from '@/components/contact/contact-form'
 import { brand } from '@/config/brand'
 
-export const metadata: Metadata = { title: 'Contato', description: 'Fale com a Kaê pelo WhatsApp, e-mail ou Instagram.' }
+export const metadata: Metadata = { title: 'Contato', description: 'Fale com a Kaê pelo WhatsApp, e-mail ou Instagram.', alternates: { canonical: '/contato' } }
 
 const channels = [
   { icon: WhatsappLogo, label: 'WhatsApp', value: brand.contact.phone, href: `https://wa.me/${brand.contact.whatsapp}` },

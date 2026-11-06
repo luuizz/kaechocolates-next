@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { brand } from '@/config/brand'
 import { SiteHeader } from '@/components/layout/site-header'
 import { SiteFooter } from '@/components/layout/site-footer'
@@ -17,8 +17,14 @@ export const metadata: Metadata = {
   metadataBase: new URL(brand.url),
   title: { default: `${brand.name} · ${brand.tagline}`, template: `%s · ${brand.name}` },
   description: brand.description,
+  applicationName: brand.name,
   robots: brand.indexable ? undefined : { index: false, follow: false },
+  openGraph: { type: 'website', locale: 'pt_BR', siteName: brand.name },
+  twitter: { card: 'summary_large_image' },
+  formatDetection: { telephone: false },
 }
+
+export const viewport: Viewport = { themeColor: '#ffffff' }
 
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const catalog = await getCatalog()

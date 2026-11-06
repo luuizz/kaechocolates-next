@@ -8,6 +8,7 @@ import { ProductCard } from '@/components/product/product-card'
 import { brand } from '@/config/brand'
 import { LINES, LINE_SINGULAR, findProduct, formatBRL, installment } from '@/data/products'
 import { getCatalog } from '@/lib/catalog'
+import { JsonLd, breadcrumbs, productLd } from '@/lib/seo/json-ld'
 
 type Params = { params: Promise<{ slug: string }> }
 
@@ -19,7 +20,14 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
   const product = findProduct((await getCatalog()).products, (await params).slug)
   if (!product) return {}
-  return { title: `${product.name} ${product.cacao}%`, description: product.short }
+  const title = `${product.name} ${product.cacao}%`
+  const description = `${product.short} Chocolate ${LINE_SINGULAR[product.line]} bean to bar, ${product.weight}.`
+  return {
+    title,
+    description,
+    alternates: { canonical: `/produtos/${product.slug}` },
+    openGraph: { type: 'website', locale: 'pt_BR', siteName: brand.name, title: `${title} · ${brand.name}`, description, url: `/produtos/${product.slug}` },
+  }
 }
 
 export default async function ProductPage({ params }: Params) {
@@ -32,6 +40,7 @@ export default async function ProductPage({ params }: Params) {
 
   return (
     <div className="mx-auto max-w-7xl px-5 pb-20 pt-8 md:px-8 md:pt-12">
+      <JsonLd data={[productLd(product), breadcrumbs([{ name: 'Início', path: '/' }, { name: LINES[product.line], path: `/produtos?linha=${product.line}` }, { name: product.name, path: `/produtos/${product.slug}` }])]} />
       <nav aria-label="Navegação estrutural" className="text-sm text-muted-foreground">
         <Link href="/" className="hover:text-foreground">Início</Link> <span aria-hidden="true">/</span>{' '}
         <Link href={`/produtos?linha=${product.line}`} className="hover:text-foreground">{LINES[product.line]}</Link> <span aria-hidden="true">/</span>{' '}

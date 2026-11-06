@@ -7,7 +7,7 @@ import { Reveal } from '@/components/motion/reveal'
 import { CLUB_FAQ } from '@/data/club'
 import { getCatalog } from '@/lib/catalog'
 
-export const metadata: Metadata = { title: 'Clube de assinatura', description: 'Todo mês uma caixa com chocolates bean to bar brasileiros, edições limitadas e frete grátis.' }
+export const metadata: Metadata = { title: 'Clube de assinatura', description: 'Todo mês uma caixa com chocolates bean to bar brasileiros, edições limitadas e frete grátis.', alternates: { canonical: '/clube' } }
 
 const steps = [
   { icon: Package, title: 'Escolha o plano', text: 'De 2 a 6 barras por mês, no período que fizer sentido para você.' },

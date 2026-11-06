@@ -6,7 +6,7 @@ import { PageHeader } from '@/components/layout/page-header'
 import { Reveal } from '@/components/motion/reveal'
 import { Button } from '@/components/ui/button'
 
-export const metadata: Metadata = { title: 'A Kaê', description: 'Chocolate bean to bar brasileiro: cacau da Bahia, ingredientes da Amazônia e borogodó mineiro.' }
+export const metadata: Metadata = { title: 'A Kaê', description: 'Chocolate bean to bar brasileiro: cacau da Bahia, ingredientes da Amazônia e borogodó mineiro.', alternates: { canonical: '/quem-somos' } }
 
 const steps = [
   { title: 'Colheita e quebra do fruto', text: 'O cacau é colhido maduro na Bahia e aberto ainda na fazenda.' },
