@@ -1,7 +1,8 @@
-import React from 'react'
+import type { Metadata } from 'next'
+import { ComingSoon } from '@/components/layout/coming-soon'
 
-export default function PageQuemSomos() {
-  return (
-    <section>Página quem somos</section>
-  )
+export const metadata: Metadata = { title: 'A Kaê' }
+
+export default function Page() {
+  return <ComingSoon title="A Kaê" />
 }

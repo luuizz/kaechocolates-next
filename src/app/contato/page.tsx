@@ -1,7 +1,8 @@
-import React from 'react'
+import type { Metadata } from 'next'
+import { ComingSoon } from '@/components/layout/coming-soon'
 
-export default function PageContato() {
-  return (
-    <section>PageContato</section>
-  )
+export const metadata: Metadata = { title: 'Contato' }
+
+export default function Page() {
+  return <ComingSoon title="Contato" />
 }
