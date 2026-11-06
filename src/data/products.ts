@@ -24,6 +24,8 @@ export type Product = {
   image?: string
 }
 
+export const LINE_SINGULAR: Record<Line, string> = { intensos: 'intenso', 'ao-leite': 'ao leite', brancos: 'branco' }
+
 export const LINES: Record<Line, string> = {
   intensos: 'Intensos',
   'ao-leite': 'Ao leite',
@@ -55,3 +57,32 @@ export const formatBRL = (value: number) =>
   value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
 
 export const installment = (value: number, times = 7) => formatBRL(value / times)
+
+export const SORTS = {
+  relevancia: 'Mais relevantes',
+  'menor-preco': 'Menor preço',
+  'maior-preco': 'Maior preço',
+  'mais-cacau': 'Mais cacau',
+  'menos-cacau': 'Menos cacau',
+} as const
+export type Sort = keyof typeof SORTS
+
+const normalize = (text: string) => text.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
+
+// Filtro do catálogo: linha, busca por texto e ordenação (esgotados por último)
+export function filterProducts({ line, search, sort = 'relevancia' }: { line?: string; search?: string; sort?: string }) {
+  const term = search ? normalize(search.trim()) : ''
+  const list = products.filter((product) => {
+    if (line && line in LINES && product.line !== line) return false
+    if (term && !normalize(`${product.name} ${product.short} ${product.cacao}`).includes(term)) return false
+    return true
+  })
+  const compare: Record<string, (a: Product, b: Product) => number> = {
+    'menor-preco': (a, b) => a.price - b.price,
+    'maior-preco': (a, b) => b.price - a.price,
+    'mais-cacau': (a, b) => b.cacao - a.cacao,
+    'menos-cacau': (a, b) => a.cacao - b.cacao,
+  }
+  const sorted = compare[sort] ? [...list].sort(compare[sort]) : list
+  return sorted.sort((a, b) => Number(Boolean(a.soldOut)) - Number(Boolean(b.soldOut)))
+}
