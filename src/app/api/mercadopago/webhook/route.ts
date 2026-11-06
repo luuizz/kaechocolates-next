@@ -1,5 +1,5 @@
 import { db } from '@/lib/server/db'
-import { getAuthorizedPayment, getMpOrder, getPreapproval, paymentSnapshot, preapprovalSnapshot, validWebhookSignature } from '@/lib/server/mercadopago'
+import { MpError, getAuthorizedPayment, getMpOrder, getPreapproval, paymentSnapshot, preapprovalSnapshot, validWebhookSignature } from '@/lib/server/mercadopago'
 
 // Avisos do Mercado Pago. Não confiamos no corpo do aviso: buscamos o recurso
 // na API deles e gravamos o status que vier de lá.
@@ -44,6 +44,12 @@ export async function POST(request: Request) {
     await db().query('select public.apply_payment($1, $2::jsonb)', [mpOrder.external_reference, JSON.stringify(paymentSnapshot(mpOrder))])
     return Response.json({ ok: true })
   } catch (error) {
+    // Recurso que não existe no Mercado Pago (ex.: "Simular notificação" com um id
+    // de exemplo): não é nosso, responde 200 para não ficar recebendo de novo
+    if (error instanceof MpError && (error.status === 404 || error.status === 400)) {
+      console.warn('[webhook] ignorado:', topic || 'order', dataId)
+      return Response.json({ ok: true, ignored: true })
+    }
     console.error('[webhook]', error)
     // 500 faz o Mercado Pago tentar de novo mais tarde
     return Response.json({ error: 'Falha ao processar.' }, { status: 500 })
