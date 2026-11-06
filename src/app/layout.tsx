@@ -4,6 +4,10 @@ import { SiteHeader } from '@/components/layout/site-header'
 import { SiteFooter } from '@/components/layout/site-footer'
 import { CartProvider } from '@/components/cart/cart-provider'
 import { CartDrawer } from '@/components/cart/cart-drawer'
+import { CatalogProvider } from '@/components/catalog/catalog-provider'
+import { AuthProvider } from '@/components/auth/auth-provider'
+import { ShopChrome } from '@/components/layout/shop-chrome'
+import { getCatalog } from '@/lib/catalog'
 import '@fontsource-variable/inter'
 import '@fontsource-variable/plus-jakarta-sans'
 import '@fontsource-variable/plus-jakarta-sans/wght-italic.css'
@@ -16,16 +20,20 @@ export const metadata: Metadata = {
   robots: brand.indexable ? undefined : { index: false, follow: false },
 }
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const catalog = await getCatalog()
   return (
     <html lang="pt-BR">
       <body className="flex min-h-dvh flex-col font-sans">
-        <CartProvider>
-          <SiteHeader />
-          <main className="flex-1 overflow-x-clip">{children}</main>
-          <SiteFooter />
-          <CartDrawer />
-        </CartProvider>
+        <CatalogProvider catalog={catalog}>
+          <AuthProvider>
+            <CartProvider>
+              <ShopChrome header={<SiteHeader />} footer={<SiteFooter />} drawer={<CartDrawer />}>
+                {children}
+              </ShopChrome>
+            </CartProvider>
+          </AuthProvider>
+        </CatalogProvider>
       </body>
     </html>
   )

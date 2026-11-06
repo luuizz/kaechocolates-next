@@ -5,7 +5,7 @@ import { PlanPicker } from '@/components/club/plan-picker'
 import { BarPackage } from '@/components/product/bar-package'
 import { Reveal } from '@/components/motion/reveal'
 import { CLUB_FAQ } from '@/data/club'
-import { findProduct } from '@/data/products'
+import { getCatalog } from '@/lib/catalog'
 
 export const metadata: Metadata = { title: 'Clube de assinatura', description: 'Todo mês uma caixa com chocolates bean to bar brasileiros, edições limitadas e frete grátis.' }
 
@@ -16,7 +16,8 @@ const steps = [
   { icon: CalendarCheck, title: 'Você no controle', text: 'Pause, troque de plano ou cancele pela sua conta.' },
 ]
 
-export default function ClubPage() {
+export default async function ClubPage() {
+  const bars = (await getCatalog()).products.filter((product) => !product.soldOut).slice(0, 3)
   return (
     <>
       <section className="bg-[#5fc2b0]">
@@ -30,9 +31,9 @@ export default function ClubPage() {
             <a href="#planos" className="mt-8 inline-flex h-12 items-center rounded-full bg-foreground px-7 font-bold text-background transition-transform hover:scale-[1.03]">Ver planos</a>
           </div>
           <div className="relative mx-auto flex w-full max-w-md justify-center" aria-hidden="true">
-            {['acai-37', 'guru-60', 'caipira-37'].map((slug, index) => (
-              <div key={slug} className="-mx-8 w-1/2" style={{ transform: `rotate(${(index - 1) * 10}deg) translateY(${Math.abs(index - 1) * 24}px)`, zIndex: index === 1 ? 2 : 1 }}>
-                <BarPackage product={findProduct(slug)!} />
+            {bars.map((product, index) => (
+              <div key={product.slug} className="-mx-8 w-1/2" style={{ transform: `rotate(${(index - 1) * 10}deg) translateY(${Math.abs(index - 1) * 24}px)`, zIndex: index === 1 ? 2 : 1 }}>
+                <BarPackage product={product} />
               </div>
             ))}
           </div>

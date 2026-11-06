@@ -45,3 +45,31 @@ jobs:
       - run: yarn lint
       - run: yarn typecheck
       - run: yarn build
+        # Sem endereços do Neon: o build usa o catálogo local (src/data)
+
+  database:
+    name: Migrations (Postgres de teste)
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: yarn
+      - run: yarn install --frozen-lockfile
+      - name: Simula o Neon Auth + Data API
+        run: psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f database/ci/neon-stub.sql
+      - name: Aplica as migrations do zero
+        run: yarn db:migrate
+      - name: Segunda execução não aplica nada
+        run: yarn db:migrate | tee out.txt && grep -q "Banco em dia" out.txt

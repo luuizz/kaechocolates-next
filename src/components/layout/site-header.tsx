@@ -3,11 +3,12 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { CaretDown, List, MagnifyingGlass, ShoppingBagOpen, User, X } from '@phosphor-icons/react'
+import { CaretDown, Gauge, List, MagnifyingGlass, ShoppingBagOpen, User, X } from '@phosphor-icons/react'
 import { Logo } from '@/components/brand/logo'
 import { brand } from '@/config/brand'
 import { cn } from '@/lib/utils'
 import { useCart } from '@/components/cart/cart-provider'
+import { useAuth } from '@/components/auth/auth-provider'
 
 type NavItem = { href: string; label: string; children?: { href: string; label: string }[] }
 
@@ -69,6 +70,9 @@ export function SiteHeader() {
   const open = openOn === pathname
   const [scrolled, setScrolled] = useState(false)
   const cart = useCart()
+  const auth = useAuth()
+  const firstName = (auth.profile?.full_name || auth.user?.email || '').split(/[\s@]/)[0]
+  const accountLabel = auth.user ? (firstName ? `Olá, ${firstName}` : 'Minha conta') : 'Entrar'
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40)
@@ -96,8 +100,13 @@ export function SiteHeader() {
           </Link>
 
           <div className="flex items-center justify-end gap-2">
-            <Link href="/conta" className="hidden h-11 items-center gap-2 rounded-full px-3 text-sm font-semibold transition-colors hover:bg-secondary md:flex">
-              <User size={22} /> Entrar
+            {auth.isAdmin && (
+              <Link href="/admin" className="hidden h-11 items-center gap-2 rounded-full bg-flavor-yellow px-4 text-sm font-semibold transition-colors hover:bg-flavor-yellow/85 md:flex">
+                <Gauge size={20} weight="bold" /> Painel
+              </Link>
+            )}
+            <Link href={auth.user ? '/conta' : '/entrar'} className="hidden h-11 max-w-48 items-center gap-2 rounded-full px-3 text-sm font-semibold transition-colors hover:bg-secondary md:flex">
+              <User size={22} weight={auth.user ? 'fill' : 'regular'} className="shrink-0" /> <span className="truncate">{auth.loading ? 'Conta' : accountLabel}</span>
             </Link>
             <button type="button" onClick={() => cart.setOpen(true)} aria-label={`Abrir sacola, ${cart.count} ${cart.count === 1 ? 'item' : 'itens'}`} className="relative grid size-11 place-items-center rounded-full bg-foreground text-background transition-transform hover:scale-105">
               <ShoppingBagOpen size={22} weight="bold" />
@@ -150,7 +159,8 @@ export function SiteHeader() {
                   )}
                 </div>
               ))}
-              <Link href="/conta" className="mt-4 flex items-center gap-2 font-semibold"><User size={20} /> Entrar ou cadastrar</Link>
+              <Link href={auth.user ? '/conta' : '/entrar'} className="mt-4 flex items-center gap-2 font-semibold"><User size={20} /> {auth.user ? 'Minha conta' : 'Entrar ou cadastrar'}</Link>
+              {auth.isAdmin && <Link href="/admin" className="mt-3 flex items-center gap-2 font-semibold"><Gauge size={20} /> Painel da loja</Link>}
             </nav>
           </div>
         )}

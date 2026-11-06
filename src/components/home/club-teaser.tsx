@@ -2,7 +2,7 @@ import Link from 'next/link'
 import { ArrowRight, CalendarCheck, Gift, Truck } from '@phosphor-icons/react/dist/ssr'
 import { Button } from '@/components/ui/button'
 import { Reveal } from '@/components/motion/reveal'
-import { findProduct } from '@/data/products'
+import type { Product } from '@/data/products'
 import { BarPackage } from '@/components/product/bar-package'
 
 const perks = [
@@ -12,7 +12,8 @@ const perks = [
 ]
 
 // Chamada para o clube de assinatura
-export function ClubTeaser() {
+export function ClubTeaser({ products }: { products: Product[] }) {
+  const bars = products.filter((product) => !product.soldOut).slice(1, 4)
   return (
     <section id="clube" className="px-5 py-20 md:px-8 md:py-28">
       <div className="relative mx-auto grid max-w-7xl gap-10 overflow-hidden rounded-[2.5rem] bg-flavor-pink p-8 md:p-14 lg:grid-cols-[1.1fr_1fr]">
@@ -40,13 +41,13 @@ export function ClubTeaser() {
 
         <div className="relative min-h-80" aria-hidden="true">
           <div className="absolute left-1/2 top-1/2 size-[22rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-background/30" />
-          {['acai-37', 'cumaru-55', 'caipira-37'].map((slug, index) => (
+          {bars.map((product, index) => (
             <div
-              key={slug}
+              key={product.slug}
               className="absolute left-1/2 top-1/2 w-44 md:w-52"
               style={{ transform: `translate(calc(-50% + ${(index - 1) * 80}px), calc(-50% + ${Math.abs(index - 1) * 18}px)) rotate(${(index - 1) * 12}deg)` }}
             >
-              <BarPackage product={findProduct(slug)!} />
+              <BarPackage product={product} />
             </div>
           ))}
         </div>

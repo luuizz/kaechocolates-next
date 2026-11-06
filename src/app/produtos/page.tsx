@@ -5,7 +5,8 @@ import { MagnifyingGlass } from '@phosphor-icons/react/dist/ssr'
 import { ProductCard } from '@/components/product/product-card'
 import { SortSelect } from '@/components/catalog/sort-select'
 import { Button } from '@/components/ui/button'
-import { LINES, filterProducts, products, type Line } from '@/data/products'
+import { LINES, filterProducts, type Line } from '@/data/products'
+import { getCatalog } from '@/lib/catalog'
 import { cn } from '@/lib/utils'
 
 type Search = { linha?: string; busca?: string; ordem?: string }
@@ -25,7 +26,8 @@ export async function generateMetadata({ searchParams }: { searchParams: Promise
 export default async function ProductsPage({ searchParams }: { searchParams: Promise<Search> }) {
   const { linha, busca, ordem } = await searchParams
   const line = (linha && linha in LINES ? linha : 'todos') as Line | 'todos'
-  const list = filterProducts({ line: line === 'todos' ? undefined : line, search: busca, sort: ordem })
+  const { products } = await getCatalog()
+  const list = filterProducts(products, { line: line === 'todos' ? undefined : line, search: busca, sort: ordem })
   const tabs = [{ value: 'todos', label: 'Todos' }, ...Object.entries(LINES).map(([value, label]) => ({ value, label }))]
   const count = (value: string) => (value === 'todos' ? products.length : products.filter((product) => product.line === value).length)
 

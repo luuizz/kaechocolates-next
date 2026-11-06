@@ -4,16 +4,18 @@ import { CatalogSection } from '@/components/home/catalog-section'
 import { About } from '@/components/home/about'
 import { ClubTeaser } from '@/components/home/club-teaser'
 import { Reviews } from '@/components/home/reviews'
+import { getCatalog } from '@/lib/catalog'
 
-export default function Home() {
+export default async function Home() {
+  const { products } = await getCatalog()
   return (
     <>
-      <Bento />
+      <Bento products={products} />
       <Benefits />
       <CatalogSection />
       <About />
-      <ClubTeaser />
-      {/* Avaliações entram quando houver dados reais (fase 2) */}
+      <ClubTeaser products={products} />
+      {/* Avaliações entram quando houver dados reais */}
       <Reviews reviews={[]} />
     </>
   )
