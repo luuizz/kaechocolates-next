@@ -29,4 +29,21 @@ e as fotos, o projeto vira uma loja genérica.
 
 ## Fluxo de trabalho
 
-`feature/*` → `dev` → `main` (produção).
+`feat/*` → `dev` → `main` (produção).
+
+- **CI** (`.github/workflows/ci.yml`): toda PR roda lint, checagem de tipos e build.
+  PR para a `main` só é aceita se vier da `dev`.
+- **Deploy** (`.github/workflows/deploy.yml`): cada merge na `main` publica na Vercel.
+  O deploy automático pelo Git fica desligado no `vercel.json`.
+
+### Configurar o deploy (uma vez)
+
+1. No seu computador, na pasta do projeto: `npx vercel@65 link` e escolha o projeto
+   **kaechocolates**. Isso cria `.vercel/project.json` (já está no `.gitignore`).
+2. Crie um token em vercel.com/account/tokens.
+3. No GitHub, em **Settings → Secrets and variables → Actions → Secrets**, crie:
+   - `VERCEL_TOKEN`: o token do passo 2
+   - `VERCEL_ORG_ID`: o `orgId` do `.vercel/project.json`
+   - `VERCEL_PROJECT_ID`: o `projectId` do `.vercel/project.json`
+4. Em **Settings → Rules → Rulesets**, proteja a `main` exigindo PR e os checks
+   "Origem do PR" e "Lint, tipos e build".
