@@ -21,7 +21,7 @@ export type Address = {
   is_default: boolean
 }
 
-type Draft = Omit<Address, 'id' | 'is_default' | 'label' | 'complement'> & { id?: number; label: string; complement: string; is_default: boolean }
+export type AddressDraft = Omit<Address, 'id' | 'is_default' | 'label' | 'complement'> & { id?: number; label: string; complement: string; is_default: boolean }
 
 export const STATES = ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO']
 
@@ -36,12 +36,12 @@ async function lookupCep(cep: string) {
   return { street: data.logradouro as string, district: data.bairro as string, city: data.localidade as string, state: data.uf as string }
 }
 
-const empty = (recipient: string): Draft => ({ label: '', recipient, cep: '', street: '', number: '', complement: '', district: '', city: '', state: 'MG', is_default: false })
+export const emptyAddress = (recipient: string): AddressDraft => ({ label: '', recipient, cep: '', street: '', number: '', complement: '', district: '', city: '', state: 'MG', is_default: false })
 
 export function AddressBook() {
   const auth = useAuth()
   const [list, setList] = useState<Address[] | null>(null)
-  const [draft, setDraft] = useState<Draft | null>(null)
+  const [draft, setDraft] = useState<AddressDraft | null>(null)
   const [error, setError] = useState('')
 
   const load = useCallback(async () => {
@@ -106,7 +106,7 @@ export function AddressBook() {
             </li>
           ))}
           <li>
-            <button type="button" onClick={() => setDraft({ ...empty(auth.profile?.full_name ?? ''), is_default: list.length === 0 })} className="flex h-full min-h-40 w-full flex-col items-center justify-center gap-2 rounded-[1.5rem] border-2 border-dashed text-sm font-semibold transition-colors hover:border-foreground hover:bg-secondary">
+            <button type="button" onClick={() => setDraft({ ...emptyAddress(auth.profile?.full_name ?? ''), is_default: list.length === 0 })} className="flex h-full min-h-40 w-full flex-col items-center justify-center gap-2 rounded-[1.5rem] border-2 border-dashed text-sm font-semibold transition-colors hover:border-foreground hover:bg-secondary">
               <Plus size={22} weight="bold" /> Novo endereço
             </button>
           </li>
@@ -116,13 +116,13 @@ export function AddressBook() {
   )
 }
 
-function AddressForm({ draft, onCancel, onSaved }: { draft: Draft; onCancel: () => void; onSaved: () => void }) {
-  const [form, setForm] = useState<Draft>(draft)
+export function AddressForm({ draft, onCancel, onSaved }: { draft: AddressDraft; onCancel: () => void; onSaved: (id: number) => void }) {
+  const [form, setForm] = useState<AddressDraft>(draft)
   const [tried, setTried] = useState(false)
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
   const [looking, setLooking] = useState(false)
-  const set = (key: keyof Draft) => (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => setForm((current) => ({ ...current, [key]: event.target.value }))
+  const set = (key: keyof AddressDraft) => (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => setForm((current) => ({ ...current, [key]: event.target.value }))
 
   const cep = form.cep.replace(/\D/g, '')
   const errors = {
@@ -164,9 +164,10 @@ function AddressForm({ draft, onCancel, onSaved }: { draft: Draft; onCancel: () 
         state: form.state,
       }
       if (form.is_default) unwrap(await neon.from('addresses').update({ is_default: false }).eq('is_default', true))
-      if (form.id) unwrap(await neon.from('addresses').update({ ...row, is_default: form.is_default }).eq('id', form.id))
-      else unwrap(await neon.from('addresses').insert({ ...row, is_default: form.is_default }))
-      onSaved()
+      let id = form.id
+      if (id) unwrap(await neon.from('addresses').update({ ...row, is_default: form.is_default }).eq('id', id))
+      else id = (unwrap(await neon.from('addresses').insert({ ...row, is_default: form.is_default }).select('id')) as { id: number }[])[0]?.id
+      onSaved(id ?? 0)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Não foi possível salvar.')
       setBusy(false)

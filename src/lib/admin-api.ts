@@ -5,11 +5,13 @@ import { getAccessToken, getNeon, unwrap } from '@/lib/neon'
 import type { Product } from '@/data/products'
 import type { Box } from '@/data/kits'
 import type { Period, Plan } from '@/data/club'
+import { normalizeOrder, type OrderStatus } from '@/lib/orders'
 
 // Acesso do painel ao banco. Todas as chamadas vão com o token do admin;
 // quem barra quem não é admin são as políticas (RLS) do banco.
 
-export type AdminProduct = Product & { id: number; active: boolean; sortOrder: number; updatedAt: string }
+// soldOut = marcada como esgotada OU estoque zerado; soldOutFlag = só a marcação manual
+export type AdminProduct = Product & { id: number; active: boolean; sortOrder: number; updatedAt: string; soldOutFlag: boolean }
 export type AdminBox = Box & { active: boolean; sort_order: number }
 export type AdminPlan = Plan & { active: boolean; sort_order: number }
 export type AdminPeriod = Period & { active: boolean; sort_order: number }
@@ -20,7 +22,7 @@ const neon = () => getNeon()
 // ---- produtos -------------------------------------------------------------
 
 type Row = Parameters<typeof productFromRow>[0] & { active: boolean; sort_order: number; updated_at: string }
-const adminProduct = (row: Row): AdminProduct => ({ ...productFromRow(row), id: row.id, active: row.active, sortOrder: row.sort_order, updatedAt: row.updated_at })
+const adminProduct = (row: Row): AdminProduct => ({ ...productFromRow(row), id: row.id, active: row.active, sortOrder: row.sort_order, updatedAt: row.updated_at, soldOutFlag: row.sold_out })
 
 export async function listProducts() {
   const rows = unwrap(await neon().from('products').select('*').order('sort_order').order('id')) as Row[]
@@ -32,7 +34,7 @@ export async function getProduct(id: number) {
   return rows[0] ? adminProduct(rows[0]) : null
 }
 
-export type ProductInput = Omit<AdminProduct, 'id' | 'updatedAt'> & { id?: number }
+export type ProductInput = Omit<AdminProduct, 'id' | 'updatedAt' | 'soldOutFlag'> & { id?: number }
 
 const toRow = (product: ProductInput) => ({
   slug: product.slug,
@@ -52,6 +54,7 @@ const toRow = (product: ProductInput) => ({
   sold_out: Boolean(product.soldOut),
   image: product.image || null,
   sort_order: product.sortOrder,
+  stock: product.stock ?? null,
   active: product.active,
 })
 
@@ -90,7 +93,7 @@ export async function listPeriods() {
   return (unwrap(await neon().from('club_periods').select('*').order('sort_order')) as AdminPeriod[]).map(numeric) as AdminPeriod[]
 }
 
-type Table = 'kit_boxes' | 'club_plans' | 'club_periods'
+type Table = 'kit_boxes' | 'club_plans' | 'club_periods' | 'shipping_zones'
 
 // Grava a lista inteira: atualiza/insere as linhas e apaga as que saíram
 export async function saveRows<T extends { id: string }>(table: Table, rows: T[], removed: string[]) {
@@ -129,4 +132,33 @@ export async function deleteImage(url: string) {
 // Avisa a loja para recarregar o catálogo (sem esperar o cache de 5 minutos)
 export async function refreshStore() {
   await callSite('/api/revalidate', { method: 'POST' })
+}
+
+// ---- pedidos e frete -----------------------------------------------------
+
+export type AdminOrderRow = {
+  id: number; code: string; status: OrderStatus; total: number; created_at: string
+  payment_method: 'pix' | 'card'; customer: { name: string; email: string }; shipping_address: { city: string; state: string }
+  order_items: { quantity: number }[]
+}
+
+export async function listOrders() {
+  const rows = unwrap(await neon().from('orders').select('id,code,status,total,created_at,payment_method,customer,shipping_address,order_items(quantity)').order('created_at', { ascending: false }).limit(300)) as AdminOrderRow[]
+  return rows.map((row) => ({ ...row, total: Number(row.total) }))
+}
+
+export async function getOrder(code: string) {
+  const rows = unwrap(await neon().from('orders').select('*, order_items(kind,product_id,name,quantity,unit_price,total,kit)').eq('code', code).limit(1)) as (Record<string, unknown> & { order_items: Record<string, unknown>[] })[]
+  if (!rows[0]) return null
+  const { order_items: items, ...order } = rows[0]
+  return normalizeOrder(order, items)
+}
+
+export async function updateOrder(id: number, status: string, tracking: string) {
+  unwrap(await neon().rpc('admin_update_order', { p_id: id, p_status: status, p_tracking: tracking }))
+}
+
+export type AdminZone = { id: string; name: string; states: string[]; price: number; days_min: number; days_max: number; active: boolean; sort_order: number }
+export async function listZones() {
+  return (unwrap(await neon().from('shipping_zones').select('*').order('sort_order')) as AdminZone[]).map((zone) => ({ ...zone, price: Number(zone.price) }))
 }

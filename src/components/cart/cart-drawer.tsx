@@ -47,7 +47,7 @@ export function CartDrawer() {
                 </div>
                 <p className="mt-1 text-xs text-muted-foreground">Frete calculado no próximo passo.</p>
                 <div className="mt-4 grid gap-2">
-                  <Button asChild size="lg" onClick={close}><Link href="/carrinho">Finalizar compra</Link></Button>
+                  <Button asChild size="lg" onClick={close}><Link href="/checkout">Finalizar compra</Link></Button>
                   <Button variant="ghost" onClick={close}>Continuar comprando</Button>
                 </div>
               </div>

@@ -123,3 +123,8 @@ export function useCart() {
   if (!context) throw new Error('useCart precisa estar dentro do CartProvider')
   return context
 }
+
+// Formato que o checkout manda para o servidor (sem preços: o banco recalcula)
+export const toCheckoutItems = (items: CartItem[]) => items.map((item) => (item.kind === 'product'
+  ? { kind: 'product' as const, slug: item.slug, quantity: item.quantity }
+  : { kind: 'kit' as const, name: item.kit.name, box: item.kit.box, slugs: item.kit.slugs, message: item.kit.message, quantity: item.quantity }))
