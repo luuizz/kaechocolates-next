@@ -2,42 +2,48 @@
 @import 'tw-animate-css';
 
 /*
- * Tokens da marca. As cores são provisórias (tons de cacau) e serão
- * ajustadas a partir do Figma. Componentes usam só os nomes semânticos
- * (primary, muted, accent...), então trocar a identidade é mexer aqui.
+ * Tokens da marca. Componentes usam só os nomes semânticos (primary, muted,
+ * flavor-*...), então trocar a identidade é mexer aqui e em src/config/brand.ts.
+ * Base: papel creme + tinta quase preta (do layout original) e as cores das
+ * embalagens como paleta de destaque, uma por sabor.
  */
 :root {
-  --radius: 0.75rem;
+  --radius: 1.25rem;
 
-  --background: oklch(0.985 0.006 75);
-  --foreground: oklch(0.24 0.03 45);
+  --background: #fbf6ec;
+  --foreground: #16110f;
 
-  --card: oklch(1 0 0);
+  --card: #ffffff;
   --card-foreground: var(--foreground);
-  --popover: oklch(1 0 0);
+  --popover: #ffffff;
   --popover-foreground: var(--foreground);
 
-  /* cacau */
-  --primary: oklch(0.36 0.06 40);
-  --primary-foreground: oklch(0.98 0.01 75);
+  --primary: #16110f;
+  --primary-foreground: #fbf6ec;
 
-  /* creme */
-  --secondary: oklch(0.94 0.025 75);
-  --secondary-foreground: oklch(0.3 0.04 45);
+  --secondary: #f1e8d6;
+  --secondary-foreground: #16110f;
 
-  --muted: oklch(0.955 0.012 75);
-  --muted-foreground: oklch(0.5 0.025 50);
+  --muted: #f3ecdf;
+  --muted-foreground: #6b5f57;
 
-  /* dourado / caramelo */
-  --accent: oklch(0.78 0.11 75);
-  --accent-foreground: oklch(0.25 0.04 45);
+  --accent: #e8b630;
+  --accent-foreground: #16110f;
 
-  --destructive: oklch(0.58 0.2 27);
-  --success: oklch(0.55 0.12 150);
+  --destructive: #d01b2e;
+  --success: #2f8a4c;
 
-  --border: oklch(0.9 0.015 70);
-  --input: oklch(0.88 0.015 70);
-  --ring: oklch(0.55 0.08 50);
+  --border: #e3d8c5;
+  --input: #d9ccb6;
+  --ring: #16110f;
+
+  /* Cores das embalagens (uma por sabor) */
+  --flavor-yellow: #e8b630;
+  --flavor-blue: #008bc0;
+  --flavor-pink: #e2708e;
+  --flavor-orange: #e47a24;
+  --flavor-red: #d01b2e;
+  --cocoa: #5a3426;
 }
 
 @theme inline {
@@ -60,14 +66,33 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-flavor-yellow: var(--flavor-yellow);
+  --color-flavor-blue: var(--flavor-blue);
+  --color-flavor-pink: var(--flavor-pink);
+  --color-flavor-orange: var(--flavor-orange);
+  --color-flavor-red: var(--flavor-red);
+  --color-cocoa: var(--cocoa);
 
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 8px);
+  --radius-md: calc(var(--radius) - 4px);
   --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
+  --radius-xl: calc(var(--radius) + 8px);
 
-  --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-heading), ui-serif, Georgia, serif;
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Plus Jakarta Sans Variable', ui-sans-serif, system-ui, sans-serif;
+
+  --animate-marquee: marquee 28s linear infinite;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-spin-slow: spin 18s linear infinite;
+
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  @keyframes float {
+    0%, 100% { transform: translateY(0) rotate(var(--tilt, 0deg)); }
+    50% { transform: translateY(-14px) rotate(var(--tilt, 0deg)); }
+  }
 }
 
 @layer base {
@@ -84,7 +109,7 @@
     @apply font-display tracking-tight text-balance;
   }
   ::selection {
-    @apply bg-accent/40;
+    @apply bg-accent text-accent-foreground;
   }
 }
 
@@ -92,6 +117,7 @@
   html { scroll-behavior: auto; }
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
 }

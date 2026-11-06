@@ -8,7 +8,7 @@ export const brand = {
   description:
     'Chocolate bean to bar brasileiro: do grão à barra, com cacau da Bahia, ingredientes amazônicos e jeitinho mineiro.',
   url: process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000',
-  logo: { src: '/brand/logo.svg', alt: 'Kaê Chocolates' },
+  logo: { src: '/brand/logo.svg', inverted: '/brand/logo-negativo.svg', alt: 'Kaê Chocolates' },
   social: {
     instagram: 'https://www.instagram.com/kaechocolates/',
   },
