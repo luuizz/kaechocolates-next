@@ -1,8 +1,6 @@
-import React from 'react'
+import { ComingSoon } from '@/components/layout/coming-soon'
 
-
-export default async function Page({ params }: { params: { slug: string } }) {
+export default async function ProductPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
-
-  return <div>Página do produto {slug}</div>
+  return <ComingSoon title={slug} />
 }
