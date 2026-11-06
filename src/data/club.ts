@@ -1,3 +1,5 @@
+import { roundMoney } from '@/lib/utils'
+
 // Planos e períodos do clube (tabelas club_plans e club_periods, editáveis em /admin/clube).
 // As listas abaixo são a reserva para quando o banco não está configurado.
 // Na fase do Mercado Pago, cada combinação plano + período vira um plano de assinatura.
@@ -17,8 +19,8 @@ export const FALLBACK_PERIODS: Period[] = [
 ]
 
 export function planPrice(plan: Plan, period: Period) {
-  const monthly = Math.round(plan.price * (1 - period.discount) * 100) / 100
-  return { monthly, total: Math.round(monthly * period.months * 100) / 100, period }
+  const monthly = roundMoney(plan.price * (1 - period.discount))
+  return { monthly, total: roundMoney(monthly * period.months), period }
 }
 
 export const CLUB_FAQ = [

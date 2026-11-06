@@ -2,18 +2,19 @@
 
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { CheckCircle, CircleNotch, CreditCard, LockSimple, MapPin, Package, PixLogo, Plus, ShoppingBagOpen, Truck, WarningCircle } from '@phosphor-icons/react'
+import { useEffect, useMemo, useState } from 'react'
+import { CircleNotch, CreditCard, LockSimple, MapPin, Package, PixLogo, ShoppingBagOpen, Truck, WarningCircle } from '@phosphor-icons/react'
 import { useAuth } from '@/components/auth/auth-provider'
 import { toCheckoutItems, useCart } from '@/components/cart/cart-provider'
-import { AddressForm, emptyAddress, formatCep, type Address } from '@/components/account/address-book'
+import type { Address } from '@/components/account/address-book'
+import { AddressPicker } from './address-picker'
 import { BarPackage } from '@/components/product/bar-package'
 import { Button } from '@/components/ui/button'
 import { Field, FormMessage, Input } from '@/components/ui/field'
 import { brand } from '@/config/brand'
 import { formatBRL, installment } from '@/data/products'
 import { formatCpf, validCpf } from '@/lib/cpf'
-import { getAccessToken, getNeon, unwrap } from '@/lib/neon'
+import { getAccessToken } from '@/lib/neon'
 import { cn } from '@/lib/utils'
 import { CardForm } from './card-form'
 
@@ -35,9 +36,7 @@ export function CheckoutPage() {
   const auth = useAuth()
   const cart = useCart()
   const router = useRouter()
-  const [addresses, setAddresses] = useState<Address[] | null>(null)
-  const [addressId, setAddressId] = useState<number | null>(null)
-  const [adding, setAdding] = useState(false)
+  const [address, setAddress] = useState<Address | null>(null)
   const [quote, setQuote] = useState<Quote | null>(null)
   const [quoting, setQuoting] = useState(false)
   const [method, setMethod] = useState<Method>('pix')
@@ -47,24 +46,11 @@ export function CheckoutPage() {
   const [done, setDone] = useState(false)
 
   const items = useMemo(() => toCheckoutItems(cart.items), [cart.items])
-  const address = addresses?.find((item) => item.id === addressId) ?? null
+  const addressId = address?.id ?? null
 
   useEffect(() => {
     if (auth.configured && !auth.loading && !auth.user) router.replace('/entrar?volta=/checkout')
   }, [auth.configured, auth.loading, auth.user, router])
-
-  const loadAddresses = useCallback(async (select?: number) => {
-    const rows = unwrap(await getNeon().from('addresses').select('*').order('is_default', { ascending: false }).order('id')) as Address[]
-    setAddresses(rows)
-    setAddressId((current) => select ?? current ?? rows[0]?.id ?? null)
-    if (!rows.length) setAdding(true)
-  }, [])
-
-  useEffect(() => {
-    if (!auth.user) return
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- busca inicial dos endereços
-    loadAddresses().catch((err) => setError(err.message))
-  }, [auth.user, loadAddresses])
 
   // Recalcula no servidor sempre que a sacola ou o estado de entrega mudam
   const state = address?.state ?? null
@@ -143,32 +129,7 @@ export function CheckoutPage() {
         <div className="flex flex-col gap-6">
           {/* 1. Endereço */}
           <Step number={1} title="Endereço de entrega" icon={MapPin}>
-            {addresses === null ? (
-              <div className="h-24 animate-pulse rounded-2xl bg-secondary" />
-            ) : adding ? (
-              <AddressForm
-                draft={{ ...emptyAddress(auth.profile?.full_name ?? ''), is_default: addresses.length === 0 }}
-                onCancel={() => setAdding(false)}
-                onSaved={async (id) => { setAdding(false); await loadAddresses(id || undefined) }}
-              />
-            ) : (
-              <div role="radiogroup" aria-label="Endereço de entrega" className="grid gap-3 md:grid-cols-2">
-                {addresses.map((item) => {
-                  const active = item.id === addressId
-                  return (
-                    <button key={item.id} type="button" role="radio" aria-checked={active} onClick={() => setAddressId(item.id)} className={cn('relative rounded-2xl border-2 p-4 text-left text-sm transition-colors', active ? 'border-foreground bg-secondary' : 'hover:border-foreground/40')}>
-                      {active && <CheckCircle size={20} weight="fill" className="absolute right-3 top-3" />}
-                      <span className="block font-semibold">{item.label || item.recipient}</span>
-                      <span className="mt-1 block text-muted-foreground">{item.street}, {item.number}{item.complement ? ` · ${item.complement}` : ''}</span>
-                      <span className="block text-muted-foreground">{item.district} · {item.city}/{item.state} · {formatCep(item.cep)}</span>
-                    </button>
-                  )
-                })}
-                <button type="button" onClick={() => setAdding(true)} className="flex min-h-24 items-center justify-center gap-2 rounded-2xl border-2 border-dashed text-sm font-semibold hover:border-foreground hover:bg-secondary">
-                  <Plus weight="bold" /> Novo endereço
-                </button>
-              </div>
-            )}
+            <AddressPicker value={address} onChange={setAddress} />
           </Step>
 
           {/* 2. Entrega */}

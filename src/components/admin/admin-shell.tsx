@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
-import { ArrowSquareOut, Barcode, CircleNotch, Gauge, List, Package, Receipt, SignOut, Sparkle, Truck, Users, X } from '@phosphor-icons/react'
+import { ArrowSquareOut, Barcode, CircleNotch, Gauge, List, Package, Receipt, SignOut, Sparkle, Truck, UserCircleCheck, Users, X } from '@phosphor-icons/react'
 import { Toaster } from 'sonner'
 import { Logo } from '@/components/brand/logo'
 import { useAuth } from '@/components/auth/auth-provider'
@@ -15,7 +15,8 @@ const NAV = [
   { href: '/admin/pedidos', label: 'Pedidos', icon: Receipt },
   { href: '/admin/produtos', label: 'Produtos', icon: Barcode },
   { href: '/admin/kits', label: 'Caixas de kit', icon: Package },
-  { href: '/admin/clube', label: 'Clube', icon: Sparkle },
+  { href: '/admin/assinantes', label: 'Assinantes', icon: UserCircleCheck },
+  { href: '/admin/clube', label: 'Planos do clube', icon: Sparkle },
   { href: '/admin/frete', label: 'Frete', icon: Truck },
   { href: '/admin/clientes', label: 'Clientes', icon: Users },
 ]
