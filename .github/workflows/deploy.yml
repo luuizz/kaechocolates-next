@@ -1,7 +1,7 @@
 # Publica a main em produção (kaechocolates.luricweb.com.br).
 # O deploy automático da Vercel pelo Git fica desligado (vercel.json):
 # quem publica é esta esteira, depois do CI passar na PR dev → main.
-# Quando o banco entrar, um job de migrations roda antes deste.
+# Antes de publicar, aplica as migrations pendentes no Neon.
 name: Deploy
 
 on:
@@ -17,8 +17,45 @@ permissions:
   contents: read
 
 jobs:
+  migrate:
+    name: Banco (migrations)
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: ${{ secrets.NEON_DATABASE_URL }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: Confere a connection string
+        id: check
+        run: |
+          if [ -z "$DATABASE_URL" ]; then
+            echo "::warning::Secret NEON_DATABASE_URL não configurado: migrations não foram aplicadas. Veja o README (Banco)."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          fi
+      - uses: actions/setup-node@v5
+        if: steps.check.outputs.skip != 'true'
+        with:
+          node-version-file: .nvmrc
+          cache: yarn
+      - if: steps.check.outputs.skip != 'true'
+        run: yarn install --frozen-lockfile
+      - if: steps.check.outputs.skip != 'true'
+        run: yarn db:migrate
+      - name: Recarrega o cache da Data API
+        if: steps.check.outputs.skip != 'true'
+        env:
+          NEON_API_KEY: ${{ secrets.NEON_API_KEY || secrets.NEON_API_KEY_KAE }}
+          NEON_PROJECT_ID: ${{ vars.NEON_PROJECT_ID }}
+          NEON_BRANCH: ${{ vars.NEON_BRANCH || 'production' }}
+        run: |
+          if [ -z "$NEON_API_KEY" ] || [ -z "$NEON_PROJECT_ID" ]; then
+            echo "::warning::Sem NEON_API_KEY e NEON_PROJECT_ID: se a migration mudou tabelas, rode 'neon data-api refresh-schema --database neondb'."
+            exit 0
+          fi
+          npx -y neonctl@8 data-api refresh-schema --project-id "$NEON_PROJECT_ID" --branch "$NEON_BRANCH" --database neondb
+
   deploy:
     name: Publicar na Vercel
+    needs: migrate
     runs-on: ubuntu-latest
     environment:
       name: production

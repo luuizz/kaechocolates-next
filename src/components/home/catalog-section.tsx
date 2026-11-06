@@ -4,7 +4,8 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { ArrowRight } from '@phosphor-icons/react'
 import { ProductCard } from '@/components/product/product-card'
-import { LINES, products, type Line } from '@/data/products'
+import { LINES, type Line } from '@/data/products'
+import { useCatalog } from '@/components/catalog/catalog-provider'
 import { cn } from '@/lib/utils'
 
 const filters: Array<{ value: Line | 'todos'; label: string }> = [
@@ -14,8 +15,9 @@ const filters: Array<{ value: Line | 'todos'; label: string }> = [
 
 // Vitrine com filtro rápido por linha
 export function CatalogSection() {
+  const { products } = useCatalog()
   const [line, setLine] = useState<Line | 'todos'>('todos')
-  const list = products.filter((product) => line === 'todos' || product.line === line).slice(0, 8)
+  const list = products.filter((product) => !product.soldOut && (line === 'todos' || product.line === line)).slice(0, 8)
 
   return (
     <section className="mx-auto max-w-7xl px-5 py-16 md:px-8 md:py-24">

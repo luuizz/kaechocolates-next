@@ -6,22 +6,25 @@ import { BarPackage } from '@/components/product/bar-package'
 import { BuyBox } from '@/components/product/buy-box'
 import { ProductCard } from '@/components/product/product-card'
 import { brand } from '@/config/brand'
-import { LINES, LINE_SINGULAR, findProduct, formatBRL, installment, products } from '@/data/products'
+import { LINES, LINE_SINGULAR, findProduct, formatBRL, installment } from '@/data/products'
+import { getCatalog } from '@/lib/catalog'
 
 type Params = { params: Promise<{ slug: string }> }
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
+  const { products } = await getCatalog()
   return products.map((product) => ({ slug: product.slug }))
 }
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
-  const product = findProduct((await params).slug)
+  const product = findProduct((await getCatalog()).products, (await params).slug)
   if (!product) return {}
   return { title: `${product.name} ${product.cacao}%`, description: product.short }
 }
 
 export default async function ProductPage({ params }: Params) {
-  const product = findProduct((await params).slug)
+  const { products } = await getCatalog()
+  const product = findProduct(products, (await params).slug)
   if (!product) notFound()
 
   const related = products.filter((item) => item.line === product.line && item.slug !== product.slug && !item.soldOut).slice(0, 4)
@@ -68,8 +71,8 @@ export default async function ProductPage({ params }: Params) {
 
           <div className="mt-8 divide-y rounded-2xl border">
             {[
-              { title: 'Sobre o chocolate', body: `${product.short} Feito do grão à barra, em pequenos lotes, com cacau da Bahia.` },
-              { title: 'Ingredientes e alérgicos', body: 'Informações completas em breve. Em caso de alergia, fale com a gente antes de comprar.' },
+              { title: 'Sobre o chocolate', body: product.description || `${product.short} Feito do grão à barra, em pequenos lotes, com cacau da Bahia.` },
+              { title: 'Ingredientes e alérgicos', body: product.ingredients || 'Informações completas em breve. Em caso de alergia, fale com a gente antes de comprar.' },
               { title: 'Como conservar', body: 'Guarde em local seco e fresco, entre 15 °C e 22 °C, longe do sol e de cheiros fortes. Evite a geladeira.' },
             ].map((section, index) => (
               <details key={section.title} open={index === 0} className="group px-5 py-4">

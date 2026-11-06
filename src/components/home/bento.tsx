@@ -1,11 +1,12 @@
 import Link from 'next/link'
 import { ArrowUpRight, Medal, Package, Sparkle } from '@phosphor-icons/react/dist/ssr'
 import { BarPackage } from '@/components/product/bar-package'
-import { findProduct, formatBRL, type Product } from '@/data/products'
+import { formatBRL, type Product } from '@/data/products'
 import { cn } from '@/lib/utils'
 
 // Mosaico do topo (mesma ideia do site atual), com preço e compra no bloco
-function ProductTile({ product, className, priority }: { product: Product; className?: string; priority?: boolean }) {
+function ProductTile({ product, className, priority }: { product?: Product; className?: string; priority?: boolean }) {
+  if (!product) return null
   return (
     <Link
       href={`/produtos/${product.slug}`}
@@ -21,11 +22,13 @@ function ProductTile({ product, className, priority }: { product: Product; class
   )
 }
 
-const tiles = ['guru-60', 'acai-37', 'cumaru-55', 'zero-acucar-cumaru-55', 'caipira-37', 'chocada-55', 'nibs-37', 'pingado-55', 'castanha-64', 'cupuacu-64', 'cafezinho-64', 'pao-de-mel-64', 'intenso-71', 'prodigio-64']
-
-export function Bento() {
-  const list = tiles.map((slug) => findProduct(slug)!).filter(Boolean)
+// Os 14 primeiros do catálogo (ordem definida no painel) preenchem o mosaico
+export function Bento({ products }: { products: Product[] }) {
+  const list = products.slice(0, 14)
   const [a, b, c, d, e, f, g, h, i, j, k, l, m, n] = list
+  // Barras decorativas dos blocos do clube e do kit (as que têm foto primeiro)
+  const pool = [...products.filter((product) => product.image), ...products.filter((product) => !product.image && !product.soldOut)]
+  const deco = (index: number) => pool[index % Math.max(pool.length, 1)]
 
   return (
     <section aria-label="Destaques" className="mx-auto max-w-7xl px-5 pt-6 md:px-8 md:pt-8">
@@ -39,8 +42,10 @@ export function Bento() {
             Conhecer planos <ArrowUpRight weight="bold" className="transition-transform group-hover:rotate-45" />
           </span>
           <div className="absolute -bottom-6 -right-2 flex w-[42%] max-w-56 -rotate-6 transition-transform duration-500 group-hover:-rotate-2">
-            <BarPackage product={c} className="w-1/2 translate-x-4" />
-            <BarPackage product={e} className="w-1/2 -translate-x-4 rotate-12" />
+            {pool.length > 1 && <>
+              <BarPackage product={deco(4)} className="w-1/2 translate-x-4" />
+              <BarPackage product={deco(6)} className="w-1/2 -translate-x-4 rotate-12" />
+            </>}
           </div>
         </Link>
 
@@ -53,8 +58,8 @@ export function Bento() {
           <h2 className="mt-4 font-display text-4xl font-extrabold leading-[0.95] tracking-[-0.03em]">Monte seu kit</h2>
           <p className="mt-3 text-sm text-background/70">Escolha as barras, a caixa e o cartão. A gente embrulha com axé.</p>
           <div className="absolute -bottom-6 left-1/2 flex w-[110%] -translate-x-1/2 justify-center">
-            {[g, j, m].map((product, index) => (
-              <BarPackage key={product.slug} product={product} className={cn('-mx-6 w-1/2 transition-transform duration-500', index === 1 ? 'z-10 -translate-y-6 group-hover:-translate-y-10' : 'rotate-[-10deg] group-hover:rotate-[-14deg]', index === 2 && 'rotate-[10deg] group-hover:rotate-[14deg]')} />
+            {pool.length > 2 && [deco(0), deco(2), deco(3)].map((product, index) => (
+              <BarPackage key={`${product.slug}-${index}`} product={product} className={cn('-mx-6 w-1/2 transition-transform duration-500', index === 1 ? 'z-10 -translate-y-6 group-hover:-translate-y-10' : 'rotate-[-10deg] group-hover:rotate-[-14deg]', index === 2 && 'rotate-[10deg] group-hover:rotate-[14deg]')} />
             ))}
           </div>
           <span className="absolute right-5 top-5 grid size-10 place-items-center rounded-full bg-background text-foreground transition-transform group-hover:rotate-45">

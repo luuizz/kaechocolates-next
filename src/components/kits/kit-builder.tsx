@@ -5,29 +5,30 @@ import { ArrowCounterClockwise, Check, Minus, Plus, Shuffle } from '@phosphor-ic
 import { Button } from '@/components/ui/button'
 import { BarPackage } from '@/components/product/bar-package'
 import { useCart } from '@/components/cart/cart-provider'
-import { BOXES, findBox, kitTotals, type BoxId } from '@/data/kits'
-import { formatBRL, products } from '@/data/products'
+import { useCatalog } from '@/components/catalog/catalog-provider'
+import { formatBRL } from '@/data/products'
 import { cn } from '@/lib/utils'
 
-const available = products.filter((product) => !product.soldOut)
 const MESSAGE_MAX = 200
 
 // Montador de kit: escolhe a caixa, as barras e o recado do cartão
 export function KitBuilder() {
   const { addKit } = useCart()
-  const [boxId, setBoxId] = useState<BoxId>('m')
+  const { products, boxes, findBox, kitTotals } = useCatalog()
+  const available = useMemo(() => products.filter((product) => !product.soldOut), [products])
+  const [boxId, setBoxId] = useState(() => (boxes.find((item) => item.id === 'm') ?? boxes[0])?.id ?? '')
   const [picked, setPicked] = useState<string[]>([])
   const [message, setMessage] = useState('')
   const [added, setAdded] = useState(false)
 
-  const box = findBox(boxId)
-  const full = picked.length === box.size
-  const totals = useMemo(() => kitTotals({ box: boxId, slugs: picked }), [boxId, picked])
+  const box = findBox(boxId) ?? { id: '', name: 'Caixa', size: 0, discount: 0 }
+  const full = box.size > 0 && picked.length === box.size
+  const totals = useMemo(() => kitTotals({ box: boxId, slugs: picked }), [boxId, picked, kitTotals])
   const countOf = (slug: string) => picked.filter((item) => item === slug).length
 
-  const changeBox = (id: BoxId) => {
+  const changeBox = (id: string) => {
     setBoxId(id)
-    setPicked((current) => current.slice(0, findBox(id).size))
+    setPicked((current) => current.slice(0, findBox(id)?.size ?? 0))
   }
   const plus = (slug: string) => { if (!full) { setPicked((current) => [...current, slug]); setAdded(false) } }
   const minus = (slug: string) => {
@@ -55,7 +56,7 @@ export function KitBuilder() {
         {/* 1. Caixa */}
         <h3 className="flex items-center gap-3 font-display text-2xl font-extrabold"><span className="grid size-8 place-items-center rounded-full bg-foreground text-sm text-background">1</span> Escolha a caixa</h3>
         <div role="radiogroup" aria-label="Tamanho da caixa" className="mt-5 grid gap-3 sm:grid-cols-3">
-          {BOXES.map((option) => {
+          {boxes.map((option) => {
             const active = option.id === boxId
             return (
               <button

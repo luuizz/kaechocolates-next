@@ -4,12 +4,13 @@ import Link from 'next/link'
 import { Package, Trash } from '@phosphor-icons/react'
 import { BarPackage } from '@/components/product/bar-package'
 import { formatBRL } from '@/data/products'
-import { findBox } from '@/data/kits'
+import { useCatalog } from '@/components/catalog/catalog-provider'
 import { useCart, MAX_PER_ITEM, type CartItem } from './cart-provider'
 import { QuantityStepper } from './quantity-stepper'
 
 export function CartLine({ item, onNavigate }: { item: CartItem; onNavigate?: () => void }) {
   const { update, remove } = useCart()
+  const { findBox } = useCatalog()
 
   const thumb = item.kind === 'product' ? (
     <Link href={`/produtos/${item.product.slug}`} onClick={onNavigate} className="w-20 shrink-0 overflow-hidden rounded-xl" style={{ background: item.product.tile }}>
@@ -39,7 +40,7 @@ export function CartLine({ item, onNavigate }: { item: CartItem; onNavigate?: ()
           <p className="text-xs text-muted-foreground">{item.product.weight} · {formatBRL(item.unitPrice)} cada</p>
         ) : (
           <div className="text-xs text-muted-foreground">
-            <p>{findBox(item.kit.box).name} · {item.products.map((product) => product.name).join(', ')}</p>
+            <p>{findBox(item.kit.box)?.name} · {item.products.map((product) => product.name).join(', ')}</p>
             {item.kit.message && <p className="mt-1 italic">Cartão: “{item.kit.message}”</p>}
             <p className="mt-1"><s>{formatBRL(item.fullPrice)}</s> <span className="font-semibold text-success">{formatBRL(item.unitPrice)} o kit</span></p>
           </div>
