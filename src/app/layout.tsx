@@ -29,8 +29,10 @@ export const viewport: Viewport = { themeColor: '#ffffff' }
 export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const catalog = await getCatalog()
   return (
-    <html lang="pt-BR">
-      <body className="flex min-h-dvh flex-col font-sans">
+    // suppressHydrationWarning: extensões do navegador (gerenciadores de senha, tradutores…)
+    // colocam atributos no <html>/<body> antes do React carregar. Vale só para estas duas tags.
+    <html lang="pt-BR" suppressHydrationWarning>
+      <body className="flex min-h-dvh flex-col font-sans" suppressHydrationWarning>
         <CatalogProvider catalog={catalog}>
           <AuthProvider>
             <CartProvider>
