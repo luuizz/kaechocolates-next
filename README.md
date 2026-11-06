@@ -83,6 +83,18 @@ cartão pelo Mercado Pago (API de Orders, Checkout Transparente).
   a página fechada. O site nunca confia no corpo do aviso: busca o pedido na API deles.
 - **Painel**: `/admin/pedidos` (andamento e rastreio) e `/admin/frete` (preço e prazo por região).
 
+### Clube de assinatura
+
+Cada assinatura é uma *preapproval* no Mercado Pago (assinatura sem plano associado):
+o cartão é autorizado na hora e cobrado a cada período (1, 3 ou 6 meses). O valor vem
+de `club_quote` (`database/migrations/0004_clube.sql`), a partir dos planos e períodos do banco.
+
+- `/clube/assinar`: plano, período, endereço das caixas, restrições e cartão.
+- Minha conta → Clube: próxima cobrança, cobranças pagas, pausar e retomar (mensal) e
+  cancelar. Ao cancelar, as caixas seguem até o fim do período já pago.
+- `/admin/assinantes`: quem recebe caixa no mês, receita recorrente, barras para separar
+  e a lista de envio em CSV.
+
 ### Variáveis (Vercel)
 
 | Variável | Tipo | O que é |
@@ -92,6 +104,7 @@ cartão pelo Mercado Pago (API de Orders, Checkout Transparente).
 | `MERCADOPAGO_ACCESS_TOKEN` | Sensitive | Access Token da aplicação |
 | `MERCADOPAGO_WEBHOOK_SECRET` | Sensitive | Assinatura secreta dos webhooks |
 | `MERCADOPAGO_TEST_MODE` | comum | `true` enquanto usar a conta de teste: aprova o Pix sozinho |
+| `MERCADOPAGO_TEST_PAYER_EMAIL` | comum | E-mail da conta **compradora de teste** (o Mercado Pago exige um usuário de teste como assinante) |
 
 ### Testar pagamentos
 
@@ -101,7 +114,8 @@ Use as credenciais da conta **vendedora de teste** do Mercado Pago.
 - **Cartão**: Mastercard `5031 4332 1540 6351`, validade `11/30`, CVV `123`, CPF `12345678909`.
   O nome no cartão define o resultado: `APRO` aprova, `OTHE` recusa, `FUND` recusa por saldo.
 - **Webhook**: em Suas integrações → Webhooks, URL `https://<site>/api/mercadopago/webhook`,
-  evento **Order**. Copie a assinatura secreta para `MERCADOPAGO_WEBHOOK_SECRET`.
+  eventos **Order**, **Planos e assinaturas** e **Pagamentos recorrentes**. Copie a
+  assinatura secreta para `MERCADOPAGO_WEBHOOK_SECRET`.
 
 ## SEO e páginas legais
 

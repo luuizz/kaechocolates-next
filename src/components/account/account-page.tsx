@@ -10,6 +10,7 @@ import { Field, FormMessage, Input } from '@/components/ui/field'
 import { getNeon, unwrap } from '@/lib/neon'
 import { cn, formatPhone } from '@/lib/utils'
 import { AddressBook } from './address-book'
+import { MySubscription } from '@/components/club/my-subscription'
 import { StatusBadge } from '@/components/orders/order-parts'
 import { formatBRL } from '@/data/products'
 import { formatDateTime, type OrderStatus } from '@/lib/orders'
@@ -154,10 +155,11 @@ function Orders() {
 }
 
 function Club() {
+  const justSubscribed = useSearchParams().get('assinou') === '1'
   return (
     <>
       <Title>Clube</Title>
-      <Empty icon={Sparkle} title="Você ainda não assina o clube" text="Todo mês uma caixa com barras da casa e edições limitadas, com frete grátis." action={<Button asChild><Link href="/clube">Conhecer planos</Link></Button>} />
+      <MySubscription justSubscribed={justSubscribed} />
     </>
   )
 }

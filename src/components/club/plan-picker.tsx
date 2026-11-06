@@ -1,7 +1,8 @@
 'use client'
 
+import Link from 'next/link'
 import { useState } from 'react'
-import { Check, LockSimple } from '@phosphor-icons/react'
+import { Check } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { planPrice } from '@/data/club'
 import { useCatalog } from '@/components/catalog/catalog-provider'
@@ -12,7 +13,6 @@ import { cn } from '@/lib/utils'
 export function PlanPicker() {
   const { plans, periods } = useCatalog()
   const [periodId, setPeriod] = useState(periods[0]?.id ?? '')
-  const [chosen, setChosen] = useState<string | null>(null)
   const period = periods.find((item) => item.id === periodId) ?? periods[0]
   if (!period || !plans.length) return <p className="text-center text-muted-foreground">Os planos estão sendo atualizados. Volte em instantes.</p>
 
@@ -38,9 +38,8 @@ export function PlanPicker() {
         {plans.map((plan) => {
           const price = planPrice(plan, period)
           const featured = Boolean(plan.featured)
-          const selected = chosen === plan.id
           return (
-            <article key={plan.id} className={cn('relative flex flex-col rounded-[1.75rem] border-2 p-6 transition-colors md:p-8', featured ? 'border-foreground' : 'border-border', selected && 'ring-4 ring-flavor-yellow')}>
+            <article key={plan.id} className={cn('relative flex flex-col rounded-[1.75rem] border-2 p-6 transition-colors md:p-8', featured ? 'border-foreground' : 'border-border')}>
               {featured && <span className="absolute -top-3 left-6 rounded-full bg-foreground px-3 py-1 text-xs font-bold uppercase tracking-wider text-background">Mais escolhido</span>}
               <div className="flex items-center gap-3">
                 <span className="grid grid-cols-3 gap-0.5" aria-hidden="true">
@@ -54,22 +53,14 @@ export function PlanPicker() {
               <ul className="mt-6 flex flex-1 flex-col gap-2.5">
                 {plan.perks.map((perk) => <li key={perk} className="flex items-center gap-2 text-sm"><Check size={18} weight="bold" className="shrink-0 text-success" /> {perk}</li>)}
               </ul>
-              <Button size="lg" variant={featured ? 'default' : 'outline'} className="mt-8 w-full" onClick={() => setChosen(plan.id)} aria-pressed={selected}>
-                {selected ? 'Plano escolhido' : `Assinar ${plan.name}`}
+              <Button asChild size="lg" variant={featured ? 'default' : 'outline'} className="mt-8 w-full">
+                <Link href={`/clube/assinar?plano=${plan.id}&periodo=${period.id}`}>Assinar {plan.name}</Link>
               </Button>
             </article>
           )
         })}
       </div>
 
-      {chosen && (
-        <div role="status" className="mx-auto mt-8 flex max-w-2xl items-start gap-3 rounded-2xl bg-secondary p-5 text-sm">
-          <LockSimple size={22} weight="duotone" className="shrink-0" />
-          <p>
-            Ótima escolha: <strong>{plans.find((plan) => plan.id === chosen)?.name}</strong>, {period.label.toLowerCase()}. As assinaturas abrem assim que o pagamento recorrente pelo Mercado Pago estiver no ar.
-          </p>
-        </div>
-      )}
     </div>
   )
 }

@@ -6,6 +6,7 @@ import type { Product } from '@/data/products'
 import type { Box } from '@/data/kits'
 import type { Period, Plan } from '@/data/club'
 import { normalizeOrder, type OrderStatus } from '@/lib/orders'
+import { normalizeSubscription, type Subscription } from '@/lib/club'
 
 // Acesso do painel ao banco. Todas as chamadas vão com o token do admin;
 // quem barra quem não é admin são as políticas (RLS) do banco.
@@ -161,4 +162,15 @@ export async function updateOrder(id: number, status: string, tracking: string) 
 export type AdminZone = { id: string; name: string; states: string[]; price: number; days_min: number; days_max: number; active: boolean; sort_order: number }
 export async function listZones() {
   return (unwrap(await neon().from('shipping_zones').select('*').order('sort_order')) as AdminZone[]).map((zone) => ({ ...zone, price: Number(zone.price) }))
+}
+
+// ---- clube: assinantes ----------------------------------------------------
+
+export async function listSubscriptions() {
+  const rows = unwrap(await neon().from('subscriptions').select('*').order('created_at', { ascending: false }).limit(1000)) as Subscription[]
+  return rows.map(normalizeSubscription)
+}
+
+export async function manageSubscription(id: number, action: 'pause' | 'resume' | 'cancel') {
+  await callSite('/api/club/subscription', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id, action }) })
 }

@@ -17,3 +17,7 @@ export function formatPhone(value: string) {
   if (digits.length <= 10) return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`
   return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`
 }
+
+// Arredonda dinheiro em centavos como o Postgres (round(numeric, 2)), sem o erro
+// de ponto flutuante do JS: 104.405 vira 104.41, não 104.40
+export const roundMoney = (value: number) => Math.round(Number((value * 100).toFixed(6))) / 100
