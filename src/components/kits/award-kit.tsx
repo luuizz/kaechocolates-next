@@ -4,14 +4,19 @@ import { Medal, ShoppingBagOpen } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { BarPackage } from '@/components/product/bar-package'
 import { useCart } from '@/components/cart/cart-provider'
-import { AWARD_KIT, findBox, kitTotals } from '@/data/kits'
+import { AWARD_KIT } from '@/data/kits'
+import { useCatalog } from '@/components/catalog/catalog-provider'
 import { formatBRL, installment } from '@/data/products'
 
 // Kit pronto com as barras premiadas
 export function AwardKit() {
   const { addKit } = useCart()
-  const { products, subtotal, total } = kitTotals(AWARD_KIT)
-  const box = findBox(AWARD_KIT.box)
+  const catalog = useCatalog()
+  const { products: all, subtotal, total } = catalog.kitTotals(AWARD_KIT)
+  const products = all.filter((product) => !product.soldOut)
+  const box = catalog.findBox(AWARD_KIT.box)
+  // Some barra do kit saiu do catálogo ou a caixa foi desativada: não mostra o kit pronto
+  if (!box || products.length !== AWARD_KIT.slugs.length) return null
 
   return (
     <div className="grid items-center gap-10 overflow-hidden rounded-[2rem] bg-[#a9d8ef] p-6 md:p-10 lg:grid-cols-2">

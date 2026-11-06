@@ -1,8 +1,9 @@
 'use client'
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
-import { findProduct, type Product } from '@/data/products'
-import { BOXES, kitTotals, type KitSpec } from '@/data/kits'
+import type { Product } from '@/data/products'
+import type { KitSpec } from '@/data/kits'
+import { useCatalog } from '@/components/catalog/catalog-provider'
 
 type ProductLine = { kind: 'product'; id: string; slug: string; quantity: number }
 type KitLine = { kind: 'kit'; id: string; quantity: number; kit: KitSpec }
@@ -32,18 +33,21 @@ export const MAX_PER_ITEM = 20
 const kitId = (kit: KitSpec) => `kit:${kit.box}:${[...kit.slugs].sort().join(',')}:${kit.message ?? ''}`
 
 // Lê o que estava salvo, aceitando o formato antigo ({ slug, quantity })
+// Itens que saíram do catálogo somem da sacola na hora de montar a lista (value).
 function restore(raw: unknown): Line[] {
   if (!Array.isArray(raw)) return []
   return raw.flatMap((line): Line[] => {
-    if (line?.kind === 'kit' && line.kit && BOXES.some((box) => box.id === line.kit.box)) return [line as KitLine]
+    if (line?.kind === 'kit' && line.kit && typeof line.kit.box === 'string' && Array.isArray(line.kit.slugs)) return [line as KitLine]
     const slug = line?.slug
-    if (typeof slug === 'string' && findProduct(slug)) return [{ kind: 'product', id: slug, slug, quantity: Number(line.quantity) || 1 }]
+    if (typeof slug === 'string') return [{ kind: 'product', id: slug, slug, quantity: Number(line.quantity) || 1 }]
     return []
   })
 }
 
-// Sacola salva no navegador. Na fase do Neon, passa a ser sincronizada com a conta.
+// Sacola salva no navegador. Preços sempre do catálogo atual (nunca do que ficou salvo).
 export function CartProvider({ children }: { children: ReactNode }) {
+  const catalog = useCatalog()
+  const { findProduct, findBox, kitTotals } = catalog
   const [lines, setLines] = useState<Line[]>([])
   const [loaded, setLoaded] = useState(false)
   const [open, setOpen] = useState(false)
@@ -76,7 +80,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     const product = findProduct(slug)
     if (!product || product.soldOut) return
     push({ kind: 'product', id: slug, slug, quantity: Math.min(MAX_PER_ITEM, quantity) })
-  }, [push])
+  }, [push, findProduct])
 
   const addKit = useCallback((kit: KitSpec) => push({ kind: 'kit', id: kitId(kit), quantity: 1, kit }), [push])
 
@@ -90,9 +94,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
     const items = lines.flatMap((line): CartItem[] => {
       if (line.kind === 'product') {
         const product = findProduct(line.slug)
-        return product ? [{ ...line, product, title: `${product.name} ${product.cacao}%`, unitPrice: product.price }] : []
+        return product && !product.soldOut ? [{ ...line, product, title: `${product.name} ${product.cacao}%`, unitPrice: product.price }] : []
       }
+      if (!findBox(line.kit.box)) return []
       const totals = kitTotals(line.kit)
+      if (!totals.products.length) return []
       return [{ ...line, products: totals.products, title: line.kit.name, unitPrice: totals.total, fullPrice: totals.subtotal }]
     })
     return {
@@ -107,7 +113,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       remove,
       clear,
     }
-  }, [lines, open, add, addKit, update, remove, clear])
+  }, [lines, open, add, addKit, update, remove, clear, findProduct, findBox, kitTotals])
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>
 }
