@@ -38,7 +38,7 @@ export function CartDrawer() {
             <>
               <div className="flex-1 overflow-y-auto px-5">
                 <div className="pt-4"><FreeShipping subtotal={subtotal} /></div>
-                <ul className="divide-y">{items.map((item) => <CartLine key={item.slug} item={item} onNavigate={close} />)}</ul>
+                <ul className="divide-y">{items.map((item) => <CartLine key={item.id} item={item} onNavigate={close} />)}</ul>
               </div>
               <div className="border-t px-5 py-5">
                 <div className="flex items-baseline justify-between">
