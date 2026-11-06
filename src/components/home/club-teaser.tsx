@@ -1,9 +1,9 @@
-import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowRight, CalendarCheck, Gift, Truck } from '@phosphor-icons/react/dist/ssr'
 import { Button } from '@/components/ui/button'
 import { Reveal } from '@/components/motion/reveal'
-import { products } from '@/data/products'
+import { findProduct } from '@/data/products'
+import { BarPackage } from '@/components/product/bar-package'
 
 const perks = [
   { icon: Gift, title: 'Caixa surpresa todo mês', text: 'Barras da casa e edições limitadas que não vão para a loja.' },
@@ -40,16 +40,14 @@ export function ClubTeaser() {
 
         <div className="relative min-h-80" aria-hidden="true">
           <div className="absolute left-1/2 top-1/2 size-[22rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-background/30" />
-          {products.slice(0, 3).map((product, index) => (
-            <Image
-              key={product.slug}
-              src={product.image}
-              alt=""
-              width={311}
-              height={405}
-              className="absolute left-1/2 top-1/2 w-40 drop-shadow-[0_20px_24px_rgba(17,17,17,0.3)] md:w-48"
-              style={{ transform: `translate(calc(-50% + ${(index - 1) * 70}px), calc(-50% + ${Math.abs(index - 1) * 18}px)) rotate(${(index - 1) * 12}deg)` }}
-            />
+          {['acai-37', 'cumaru-55', 'caipira-37'].map((slug, index) => (
+            <div
+              key={slug}
+              className="absolute left-1/2 top-1/2 w-44 md:w-52"
+              style={{ transform: `translate(calc(-50% + ${(index - 1) * 80}px), calc(-50% + ${Math.abs(index - 1) * 18}px)) rotate(${(index - 1) * 12}deg)` }}
+            >
+              <BarPackage product={findProduct(slug)!} />
+            </div>
           ))}
         </div>
       </div>
