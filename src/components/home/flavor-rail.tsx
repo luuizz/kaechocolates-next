@@ -54,7 +54,7 @@ export function FlavorRail() {
                   alt={product.fullName}
                   width={311}
                   height={405}
-                  className="absolute -bottom-6 left-1/2 w-[72%] -translate-x-1/2 rotate-[-6deg] drop-shadow-[0_24px_24px_rgba(22,17,15,0.3)] transition-transform duration-500 group-hover:-translate-y-3 group-hover:rotate-0"
+                  className="absolute -bottom-6 left-1/2 w-[72%] -translate-x-1/2 rotate-[-6deg] drop-shadow-[0_24px_24px_rgba(17,17,17,0.3)] transition-transform duration-500 group-hover:-translate-y-3 group-hover:rotate-0"
                 />
                 <div className="relative z-10 mt-2">
                   <h3 className="font-display text-2xl font-bold leading-tight">{product.name}</h3>

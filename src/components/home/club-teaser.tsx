@@ -47,7 +47,7 @@ export function ClubTeaser() {
               alt=""
               width={311}
               height={405}
-              className="absolute left-1/2 top-1/2 w-40 drop-shadow-[0_20px_24px_rgba(22,17,15,0.3)] md:w-48"
+              className="absolute left-1/2 top-1/2 w-40 drop-shadow-[0_20px_24px_rgba(17,17,17,0.3)] md:w-48"
               style={{ transform: `translate(calc(-50% + ${(index - 1) * 70}px), calc(-50% + ${Math.abs(index - 1) * 18}px)) rotate(${(index - 1) * 12}deg)` }}
             />
           ))}
