@@ -105,3 +105,64 @@ export function validWebhookSignature(request: Request, dataId: string) {
     return false
   }
 }
+
+// ---- Assinaturas (preapproval) ---------------------------------------------
+// Assinatura sem plano associado, com cartão autorizado na hora.
+// Docs: mercadopago.com.br/developers/pt/docs/subscriptions
+const BASE = process.env.MERCADOPAGO_API_URL ?? 'https://api.mercadopago.com'
+
+export type MpPreapproval = {
+  id: string
+  status: string // pending | authorized | paused | cancelled
+  external_reference?: string
+  next_payment_date?: string
+  card_id?: string
+  last_four_digits?: string
+  summarized?: { last_charged_date?: string }
+}
+
+export type MpAuthorizedPayment = {
+  id: string | number
+  preapproval_id: string
+  transaction_amount: number
+  status: string
+  debit_date?: string
+  payment?: { id: number; status: string; status_detail?: string }
+}
+
+export async function createPreapproval({ reference, reason, amount, months, payerEmail, cardToken, backUrl }: {
+  reference: string; reason: string; amount: number; months: number; payerEmail: string; cardToken: string; backUrl: string
+}) {
+  return call<MpPreapproval>(`${BASE}/preapproval`, {
+    method: 'POST',
+    body: JSON.stringify({
+      reason,
+      external_reference: reference,
+      payer_email: payerEmail,
+      card_token_id: cardToken,
+      back_url: backUrl,
+      status: 'authorized',
+      auto_recurring: { frequency: months, frequency_type: 'months', transaction_amount: Number(amount.toFixed(2)), currency_id: 'BRL' },
+    }),
+  })
+}
+
+export const getPreapproval = (id: string) => call<MpPreapproval>(`${BASE}/preapproval/${encodeURIComponent(id)}`, { method: 'GET' })
+
+export async function setPreapprovalStatus(id: string, status: 'authorized' | 'paused' | 'cancelled') {
+  return call<MpPreapproval>(`${BASE}/preapproval/${encodeURIComponent(id)}`, { method: 'PUT', body: JSON.stringify({ status }) })
+}
+
+export const getAuthorizedPayment = (id: string) => call<MpAuthorizedPayment>(`${BASE}/authorized_payments/${encodeURIComponent(id)}`, { method: 'GET' })
+
+export const preapprovalSnapshot = (pre: MpPreapproval) => ({
+  mp_preapproval_id: pre.id,
+  status: pre.status,
+  next_payment_date: pre.next_payment_date,
+  last_four: pre.last_four_digits,
+})
+
+// Na conta de teste, o pagador precisa ser um usuário de teste do Mercado Pago
+export function payerEmailFor(email: string) {
+  return process.env.MERCADOPAGO_TEST_MODE === 'true' && process.env.MERCADOPAGO_TEST_PAYER_EMAIL ? process.env.MERCADOPAGO_TEST_PAYER_EMAIL : email
+}
