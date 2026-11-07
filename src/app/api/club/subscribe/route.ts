@@ -30,7 +30,8 @@ export async function POST(request: Request) {
     const { rows } = await db().query('select * from public.start_subscription($1, $2, $3, $4, $5, $6)', [user.id, plan, period, addressId, cpf, String(body?.notes ?? '')])
     sub = rows[0]
   } catch (error) {
-    console.error('[clube] start_subscription', error)
+    // Recusas de regra (estoque, CPF, endereço…) são esperadas; só registra o que é falha
+    if ((error as { code?: string })?.code !== 'P0001') console.error('[clube] start_subscription', error)
     return json(409, { error: dbMessage(error, 'Não foi possível criar a assinatura.') })
   }
 
