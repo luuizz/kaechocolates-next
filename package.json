@@ -10,7 +10,9 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "db:migrate": "node scripts/migrate.mjs",
-    "db:status": "node scripts/migrate.mjs --status"
+    "db:status": "node scripts/migrate.mjs --status",
+    "e2e": "node e2e/run.mjs",
+    "e2e:stack": "node e2e/stack/up.mjs"
   },
   "dependencies": {
     "@fontsource-variable/inter": "5.3.0",
@@ -32,11 +34,13 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@playwright/test": "1.63.0",
     "@tailwindcss/postcss": "4.3.3",
     "@types/node": "^22",
     "@types/pg": "8.23.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "better-auth": "1.7.17",
     "eslint": "^9",
     "eslint-config-next": "16.4.3",
     "tailwindcss": "4.3.3",
