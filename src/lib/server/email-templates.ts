@@ -166,3 +166,28 @@ export function clubWelcome(sub: WelcomeSubscription): Email {
     text: `${firstName(sub.customer.name)}, boas-vindas ao Clube ${brand.shortName}!\n\nPlano ${sub.plan.name} (${sub.period.label}): ${sub.plan.bars} barras por mês, frete grátis.\nCobrança: ${charge}${next ? `, próxima em ${next}` : ''}.\n\nGerencie em: ${link}`,
   }
 }
+
+// Pedido e assinatura de exemplo, para o botão "Enviar e-mails de teste" do painel
+export function sampleEmails(name: string): Email[] {
+  const order = {
+    id: 0, code: 'KAE-TESTE', status: 'paid', payment_method: 'pix', payment_status: null, payment_detail: null,
+    pix_qr_code: '00020126580014br.gov.bcb.pix0136exemplo-de-pix-copia-e-cola-kae5204000053039865406233.105802BR5913KAE CHOCOLATES6008VARGINHA6304ABCD',
+    pix_qr_base64: null, pix_ticket_url: null, pix_expires_at: null, installments: null,
+    subtotal: 228.9, discount: 15.7, shipping: 19.9, total: 233.1,
+    shipping_zone: { id: 'sudeste', name: 'Sudeste', days_min: 3, days_max: 6 },
+    shipping_address: { recipient: name, cep: '37014230', street: 'Praça Marechal Deodoro', number: '130', complement: null, district: 'Centro', city: 'Varginha', state: 'MG' },
+    customer: { name, email: '', phone: null, cpf: '12345678909' },
+    tracking_code: 'AA123456789BR', paid_at: null, shipped_at: null, created_at: new Date().toISOString(),
+    items: [
+      { kind: 'product', product_id: null, name: 'Cupuaçu 64%', quantity: 1, unit_price: 32.7, total: 32.7, kit: null },
+      { kind: 'kit', product_id: null, name: 'Kit dos premiados', quantity: 1, unit_price: 180.5, total: 180.5, kit: { box: 'm', box_name: 'Caixa M', slugs: [], names: ['Intenso', 'Cupuaçu', 'Castanha e flor de sal', 'Cumaru', 'Caipira', 'Açaí'], message: 'Feliz aniversário!', full_price: 196.2 } },
+    ],
+  } as OrderView
+  const mark = (email: Email): Email => ({ ...email, subject: `[Teste] ${email.subject}` })
+  return [
+    orderReceived(order),
+    orderPaid(order),
+    orderShipped(order),
+    clubWelcome({ id: 0, plan: { name: 'Chocólatra', bars: 4 }, period: { label: 'Trimestral', months: 3 }, amount: 313.23, next_payment_date: new Date(Date.now() + 90 * 864e5).toISOString(), customer: { name, email: '' } }),
+  ].map(mark)
+}

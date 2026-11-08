@@ -159,6 +159,11 @@ export async function updateOrder(id: number, status: string, tracking: string) 
   unwrap(await neon().rpc('admin_update_order', { p_id: id, p_status: status, p_tracking: tracking }))
 }
 
+// Manda os 4 e-mails automáticos de exemplo para o admin logado
+export async function sendTestEmails() {
+  return (await callSite('/api/admin/emails/test', { method: 'POST' })) as { to: string }
+}
+
 // Avisa o cliente por e-mail do novo andamento (ex.: enviado com rastreio)
 export async function notifyOrderChange(code: string) {
   await callSite(`/api/admin/orders/${encodeURIComponent(code)}/notify`, { method: 'POST' })

@@ -1,12 +1,22 @@
 import { api, emailsTo, expect, fillAddress, makeAdmin, signUp, sql, test, text, uniqueEmail } from './helpers'
 
 test.describe('Painel', () => {
+  let adminEmail = ''
   test.beforeEach(async ({ page }) => {
-    const email = uniqueEmail('admin')
-    await signUp(page, { name: 'Equipe Kaê', email })
-    await makeAdmin(email)
+    adminEmail = uniqueEmail('admin')
+    await signUp(page, { name: 'Equipe Kaê', email: adminEmail })
+    await makeAdmin(adminEmail)
     await page.goto('/admin')
     await expect(page.getByRole('heading', { name: /Olá, Equipe/ })).toBeVisible()
+  })
+
+  test('e-mails de teste para o próprio admin', async ({ page }) => {
+    await expect(page.getByText('Barras à venda')).toBeVisible()
+    await page.getByRole('button', { name: 'Enviar e-mails de teste' }).click()
+    await expect(page.getByText(/4 e-mails de teste enviados/)).toBeVisible({ timeout: 30_000 })
+    const subjects = (await emailsTo(adminEmail)).map((mail) => mail.subject)
+    expect(subjects).toEqual(expect.arrayContaining(['[Teste] Recebemos seu pedido KAE-TESTE', '[Teste] Boas-vindas ao Clube Kaê!']))
+    expect(subjects).toHaveLength(4)
   })
 
   test('produtos: editar preço, esgotar e criar barra', async ({ page, browser }) => {

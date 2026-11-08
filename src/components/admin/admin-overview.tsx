@@ -2,11 +2,13 @@
 
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
-import { ArrowRight, Barcode, CurrencyCircleDollar, Package, Users, WarningCircle } from '@phosphor-icons/react'
+import { ArrowRight, Barcode, CircleNotch, CurrencyCircleDollar, EnvelopeSimple, Package, Users, WarningCircle } from '@phosphor-icons/react'
+import { toast } from 'sonner'
+import { Button } from '@/components/ui/button'
 import { useAuth } from '@/components/auth/auth-provider'
 import { StatusBadge } from '@/components/orders/order-parts'
 import { formatBRL } from '@/data/products'
-import { listBoxes, listCustomers, listOrders, listPlans, listProducts, type AdminOrderRow, type AdminProduct } from '@/lib/admin-api'
+import { listBoxes, listCustomers, listOrders, listPlans, listProducts, sendTestEmails, type AdminOrderRow, type AdminProduct } from '@/lib/admin-api'
 import { AdminHeader, Panel } from './admin-shell'
 
 type Stats = { products: AdminProduct[]; boxes: number; plans: number; customers: number; orders: AdminOrderRow[]; loadedAt: number }
@@ -108,6 +110,34 @@ export function AdminOverview() {
           )}
         </Panel>
       </div>
+      <EmailTest />
     </>
+  )
+}
+
+// Confere o visual e a entrega dos e-mails sem precisar fazer uma compra
+function EmailTest() {
+  const [sending, setSending] = useState(false)
+  const send = async () => {
+    setSending(true)
+    try {
+      const { to } = await sendTestEmails()
+      toast.success(`4 e-mails de teste enviados para ${to}.`)
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Não foi possível enviar.')
+    }
+    setSending(false)
+  }
+  return (
+    <Panel className="mt-6 flex flex-wrap items-center justify-between gap-4">
+      <div className="flex items-start gap-3">
+        <span className="grid size-11 shrink-0 place-items-center rounded-full bg-secondary"><EnvelopeSimple size={22} weight="duotone" /></span>
+        <div>
+          <h2 className="font-display text-lg font-bold">E-mails automáticos</h2>
+          <p className="text-sm text-muted-foreground">Pedido recebido, pagamento aprovado, enviado e boas-vindas ao clube. Mande um exemplo de cada para o seu e-mail.</p>
+        </div>
+      </div>
+      <Button variant="outline" onClick={send} disabled={sending}>{sending ? <CircleNotch className="animate-spin" /> : <EnvelopeSimple />} Enviar e-mails de teste</Button>
+    </Panel>
   )
 }

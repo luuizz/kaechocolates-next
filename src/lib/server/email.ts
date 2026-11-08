@@ -13,6 +13,21 @@ const REPLY_TO = process.env.EMAIL_REPLY_TO ?? brand.contact.email
 
 type Kind = 'order_received' | 'order_paid' | 'order_shipped' | 'club_welcome'
 
+export const emailConfigured = () => Boolean(process.env.RESEND_API_KEY)
+
+// Chamada direta ao Resend (sem registro); lança erro com a mensagem deles se falhar
+export async function deliver(to: string, email: Email, idempotencyKey?: string) {
+  const response = await fetch(API, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, 'Content-Type': 'application/json', ...(idempotencyKey && { 'Idempotency-Key': idempotencyKey }) },
+    body: JSON.stringify({ from: FROM, to: [to], reply_to: REPLY_TO, subject: email.subject, html: email.html, text: email.text }),
+  })
+  if (!response.ok) {
+    const body = await response.json().catch(() => ({})) as { message?: string }
+    throw new Error(`Resend ${response.status}: ${body.message ?? 'erro desconhecido'}`)
+  }
+}
+
 async function send(kind: Kind, ref: string, to: string, email: Email) {
   const key = process.env.RESEND_API_KEY
   if (!key || !to) return
@@ -22,12 +37,7 @@ async function send(kind: Kind, ref: string, to: string, email: Email) {
   if (!rowCount) return
 
   try {
-    const response = await fetch(API, {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json', 'Idempotency-Key': `${kind}-${ref}` },
-      body: JSON.stringify({ from: FROM, to: [to], reply_to: REPLY_TO, subject: email.subject, html: email.html, text: email.text }),
-    })
-    if (!response.ok) throw new Error(`Resend ${response.status}: ${await response.text()}`)
+    await deliver(to, email, `${kind}-${ref}`)
   } catch (error) {
     // Libera a reserva para tentar de novo no próximo aviso
     await db().query('delete from public.email_log where kind = $1 and ref = $2', [kind, ref]).catch(() => {})
