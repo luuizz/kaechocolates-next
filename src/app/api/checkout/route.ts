@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto'
+import { after } from 'next/server'
 import { brand } from '@/config/brand'
 import { db, dbMessage } from '@/lib/server/db'
 import { userFromRequest } from '@/lib/server/auth'
@@ -7,6 +8,7 @@ import { createMpOrder, MpError, paymentSnapshot } from '@/lib/server/mercadopag
 import { loadOrder, publicOrder } from '@/lib/server/orders'
 import { paymentProblem } from '@/lib/orders'
 import { validCpf } from '@/lib/cpf'
+import { notifyOrder } from '@/lib/server/email'
 
 const json = (status: number, body: unknown) => Response.json(body, { status })
 
@@ -68,6 +70,8 @@ export async function POST(request: Request) {
   }
 
   const order = publicOrder(await loadOrder(code))
+  // E-mail de pedido recebido (Pix) ou pagamento aprovado (cartão), depois da resposta
+  after(() => notifyOrder(code))
   if (order?.status === 'canceled') return json(402, { error: paymentProblem(order.payment_detail), code })
   return json(201, { order })
 }

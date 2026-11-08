@@ -1,4 +1,6 @@
+import { after } from 'next/server'
 import { brand } from '@/config/brand'
+import { notifySubscription } from '@/lib/server/email'
 import { validCpf } from '@/lib/cpf'
 import { userFromRequest } from '@/lib/server/auth'
 import { applyPreapproval } from '@/lib/server/club'
@@ -47,6 +49,7 @@ export async function POST(request: Request) {
     })
     const saved = await applyPreapproval(sub.id, preapprovalSnapshot(pre))
     if (saved.status === 'canceled') return json(402, { error: 'O cartão não foi autorizado. Tente outro cartão.' })
+    after(() => notifySubscription(saved.id))
     return json(201, { subscription: { id: saved.id, status: saved.status } })
   } catch (error) {
     await applyPreapproval(sub.id, { status: 'failed' }).catch(() => {})

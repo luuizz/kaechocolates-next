@@ -9,7 +9,7 @@ simulado que sobe junto. Não precisa de conta, chave ou variável de nenhum ser
 | `stack/auth.mjs` | o Neon Auth (é um Better Auth com JWT e token anônimo) |
 | PostgREST | a Data API do Neon |
 | `stack/proxy.mjs` | os endereços do Neon em `localhost:54321` |
-| `stack/mercadopago.mjs` | a API de Orders e de assinaturas do Mercado Pago |
+| `stack/mercadopago.mjs` | a API de Orders e de assinaturas do Mercado Pago, e o envio de e-mails do Resend |
 
 ## O que é testado
 

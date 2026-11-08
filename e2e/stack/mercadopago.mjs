@@ -1,4 +1,4 @@
-// Mercado Pago simulado (API de Orders e assinaturas) para os testes.
+// Mercado Pago simulado (API de Orders e assinaturas) e Resend simulado (POST /emails).
 // Regras: Pix com payer.first_name "APRO" é aprovado na primeira consulta (como no sandbox);
 // cartão com token "rejeitar" é recusado; o resto é aprovado.
 // GET /__log devolve as requisições recebidas (para os testes conferirem o que o site mandou).
@@ -20,6 +20,11 @@ export function startMercadoPago(port = 4300) {
       const body = raw ? JSON.parse(raw) : {}
       if (req.url === '/__log') return send(200, log)
       if (!req.headers.authorization?.startsWith('Bearer ')) return send(401, { message: 'missing token' })
+
+      if (req.method === 'POST' && req.url === '/emails') {
+        log.push({ type: 'email', body })
+        return send(200, { id: `email_${++n}` })
+      }
 
       if (req.method === 'POST' && req.url === '/v1/orders') {
         log.push({ type: 'order', idempotency: req.headers['x-idempotency-key'], body })
