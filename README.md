@@ -128,11 +128,19 @@ Use as credenciais da conta **vendedora de teste** do Mercado Pago.
 - `/politica-privacidade` (LGPD) e `/termos` (CDC): textos-base que descrevem o que o site
   faz hoje. Revisar com a Kaê antes de usar de verdade; o CNPJ entra em `src/config/brand.ts`.
 
+## Testes
+
+- **Ponta a ponta** (`e2e/`): Playwright no build de produção, contra um Neon e um Mercado Pago
+  simulados que sobem junto. Cobre loja, conta, checkout, clube, painel e regras de acesso.
+  Roda em toda PR, sem nenhum secret. Detalhes em [`e2e/README.md`](e2e/README.md).
+- **Migrations**: aplicadas do zero num Postgres de teste em toda PR.
+
 ## Fluxo de trabalho
 
 `feat/*` → `dev` → `main` (produção).
 
-- **CI** (`.github/workflows/ci.yml`): toda PR roda lint, checagem de tipos e build.
+- **CI** (`.github/workflows/ci.yml`): toda PR roda lint, checagem de tipos, build,
+  migrations e os testes de ponta a ponta.
   PR para a `main` só é aceita se vier da `dev`.
 - **Deploy** (`.github/workflows/deploy.yml`): cada merge na `main` publica na Vercel.
   O deploy automático pelo Git fica desligado no `vercel.json`.

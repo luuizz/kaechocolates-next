@@ -73,3 +73,45 @@ jobs:
         run: yarn db:migrate
       - name: Segunda execução não aplica nada
         run: yarn db:migrate | tee out.txt && grep -q "Banco em dia" out.txt
+
+  e2e:
+    name: Testes de ponta a ponta
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      # Tudo roda simulado dentro do job (login, Data API, Mercado Pago): sem secrets
+      E2E_DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: .nvmrc
+          cache: yarn
+      - run: yarn install --frozen-lockfile
+      - name: Instala o PostgREST (a Data API do Neon)
+        run: |
+          curl -fsSL https://github.com/PostgREST/postgrest/releases/download/v12.2.3/postgrest-v12.2.3-linux-static-x64.tar.xz \
+            | sudo tar -xJ -C /usr/local/bin postgrest \
+            || { id=$(docker create postgrest/postgrest:v12.2.3) && docker cp "$id:/bin/postgrest" ./postgrest && docker rm "$id" && sudo mv ./postgrest /usr/local/bin/postgrest; }
+          postgrest --version
+      - name: Instala o navegador
+        run: yarn playwright install --with-deps chromium
+      - name: Testes
+        run: yarn e2e
+      - name: Relatório (se falhar)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: relatorio-e2e
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7

@@ -1,0 +1,125 @@
+import { api, expect, fillAddress, makeAdmin, signUp, sql, test, text, uniqueEmail } from './helpers'
+
+test.describe('Painel', () => {
+  test.beforeEach(async ({ page }) => {
+    const email = uniqueEmail('admin')
+    await signUp(page, { name: 'Equipe Kaê', email })
+    await makeAdmin(email)
+    await page.goto('/admin')
+    await expect(page.getByRole('heading', { name: /Olá, Equipe/ })).toBeVisible()
+  })
+
+  test('produtos: editar preço, esgotar e criar barra', async ({ page, browser }) => {
+    await page.goto('/admin/produtos')
+    await expect(page.locator('tbody tr')).toHaveCount(14)
+    await page.locator('tbody tr', { hasText: 'Pão de mel' }).getByRole('link', { name: 'Editar' }).click()
+    await page.waitForURL(/\/admin\/produtos\/\d+/)
+    await page.getByLabel('Preço (R$)').fill('39,90')
+    await page.getByRole('button', { name: 'Salvar' }).click()
+    await expect(page.getByText('O preço "de" precisa ser maior que o preço.')).toBeVisible()
+    await page.getByLabel('Preço “de” (R$)').fill('42,00')
+    await page.getByRole('button', { name: 'Salvar' }).click()
+    await expect(page.getByText('Barra atualizada.')).toBeVisible()
+
+    const visitor = await browser.newPage()
+    await visitor.goto('/produtos/pao-de-mel-64')
+    await expect.poll(() => text(visitor)).toContain('R$ 39,90')
+
+    await page.goto('/admin/produtos')
+    await page.getByRole('switch', { name: 'Pingado esgotada' }).click()
+    await expect(page.getByText(/marcado como esgotado/)).toBeVisible()
+    await visitor.goto('/produtos/pingado-55')
+    await expect(visitor.locator('main')).toContainText(/esgotad/i)
+
+    await page.goto('/admin/produtos/novo')
+    await page.getByLabel('Nome').first().fill('Jabuticaba')
+    await page.getByLabel('% de cacau').fill('50')
+    await page.getByLabel('Linha').selectOption('ao-leite')
+    await expect(page.getByLabel('Endereço da página')).toHaveValue('jabuticaba-50')
+    await page.getByLabel('Preço (R$)').fill('34,90')
+    await page.getByLabel('Frase curta').fill('Ao leite com jabuticaba de Minas.')
+    await page.getByRole('button', { name: 'Salvar' }).click()
+    await page.waitForURL(/\/admin\/produtos\/\d+$/)
+    await visitor.goto('/produtos/jabuticaba-50')
+    await expect(visitor.locator('h1')).toContainText('Jabuticaba')
+
+    // Volta ao estado inicial para os outros testes
+    await sql("update public.products set price = 32.70, compare_at_price = 35.00, sold_out = false where slug in ('pao-de-mel-64', 'pingado-55')")
+    await sql("delete from public.products where slug = 'jabuticaba-50'")
+    await api(page, '/api/revalidate', {})
+    await visitor.close()
+  })
+
+  test('caixas, planos e frete refletem na loja', async ({ page, browser }) => {
+    const visitor = await browser.newPage()
+
+    await page.goto('/admin/kits')
+    const discount = page.getByLabel('Desconto em %').nth(1)
+    await discount.fill('10')
+    await discount.blur()
+    await page.getByRole('button', { name: 'Salvar' }).click()
+    await expect(page.getByText('Alterações salvas.')).toBeVisible()
+    await visitor.goto('/kits')
+    await expect(visitor.locator('main')).toContainText('10% off')
+
+    await page.goto('/admin/clube')
+    const price = page.getByLabel('Preço/mês (R$)').nth(1)
+    await price.fill('119,90')
+    await price.blur()
+    await page.getByRole('button', { name: 'Salvar' }).click()
+    await expect(page.getByText('Alterações salvas.')).toBeVisible()
+    await visitor.goto('/clube')
+    await expect.poll(() => text(visitor)).toContain('R$ 119,90')
+
+    await page.goto('/admin/frete')
+    const shipping = page.getByLabel('Preço (R$)').nth(3)
+    await shipping.fill('25,00')
+    await shipping.blur()
+    await page.getByRole('button', { name: 'Salvar' }).click()
+    await expect(page.getByText('Alterações salvas.')).toBeVisible()
+    expect((await sql<{ price: string }>("select price from public.shipping_zones where id = 'nordeste'"))[0].price).toBe('25.00')
+
+    await sql("update public.kit_boxes set discount = 0.08 where id = 'm'; update public.club_plans set price = 109.90 where id = 'chocolatra'; update public.shipping_zones set price = 29.90 where id = 'nordeste'")
+    await api(page, '/api/revalidate', {})
+    await visitor.close()
+  })
+
+  test('pedidos: separar, enviar com rastreio; assinantes e lista de envio', async ({ page, browser }) => {
+    // Um cliente compra com cartão
+    const customer = await browser.newPage()
+    await customer.route(/viacep\.com\.br/, (route) => route.abort())
+    const email = uniqueEmail('cliente')
+    await signUp(customer, { name: 'Eva Costa', email })
+    await customer.goto('/conta?aba=enderecos')
+    await customer.getByRole('button', { name: 'Novo endereço' }).click()
+    await fillAddress(customer)
+    await expect(customer.locator('main')).toContainText('Praça Marechal Deodoro')
+    const [{ id: addressId }] = await sql<{ id: string }>('select a.id from public.addresses a join public.profiles p on p.id = a.user_id where p.email = $1', [email])
+    const order = await api(customer, '/api/checkout', { items: [{ kind: 'product', slug: 'guru-60', quantity: 2 }], addressId: Number(addressId), method: 'card', cpf: '12345678909', card: { token: 'tok', paymentMethodId: 'master', installments: 1 } })
+    expect(order.status).toBe(201)
+    const code = order.body.order.code as string
+    await api(customer, '/api/club/subscribe', { plan: 'degustacao', period: 'mensal', addressId: Number(addressId), cpf: '12345678909', notes: 'sem lactose', card: { token: 'tok' } })
+
+    await page.goto('/admin/pedidos')
+    await expect(page.locator('tbody')).toContainText(code)
+    await page.goto(`/admin/pedidos/${code}`)
+    await page.getByRole('button', { name: 'Marcar como em separação' }).click()
+    await expect(page.getByRole('button', { name: 'Marcar como enviado' })).toBeVisible()
+    await page.getByPlaceholder('AA123456789BR').fill('qa123456789br')
+    await page.getByRole('button', { name: 'Marcar como enviado' }).click()
+    await expect(page.getByRole('button', { name: 'Marcar como entregue' })).toBeVisible()
+    expect((await sql<{ status: string; tracking_code: string }>('select status, tracking_code from public.orders where code = $1', [code]))[0]).toEqual({ status: 'shipped', tracking_code: 'QA123456789BR' })
+
+    await customer.goto(`/pedido/${code}`)
+    await expect(customer.locator('main')).toContainText('QA123456789BR')
+
+    await page.goto('/admin/assinantes')
+    await expect(page.locator('tbody')).toContainText('Eva Costa')
+    const [download] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: /Lista de envio/ }).click()])
+    const { readFileSync } = await import('node:fs')
+    const csv = readFileSync((await download.path())!, 'utf8')
+    expect(csv).toContain('Eva Costa')
+    expect(csv).toContain('sem lactose')
+    await customer.close()
+  })
+})

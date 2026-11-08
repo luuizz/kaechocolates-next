@@ -40,7 +40,8 @@ export async function POST(request: Request) {
     code = rows[0].code
     total = Number(rows[0].total)
   } catch (error) {
-    console.error('[checkout] place_order', error)
+    // Recusas de regra (estoque, CPF, endereço…) são esperadas; só registra o que é falha
+    if ((error as { code?: string })?.code !== 'P0001') console.error('[checkout] place_order', error)
     return json(409, { error: dbMessage(error, 'Não foi possível criar o pedido.') })
   }
 
