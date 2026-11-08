@@ -1,4 +1,6 @@
+import { after } from 'next/server'
 import { db } from '@/lib/server/db'
+import { notifyOrder, notifySubscription } from '@/lib/server/email'
 import { MpError, getAuthorizedPayment, getMpOrder, getPreapproval, paymentSnapshot, preapprovalSnapshot, validWebhookSignature } from '@/lib/server/mercadopago'
 
 // Avisos do Mercado Pago. Não confiamos no corpo do aviso: buscamos o recurso
@@ -20,7 +22,10 @@ export async function POST(request: Request) {
     if (topic === 'subscription_preapproval') {
       const pre = await getPreapproval(dataId)
       const id = pre.external_reference?.match(/^KAE-CLUBE-(\d+)$/)?.[1]
-      if (id) await db().query('select public.apply_subscription($1, $2::jsonb)', [id, JSON.stringify(preapprovalSnapshot(pre))])
+      if (id) {
+        await db().query('select public.apply_subscription($1, $2::jsonb)', [id, JSON.stringify(preapprovalSnapshot(pre))])
+        after(() => notifySubscription(id))
+      }
       return Response.json({ ok: true })
     }
     if (topic === 'subscription_authorized_payment') {
@@ -42,6 +47,7 @@ export async function POST(request: Request) {
     const mpOrder = await getMpOrder(dataId)
     if (!mpOrder.external_reference?.startsWith('KAE-')) return Response.json({ ok: true })
     await db().query('select public.apply_payment($1, $2::jsonb)', [mpOrder.external_reference, JSON.stringify(paymentSnapshot(mpOrder))])
+    after(() => notifyOrder(mpOrder.external_reference))
     return Response.json({ ok: true })
   } catch (error) {
     // Recurso que não existe no Mercado Pago (ex.: "Simular notificação" com um id

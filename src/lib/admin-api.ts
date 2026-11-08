@@ -159,6 +159,11 @@ export async function updateOrder(id: number, status: string, tracking: string) 
   unwrap(await neon().rpc('admin_update_order', { p_id: id, p_status: status, p_tracking: tracking }))
 }
 
+// Avisa o cliente por e-mail do novo andamento (ex.: enviado com rastreio)
+export async function notifyOrderChange(code: string) {
+  await callSite(`/api/admin/orders/${encodeURIComponent(code)}/notify`, { method: 'POST' })
+}
+
 export type AdminZone = { id: string; name: string; states: string[]; price: number; days_min: number; days_max: number; active: boolean; sort_order: number }
 export async function listZones() {
   return (unwrap(await neon().from('shipping_zones').select('*').order('sort_order')) as AdminZone[]).map((zone) => ({ ...zone, price: Number(zone.price) }))
