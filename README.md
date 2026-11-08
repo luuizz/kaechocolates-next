@@ -45,9 +45,10 @@ por sabor, tipografia grande e embalagens como protagonistas.
   <img src="docs/telas/celular-clube.jpg" width="240" alt="Clube no celular">
 </p>
 
-Também entraram: login e cadastro, recuperação de senha, endereços salvos, política de
-privacidade (LGPD) e termos (CDC), SEO com sitemap, dados estruturados e imagem de
-compartilhamento gerada para cada barra.
+Também entraram: login e cadastro, recuperação de senha, endereços salvos, e-mails
+automáticos (pedido recebido, pagamento aprovado, enviado com rastreio, boas-vindas ao clube),
+política de privacidade (LGPD) e termos (CDC), SEO com sitemap, dados estruturados e imagem
+de compartilhamento gerada para cada barra.
 
 ## Decisões técnicas
 
@@ -106,6 +107,7 @@ flowchart LR
   N -- cobranças --> M[Mercado Pago]
   M -- webhooks --> N
   N -- fotos --> V[Vercel Blob]
+  N -- e-mails --> R[Resend]
 ```
 
 ## Stack
@@ -116,6 +118,7 @@ flowchart LR
 | Dados | Neon (Postgres, Neon Auth, Data API), migrations em SQL puro |
 | Pagamentos | Mercado Pago: API de Orders (Pix e cartão) e assinaturas |
 | Arquivos | Vercel Blob |
+| E-mails | Resend |
 | Qualidade | ESLint, TypeScript estrito, Playwright |
 | Entrega | GitHub Actions + Vercel |
 

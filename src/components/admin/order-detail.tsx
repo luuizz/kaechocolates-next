@@ -7,7 +7,7 @@ import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Field, Input, Select } from '@/components/ui/field'
 import { OrderItems, OrderProgress, OrderShipping, StatusBadge } from '@/components/orders/order-parts'
-import { getOrder, refreshStore, updateOrder } from '@/lib/admin-api'
+import { getOrder, notifyOrderChange, refreshStore, updateOrder } from '@/lib/admin-api'
 import { formatCpf } from '@/lib/cpf'
 import { getAccessToken } from '@/lib/neon'
 import { ORDER_STATUS, formatDateTime, type OrderStatus, type OrderView } from '@/lib/orders'
@@ -46,6 +46,7 @@ export function OrderDetail({ code }: { code: string }) {
     try {
       await updateOrder(order.id, nextStatus, nextTracking)
       if (nextStatus === 'canceled') await refreshStore().catch(() => {})
+      if (nextStatus === 'shipped' || nextStatus === 'delivered') await notifyOrderChange(order.code).catch(() => toast.warning('Salvo, mas o e-mail para o cliente não saiu.'))
       toast.success(`Pedido ${ORDER_STATUS[nextStatus].label.toLowerCase()}.`)
       await load()
     } catch (err) {

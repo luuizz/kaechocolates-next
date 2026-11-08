@@ -1,4 +1,4 @@
-import { api, expect, fillAddress, mercadoPagoLog, signUp, sql, test, text, uniqueEmail } from './helpers'
+import { api, emailsTo, expect, fillAddress, mercadoPagoLog, signUp, sql, test, text, uniqueEmail } from './helpers'
 
 test.describe('Checkout', () => {
   test('Pix do início ao fim, com frete e desconto calculados no servidor', async ({ page }) => {
@@ -12,7 +12,8 @@ test.describe('Checkout', () => {
     // Sem login → cadastro → volta ao checkout
     await page.goto('/checkout')
     await page.waitForURL(/\/entrar/)
-    await signUp(page, { name: 'Bruno Lima', email: uniqueEmail('bruno'), next: '/checkout' })
+    const email = uniqueEmail('bruno')
+    await signUp(page, { name: 'Bruno Lima', email, next: '/checkout' })
     await expect(page.getByRole('button', { name: 'Salvar endereço' })).toBeVisible() // sem endereço: abre o formulário
     await fillAddress(page, { cep: '40010000', street: 'Rua Chile', number: '22', city: 'Salvador', state: 'BA' })
 
@@ -36,6 +37,14 @@ test.describe('Checkout', () => {
     const sent = (await mercadoPagoLog()).filter((entry) => entry.type === 'order').at(-1)!
     expect(sent.body.total_amount).toBe('243.10')
     expect(sent.body.payer?.first_name).toBe('APRO')
+
+    // E-mails: pedido recebido (com o Pix) e pagamento aprovado, cada um uma vez só
+    await expect.poll(async () => (await emailsTo(email)).map((mail) => mail.subject)).toEqual(expect.arrayContaining([`Recebemos seu pedido ${code}`, `Pagamento aprovado · pedido ${code}`]))
+    await page.reload()
+    await page.waitForTimeout(1500)
+    const mails = await emailsTo(email)
+    expect(mails.filter((mail) => mail.subject?.startsWith('Pagamento aprovado'))).toHaveLength(1)
+    expect(mails.find((mail) => mail.subject?.startsWith('Recebemos'))?.html).toContain('br.gov.bcb.pix')
 
     await page.goto('/conta?aba=pedidos')
     await expect(page.locator('main')).toContainText(code)

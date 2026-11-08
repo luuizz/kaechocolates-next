@@ -1,4 +1,4 @@
-import { api, expect, fillAddress, mercadoPagoLog, signUp, sql, test, text, uniqueEmail } from './helpers'
+import { api, emailsTo, expect, fillAddress, mercadoPagoLog, signUp, sql, test, text, uniqueEmail } from './helpers'
 
 // O formulário de cartão é do Mercado Pago (carrega de fora); aqui a assinatura é
 // feita pela rota do site com um token de cartão simulado.
@@ -29,6 +29,7 @@ test.describe('Clube', () => {
     const sent = (await mercadoPagoLog()).filter((entry) => entry.type === 'preapproval').at(-1)!
     expect(sent.body.auto_recurring).toMatchObject({ frequency: 3, frequency_type: 'months', transaction_amount: 313.23, currency_id: 'BRL' })
     expect(sent.body.payer_email).toBe('test_user_e2e@testuser.com')
+    await expect.poll(async () => (await emailsTo(email)).map((mail) => mail.subject)).toContain('Boas-vindas ao Clube Kaê!')
 
     response = await subscribe('familia', 'mensal')
     expect(response.status).toBe(409) // uma assinatura em andamento por cliente

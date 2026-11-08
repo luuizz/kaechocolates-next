@@ -47,6 +47,21 @@ Saia e entre de novo: o link **Painel** aparece no cabeçalho.
 | `MERCADOPAGO_TEST_MODE` | comum | `true` enquanto usar a conta de teste: aprova o Pix sozinho |
 | `MERCADOPAGO_TEST_PAYER_EMAIL` | comum | E-mail da conta **compradora de teste** (o Mercado Pago exige um usuário de teste como assinante) |
 
+## E-mails automáticos
+
+Enviados pelo [Resend](https://resend.com) com modelos próprios (`src/lib/server/email-templates.ts`):
+pedido recebido (com o Pix copia e cola), pagamento aprovado, pedido enviado (com rastreio)
+e boas-vindas ao clube. Cada aviso sai uma vez só (tabela `email_log`). Sem
+`RESEND_API_KEY`, o site funciona igual e não manda e-mail.
+
+| Variável | Tipo | O que é |
+| --- | --- | --- |
+| `RESEND_API_KEY` | Sensitive | Chave da API do Resend (permissão de envio) |
+| `EMAIL_FROM` | comum, opcional | Remetente. Padrão: `Kaê Chocolates <pedidos@dominio-do-site>` |
+
+O domínio do remetente precisa estar verificado no Resend (Domains), com os registros de
+DNS que ele indicar.
+
 ## Testar pagamentos
 
 Use as **credenciais de teste** da aplicação do Mercado Pago (Suas integrações → aplicação →

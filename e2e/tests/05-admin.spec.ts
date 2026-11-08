@@ -1,4 +1,4 @@
-import { api, expect, fillAddress, makeAdmin, signUp, sql, test, text, uniqueEmail } from './helpers'
+import { api, emailsTo, expect, fillAddress, makeAdmin, signUp, sql, test, text, uniqueEmail } from './helpers'
 
 test.describe('Painel', () => {
   test.beforeEach(async ({ page }) => {
@@ -109,6 +109,8 @@ test.describe('Painel', () => {
     await page.getByRole('button', { name: 'Marcar como enviado' }).click()
     await expect(page.getByRole('button', { name: 'Marcar como entregue' })).toBeVisible()
     expect((await sql<{ status: string; tracking_code: string }>('select status, tracking_code from public.orders where code = $1', [code]))[0]).toEqual({ status: 'shipped', tracking_code: 'QA123456789BR' })
+
+    await expect.poll(async () => (await emailsTo(email)).find((mail) => mail.subject === `Seu pedido ${code} saiu para entrega`)?.html ?? '').toContain('QA123456789BR')
 
     await customer.goto(`/pedido/${code}`)
     await expect(customer.locator('main')).toContainText('QA123456789BR')

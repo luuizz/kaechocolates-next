@@ -60,10 +60,15 @@ export async function api(page: Page, path: string, body?: unknown) {
 
 // O que o site mandou para o Mercado Pago simulado
 type MercadoPagoRequest = {
-  type: 'order' | 'preapproval'
-  body: { total_amount?: string; payer?: { first_name?: string }; payer_email?: string; auto_recurring?: Record<string, unknown> }
+  type: 'order' | 'preapproval' | 'email'
+  body: { total_amount?: string; payer?: { first_name?: string }; payer_email?: string; auto_recurring?: Record<string, unknown>; to?: string[]; subject?: string; html?: string }
 }
 
 export async function mercadoPagoLog() {
   return (await (await fetch('http://127.0.0.1:4300/__log')).json()) as MercadoPagoRequest[]
+}
+
+// E-mails que o site mandou (Resend simulado)
+export async function emailsTo(address: string) {
+  return (await mercadoPagoLog()).filter((entry) => entry.type === 'email' && entry.body.to?.includes(address)).map((entry) => entry.body)
 }

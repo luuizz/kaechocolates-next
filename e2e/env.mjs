@@ -12,4 +12,6 @@ export const e2eEnv = {
   MERCADOPAGO_API_URL: 'http://127.0.0.1:4300',
   MERCADOPAGO_TEST_MODE: 'true',
   MERCADOPAGO_TEST_PAYER_EMAIL: 'test_user_e2e@testuser.com',
+  RESEND_API_KEY: 're_e2e',
+  RESEND_API_URL: 'http://127.0.0.1:4300',
 }
