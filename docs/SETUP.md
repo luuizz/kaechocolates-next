@@ -57,7 +57,8 @@ e boas-vindas ao clube. Cada aviso sai uma vez só (tabela `email_log`). Sem
 | Variável | Tipo | O que é |
 | --- | --- | --- |
 | `RESEND_API_KEY` | Sensitive | Chave da API do Resend (permissão de envio) |
-| `EMAIL_FROM` | comum, opcional | Remetente. Padrão: `Kaê Chocolates <pedidos@dominio-do-site>` |
+| `EMAIL_FROM` | comum, opcional | Remetente. Padrão: `Kaê Chocolates <pedidos@dominio-do-site>`. Não precisa ter caixa de entrada |
+| `EMAIL_REPLY_TO` | comum, opcional | Para onde vão as respostas dos clientes. Padrão: o e-mail de contato em `brand.ts` |
 
 O domínio do remetente precisa estar verificado no Resend (Domains), com os registros de
 DNS que ele indicar.
