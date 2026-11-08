@@ -8,6 +8,8 @@ import { loadOrder } from './orders'
 // RESEND_API_URL só existe para os testes, com um servidor simulado.
 const API = `${process.env.RESEND_API_URL ?? 'https://api.resend.com'}/emails`
 const FROM = process.env.EMAIL_FROM ?? `${brand.name} <pedidos@${new URL(brand.url).hostname}>`
+// Para onde vão as respostas do cliente. O remetente não precisa ter caixa de entrada.
+const REPLY_TO = process.env.EMAIL_REPLY_TO ?? brand.contact.email
 
 type Kind = 'order_received' | 'order_paid' | 'order_shipped' | 'club_welcome'
 
@@ -23,7 +25,7 @@ async function send(kind: Kind, ref: string, to: string, email: Email) {
     const response = await fetch(API, {
       method: 'POST',
       headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json', 'Idempotency-Key': `${kind}-${ref}` },
-      body: JSON.stringify({ from: FROM, to: [to], reply_to: brand.contact.email, subject: email.subject, html: email.html, text: email.text }),
+      body: JSON.stringify({ from: FROM, to: [to], reply_to: REPLY_TO, subject: email.subject, html: email.html, text: email.text }),
     })
     if (!response.ok) throw new Error(`Resend ${response.status}: ${await response.text()}`)
   } catch (error) {
