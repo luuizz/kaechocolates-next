@@ -26,6 +26,17 @@ yarn db:migrate   # aplica (usa DATABASE_URL do .env.local)
 No CI, as migrations rodam do zero num Postgres de teste (com `database/ci/neon-stub.sql`
 simulando o Neon). No deploy da `main`, rodam no Neon antes de publicar.
 
+## Sessão (login)
+
+O login passa por `/api/auth` (mesmo domínio da loja) e a sessão fica num cookie
+assinado, que o `proxy.ts` e o layout do painel leem no servidor.
+
+| Variável                  | Tipo      | O que é                                                                                         |
+| ------------------------- | --------- | ----------------------------------------------------------------------------------------------- |
+| `NEON_AUTH_COOKIE_SECRET` | Sensitive | Segredo de 32+ caracteres que assina o cookie (`openssl rand -base64 32`). Production e Preview |
+
+Sem ela o site abre, mas o login responde "indisponível".
+
 ## Primeiro admin
 
 Crie a conta pelo site (`/cadastro`) e, no SQL Editor do Neon:

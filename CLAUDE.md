@@ -92,6 +92,13 @@ Para dúvidas de estrutura, consultar as skills `nextjs-arquitetura` e `nextjs-q
 - Corpo de requisição sempre validado com Zod (`src/lib/validation/`), com `parseWith` para devolver a mensagem do primeiro campo inválido. Tipo da entrada derivado do schema (`z.output`), não escrito à mão.
 - Linhas do banco têm tipo próprio (`OrderRow`, `ProductRow`...) e são convertidas na borda; sem `as unknown as`.
 
+## Sessão e acesso
+
+- O login passa por `/api/auth/[...path]` (handler do `@neon/neon-js/auth/next/server`) e a sessão fica em cookie no domínio da loja. Instância em `lib/server/neon-auth.ts`, criada sob demanda (sem `NEON_AUTH_COOKIE_SECRET` o login fica indisponível, mas o build e o site sobem).
+- `src/proxy.ts` exige login em `/admin`, `/conta`, `/checkout`, `/pedido` e `/clube/assinar`, redirecionando para `/entrar?volta=...`. Rota nova que precise de login entra no `matcher`.
+- O papel de admin é conferido no servidor, no layout do painel (`getAdminAccess` em `lib/server/session.ts`), que é dinâmico. O banco (RLS e funções) continua conferindo cada gravação.
+- No servidor, o usuário vem de `getSessionUser()`; não confie em id de usuário vindo do navegador.
+
 ## Variáveis de ambiente
 
 - A referência é o `.env.example`. A maioria das variáveis está configurada só na Vercel; o `.env.local` tem apenas parte delas, então algumas funcionalidades (pagamento, upload, e-mail) podem não funcionar localmente.

@@ -2,48 +2,28 @@
 
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { useEffect, useRef, useState } from 'react'
+import { useState } from 'react'
 import { List, X } from '@phosphor-icons/react'
 import { useAuth } from '@/components/auth/auth-provider'
 import { Logo } from '@/components/brand/logo'
 import { Button } from '@/components/ui/button'
-import { PageLoader } from '@/components/ui/page-loader'
 import { AdminNav, AdminUser } from './admin-nav'
 
-// Moldura do painel: só abre para admin (o banco confere de novo em cada gravação)
-export function AdminShell({ children }: { children: React.ReactNode }) {
+type AdminShellProps = { name: string; email: string; children: React.ReactNode }
+
+// Moldura do painel (o acesso de admin já foi conferido no servidor)
+export function AdminShell({ name, email, children }: AdminShellProps) {
   const auth = useAuth()
   const router = useRouter()
   const pathname = usePathname()
-  // Ao sair, vai para a home em vez de cair no login
-  const leaving = useRef(false)
   const [menuOn, setMenuOn] = useState<string | null>(null)
   const menuOpen = menuOn === pathname
 
-  useEffect(() => {
-    if (!leaving.current && auth.configured && !auth.loading && !auth.user)
-      router.replace(`/entrar?volta=${encodeURIComponent(pathname)}`)
-  }, [auth.configured, auth.loading, auth.user, pathname, router])
-
-  if (!auth.configured)
-    return (
-      <Blocked title="Painel indisponível" text="Configure as variáveis do Neon para usar o painel (veja o README)." />
-    )
-  if (auth.loading || !auth.user) return <PageLoader height="screen" />
-  if (!auth.isAdmin)
-    return (
-      <Blocked
-        title="Acesso restrito"
-        text="Esta área é só para a equipe da loja. Se você deveria ter acesso, peça para um admin liberar sua conta."
-      />
-    )
-
   const signOut = async () => {
-    leaving.current = true
     await auth.signOut()
     router.replace('/')
   }
-  const user = <AdminUser name={auth.profile?.full_name || 'Admin'} email={auth.user.email ?? ''} onSignOut={signOut} />
+  const user = <AdminUser name={name} email={email} onSignOut={signOut} />
 
   return (
     <div className="flex min-h-dvh">
@@ -78,21 +58,6 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
           </div>
         )}
         <main className="mx-auto w-full max-w-6xl flex-1 px-4 py-8 md:px-8 md:py-10">{children}</main>
-      </div>
-    </div>
-  )
-}
-
-function Blocked({ title, text }: { title: string; text: string }) {
-  return (
-    <div className="grid min-h-dvh place-items-center px-5">
-      <div className="max-w-md rounded-card bg-panel-surface p-8 text-center">
-        <Logo className="mx-auto h-10" />
-        <h1 className="mt-6 font-display text-3xl font-extrabold">{title}</h1>
-        <p className="mt-2 text-muted-foreground">{text}</p>
-        <Button asChild className="mt-6">
-          <Link href="/">Voltar para a loja</Link>
-        </Button>
       </div>
     </div>
   )
