@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { AuthShell } from '@/components/account/auth-shell'
-import { ForgotPasswordForm } from '@/components/account/auth-forms'
+import { ForgotPasswordForm } from '@/components/account/auth/forgot-password-form'
 import { getCatalog } from '@/lib/server/catalog'
 
 export const metadata: Metadata = { title: 'Recuperar senha', robots: { index: false } }

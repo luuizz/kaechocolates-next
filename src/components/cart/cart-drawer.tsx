@@ -8,6 +8,7 @@ import { formatBRL } from '@/data/products'
 import { useCart } from './cart-provider'
 import { CartLine } from './cart-line'
 import { FreeShipping } from './free-shipping'
+import { EmptyState } from '@/components/ui/empty-state'
 
 // Sacola lateral: abre ao adicionar um produto ou ao clicar no ícone
 export function CartDrawer() {
@@ -28,12 +29,14 @@ export function CartDrawer() {
           <Dialog.Description className="sr-only">Produtos que você adicionou e o total da compra.</Dialog.Description>
 
           {items.length === 0 ? (
-            <div className="flex flex-1 flex-col items-center justify-center gap-4 px-8 text-center">
-              <span className="grid size-20 place-items-center rounded-full bg-secondary"><ShoppingBagOpen size={36} weight="duotone" /></span>
-              <p className="font-display text-xl font-bold">Sua sacola está vazia</p>
-              <p className="text-sm text-muted-foreground">Que tal começar pelo nosso mais premiado?</p>
-              <Button asChild onClick={close}><Link href="/produtos">Ver chocolates</Link></Button>
-            </div>
+            <EmptyState
+              size="compact"
+              titleAs="p"
+              icon={<ShoppingBagOpen size={36} weight="duotone" />}
+              title="Sua sacola está vazia"
+              description="Que tal começar pelo nosso mais premiado?"
+              action={<Button asChild onClick={close}><Link href="/produtos">Ver chocolates</Link></Button>}
+            />
           ) : (
             <>
               <div className="flex-1 overflow-y-auto px-5">
