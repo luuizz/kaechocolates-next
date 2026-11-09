@@ -9,11 +9,31 @@ export async function loadOrder(code: string): Promise<(OrderView & { user_id: s
   return { ...normalizeOrder(rows[0], items.rows), user_id: rows[0].user_id, mp_order_id: rows[0].mp_order_id }
 }
 
+type PaymentSnapshot = ReturnType<typeof paymentSnapshot> | { status: string; status_detail: string }
+
+export async function applyPayment(code: string, snapshot: PaymentSnapshot) {
+  await db().query('select public.apply_payment($1, $2::jsonb)', [code, JSON.stringify(snapshot)])
+}
+
+// Grava a resposta de uma cobrança que já saiu no Mercado Pago. Tenta duas vezes;
+// se o banco continuar falhando, o pedido fica pendente e o webhook acerta o status.
+export async function recordCharge(code: string, snapshot: PaymentSnapshot) {
+  for (let attempt = 1; attempt <= 2; attempt++) {
+    try {
+      await applyPayment(code, snapshot)
+      return true
+    } catch (error) {
+      console.error(`[checkout] apply_payment (tentativa ${attempt})`, code, error)
+    }
+  }
+  return false
+}
+
 // Busca o status atual no Mercado Pago e grava no pedido
 export async function syncWithMercadoPago(code: string, mpOrderId: string) {
   const mpOrder = await getMpOrder(mpOrderId)
   if (mpOrder.external_reference !== code) throw new Error('Pedido do Mercado Pago não confere.')
-  await db().query('select public.apply_payment($1, $2::jsonb)', [code, JSON.stringify(paymentSnapshot(mpOrder))])
+  await applyPayment(code, paymentSnapshot(mpOrder))
 }
 
 // Tira do retorno o que o cliente não precisa ver

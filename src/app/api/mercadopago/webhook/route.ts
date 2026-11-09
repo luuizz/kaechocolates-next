@@ -1,6 +1,7 @@
 import { after } from 'next/server'
 import { db } from '@/lib/server/db'
 import { notifyOrder, notifySubscription } from '@/lib/server/email'
+import { applyPayment } from '@/lib/server/orders'
 import { MpError, getAuthorizedPayment, getMpOrder, getPreapproval, paymentSnapshot, preapprovalSnapshot, validWebhookSignature } from '@/lib/server/mercadopago'
 
 // Avisos do Mercado Pago. Não confiamos no corpo do aviso: buscamos o recurso
@@ -46,7 +47,7 @@ export async function POST(request: Request) {
 
     const mpOrder = await getMpOrder(dataId)
     if (!mpOrder.external_reference?.startsWith('KAE-')) return Response.json({ ok: true })
-    await db().query('select public.apply_payment($1, $2::jsonb)', [mpOrder.external_reference, JSON.stringify(paymentSnapshot(mpOrder))])
+    await applyPayment(mpOrder.external_reference, paymentSnapshot(mpOrder))
     after(() => notifyOrder(mpOrder.external_reference))
     return Response.json({ ok: true })
   } catch (error) {
