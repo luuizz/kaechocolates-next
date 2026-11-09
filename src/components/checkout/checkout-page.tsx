@@ -85,7 +85,8 @@ export function CheckoutPage() {
     if (!response.ok) throw new Error(body.error || 'Não foi possível finalizar a compra.')
     setDone(true)
     cart.clear()
-    router.push(`/pedido/${body.order.code}`)
+    // 202: cobrança feita, status ainda sendo gravado; a página do pedido acompanha
+    router.push(`/pedido/${body.order?.code ?? body.code}`)
   }
 
   const payPix = async () => {

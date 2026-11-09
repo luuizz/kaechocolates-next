@@ -4,8 +4,8 @@ import { brand } from '@/config/brand'
 import { db, dbMessage } from '@/lib/server/db'
 import { userFromRequest } from '@/lib/server/auth'
 import { parseCart } from '@/lib/server/cart-input'
-import { createMpOrder, MpError, paymentSnapshot } from '@/lib/server/mercadopago'
-import { loadOrder, publicOrder } from '@/lib/server/orders'
+import { createMpOrder, MpError, paymentSnapshot, type MpOrder } from '@/lib/server/mercadopago'
+import { applyPayment, loadOrder, publicOrder, recordCharge } from '@/lib/server/orders'
 import { paymentProblem } from '@/lib/orders'
 import { validCpf } from '@/lib/cpf'
 import { notifyOrder } from '@/lib/server/email'
@@ -51,8 +51,9 @@ export async function POST(request: Request) {
   const [firstName, ...rest] = (user.full_name || 'Cliente').trim().split(/\s+/)
   const testMode = process.env.MERCADOPAGO_TEST_MODE === 'true'
 
+  let mpOrder: MpOrder
   try {
-    const mpOrder = await createMpOrder({
+    mpOrder = await createMpOrder({
       reference: code,
       amount: total,
       idempotencyKey: randomUUID(),
@@ -61,17 +62,21 @@ export async function POST(request: Request) {
         ? { kind: 'pix' }
         : { kind: 'card', token: card.token, paymentMethodId: card.paymentMethodId, paymentTypeId: card.paymentTypeId === 'debit_card' ? 'debit_card' : 'credit_card', installments: Math.min(Math.max(Number(card.installments) || 1, 1), brand.commerce.maxInstallments) },
     })
-    await db().query('select public.apply_payment($1, $2::jsonb)', [code, JSON.stringify(paymentSnapshot(mpOrder))])
   } catch (error) {
     // Cobrança não saiu: cancela o pedido e devolve o estoque
-    await db().query('select public.apply_payment($1, $2::jsonb)', [code, JSON.stringify({ status: 'failed', status_detail: 'mp_error' })]).catch(() => {})
+    await applyPayment(code, { status: 'failed', status_detail: 'mp_error' }).catch((cancelError) => console.error('[checkout] cancelar pedido', code, cancelError))
     const message = error instanceof MpError ? error.message : 'Não foi possível falar com o Mercado Pago. Tente de novo.'
     return json(502, { error: message })
   }
 
-  const order = publicOrder(await loadOrder(code))
+  // A cobrança já existe no Mercado Pago: daqui em diante o pedido nunca é cancelado por falha nossa
+  if (!(await recordCharge(code, paymentSnapshot(mpOrder)))) {
+    return json(202, { code })
+  }
+
+  const order = publicOrder(await loadOrder(code).catch(() => null))
   // E-mail de pedido recebido (Pix) ou pagamento aprovado (cartão), depois da resposta
   after(() => notifyOrder(code))
   if (order?.status === 'canceled') return json(402, { error: paymentProblem(order.payment_detail), code })
-  return json(201, { order })
+  return json(201, { order, code })
 }
