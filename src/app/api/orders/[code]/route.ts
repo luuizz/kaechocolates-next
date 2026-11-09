@@ -11,7 +11,8 @@ export async function GET(request: Request, { params }: { params: Promise<{ code
 
   const { code } = await params
   let order = await loadOrder(code).catch(() => null)
-  if (!order || (order.user_id !== user.id && user.role !== 'admin')) return Response.json({ error: 'Pedido não encontrado.' }, { status: 404 })
+  if (!order || (order.user_id !== user.id && user.role !== 'admin'))
+    return Response.json({ error: 'Pedido não encontrado.' }, { status: 404 })
 
   if (order.status === 'pending_payment' && order.mp_order_id) {
     await syncWithMercadoPago(code, order.mp_order_id).catch((error) => console.error('[pedido] sync', error))

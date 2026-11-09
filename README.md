@@ -26,18 +26,18 @@ por sabor, tipografia grande e embalagens como protagonistas.
 
 ## O que foi construído
 
-| | |
-| --- | --- |
-| ![Página de produto](docs/telas/produto.jpg) | ![Monte seu kit](docs/telas/monte-seu-kit.jpg) |
-| **Produto**: foto ou embalagem desenhada, preço, parcelamento, frete grátis | **Monte seu kit**: caixa P, M ou G, barras repetidas, recado escrito à mão e desconto por tamanho |
-| ![Checkout](docs/telas/checkout.jpg) | ![Pagamento com Pix](docs/telas/pix.jpg) |
-| **Checkout em uma página**: endereço com busca de CEP, frete por região, Pix ou cartão | **Pix**: QR Code e copia e cola; a página se atualiza sozinha quando o pagamento cai |
-| ![Planos do clube](docs/telas/clube.jpg) | ![Assinatura na conta do cliente](docs/telas/conta-clube.jpg) |
-| **Clube**: três planos, períodos com desconto, cobrança recorrente no cartão | **Minha conta**: próxima cobrança, pausar, retomar, cancelar e histórico |
-| ![Visão geral do painel](docs/telas/painel.jpg) | ![Editor de produto](docs/telas/painel-produto.jpg) |
-| **Painel**: pedidos para enviar, vendas, pendências do catálogo | **Editor de barra**: prévia ao vivo da embalagem, cores, foto, estoque e ordem na vitrine |
-| ![Pedido no painel](docs/telas/painel-pedido.jpg) | ![Assinantes](docs/telas/painel-assinantes.jpg) |
-| **Pedidos**: andamento, rastreio, dados do cliente, endereço para copiar | **Assinantes**: receita recorrente, barras do mês e lista de envio em CSV |
+|                                                                                        |                                                                                                   |
+| -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| ![Página de produto](docs/telas/produto.jpg)                                           | ![Monte seu kit](docs/telas/monte-seu-kit.jpg)                                                    |
+| **Produto**: foto ou embalagem desenhada, preço, parcelamento, frete grátis            | **Monte seu kit**: caixa P, M ou G, barras repetidas, recado escrito à mão e desconto por tamanho |
+| ![Checkout](docs/telas/checkout.jpg)                                                   | ![Pagamento com Pix](docs/telas/pix.jpg)                                                          |
+| **Checkout em uma página**: endereço com busca de CEP, frete por região, Pix ou cartão | **Pix**: QR Code e copia e cola; a página se atualiza sozinha quando o pagamento cai              |
+| ![Planos do clube](docs/telas/clube.jpg)                                               | ![Assinatura na conta do cliente](docs/telas/conta-clube.jpg)                                     |
+| **Clube**: três planos, períodos com desconto, cobrança recorrente no cartão           | **Minha conta**: próxima cobrança, pausar, retomar, cancelar e histórico                          |
+| ![Visão geral do painel](docs/telas/painel.jpg)                                        | ![Editor de produto](docs/telas/painel-produto.jpg)                                               |
+| **Painel**: pedidos para enviar, vendas, pendências do catálogo                        | **Editor de barra**: prévia ao vivo da embalagem, cores, foto, estoque e ordem na vitrine         |
+| ![Pedido no painel](docs/telas/painel-pedido.jpg)                                      | ![Assinantes](docs/telas/painel-assinantes.jpg)                                                   |
+| **Pedidos**: andamento, rastreio, dados do cliente, endereço para copiar               | **Assinantes**: receita recorrente, barras do mês e lista de envio em CSV                         |
 
 <p align="center">
   <img src="docs/telas/celular-home.jpg" width="240" alt="Home no celular">
@@ -53,6 +53,7 @@ de compartilhamento gerada para cada barra.
 ## Decisões técnicas
 
 ### O banco decide o dinheiro
+
 O navegador manda só o que está na sacola. Preço, desconto do kit, frete, estoque e valor da
 assinatura são calculados por funções do Postgres (`quote_order`, `place_order`, `club_quote`),
 que clientes não conseguem chamar: só o servidor do site, com a connection string. O estoque é
@@ -61,6 +62,7 @@ cancelado. No navegador, o arredondamento de centavos segue a mesma regra do ban
 valor mostrado bater com o cobrado.
 
 ### Quase sem backend próprio
+
 Leituras e gravações do dia a dia (catálogo, conta, endereços, painel) vão direto do navegador
 para a Data API do Neon, com o token de quem está logado. Quem pode o quê é decidido no banco,
 por RLS: visitante lê só o catálogo ativo, cliente vê só os próprios dados, admin edita.
@@ -68,27 +70,32 @@ Rotas próprias (`src/app/api`) existem só onde é preciso um segredo: cobrar n
 receber webhooks, enviar fotos para o Blob e limpar o cache da loja.
 
 ### Loja rápida, painel em tempo real
+
 O catálogo é lido no servidor e fica em cache; ao salvar no painel, o cache é limpo na hora
 (`revalidateTag`), então a vitrine reflete a mudança sem esperar. Se o banco estiver fora do
 ar, a loja continua de pé com um catálogo de reserva.
 
 ### Pagamento que não confia em ninguém
+
 O webhook do Mercado Pago só serve de gatilho: o site busca o pedido ou a assinatura na API
 deles e grava o status que vier de lá, nunca o do corpo do aviso. Enquanto o Pix está
 pendente, a própria página do pedido confere o status, então tudo funciona mesmo se o
 webhook atrasar.
 
 ### Embalagem desenhada em código
+
 Só quatro barras tinham foto. As outras são desenhadas em CSS com container queries
 (`cqw`): ficam nítidas em qualquer tamanho e usam as cores cadastradas no painel. Com isso
 um sabor novo já entra na loja bonito, antes da sessão de fotos.
 
 ### Esteira de verdade
+
 `feat/*` → `dev` → `main`. Toda PR roda lint, tipos, build, migrations do zero e testes de
 ponta a ponta. O deploy sai do GitHub Actions: aplica as migrations no Neon e só depois
 publica na Vercel. O deploy automático pelo Git fica desligado.
 
 ### Testes sem nenhuma conta externa
+
 Os testes de ponta a ponta (Playwright) rodam no build de produção contra um ambiente que
 sobe dentro do próprio CI: Postgres, um Better Auth no papel do Neon Auth, o PostgREST no
 papel da Data API e um Mercado Pago simulado. São 14 cenários, de "comprar com Pix" a
@@ -112,15 +119,15 @@ flowchart LR
 
 ## Stack
 
-| Camada | Tecnologia |
-| --- | --- |
-| Front | Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, componentes no padrão shadcn/ui, Phosphor Icons, Motion |
-| Dados | Neon (Postgres, Neon Auth, Data API), migrations em SQL puro |
-| Pagamentos | Mercado Pago: API de Orders (Pix e cartão) e assinaturas |
-| Arquivos | Vercel Blob |
-| E-mails | Resend |
-| Qualidade | ESLint, TypeScript estrito, Playwright |
-| Entrega | GitHub Actions + Vercel |
+| Camada     | Tecnologia                                                                                                             |
+| ---------- | ---------------------------------------------------------------------------------------------------------------------- |
+| Front      | Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, componentes no padrão shadcn/ui, Phosphor Icons, Motion |
+| Dados      | Neon (Postgres, Neon Auth, Data API), migrations em SQL puro                                                           |
+| Pagamentos | Mercado Pago: API de Orders (Pix e cartão) e assinaturas                                                               |
+| Arquivos   | Vercel Blob                                                                                                            |
+| E-mails    | Resend                                                                                                                 |
+| Qualidade  | ESLint, TypeScript estrito, Playwright                                                                                 |
+| Entrega    | GitHub Actions + Vercel                                                                                                |
 
 ## Estrutura
 

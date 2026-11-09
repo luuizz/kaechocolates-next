@@ -1,9 +1,9 @@
 'use client'
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
-import type { Product } from '@/data/products'
-import type { KitSpec } from '@/data/kits'
 import { useCatalog } from '@/components/catalog/catalog-provider'
+import type { KitSpec } from '@/types/kit'
+import type { Product } from '@/types/product'
 
 type ProductLine = { kind: 'product'; id: string; slug: string; quantity: number }
 type KitLine = { kind: 'kit'; id: string; quantity: number; kit: KitSpec }
@@ -37,7 +37,8 @@ const kitId = (kit: KitSpec) => `kit:${kit.box}:${[...kit.slugs].sort().join(','
 function restore(raw: unknown): Line[] {
   if (!Array.isArray(raw)) return []
   return raw.flatMap((line): Line[] => {
-    if (line?.kind === 'kit' && line.kit && typeof line.kit.box === 'string' && Array.isArray(line.kit.slugs)) return [line as KitLine]
+    if (line?.kind === 'kit' && line.kit && typeof line.kit.box === 'string' && Array.isArray(line.kit.slugs))
+      return [line as KitLine]
     const slug = line?.slug
     if (typeof slug === 'string') return [{ kind: 'product', id: slug, slug, quantity: Number(line.quantity) || 1 }]
     return []
@@ -64,28 +65,42 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!loaded) return
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(lines)) } catch { /* ignora */ }
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(lines))
+    } catch {
+      /* ignora */
+    }
   }, [lines, loaded])
 
   const push = useCallback((line: Line) => {
     setLines((current) => {
       const existing = current.find((item) => item.id === line.id)
-      if (existing) return current.map((item) => (item.id === line.id ? { ...item, quantity: Math.min(MAX_PER_ITEM, item.quantity + line.quantity) } : item))
+      if (existing)
+        return current.map((item) =>
+          item.id === line.id ? { ...item, quantity: Math.min(MAX_PER_ITEM, item.quantity + line.quantity) } : item,
+        )
       return [...current, line]
     })
     setOpen(true)
   }, [])
 
-  const add = useCallback((slug: string, quantity = 1) => {
-    const product = findProduct(slug)
-    if (!product || product.soldOut) return
-    push({ kind: 'product', id: slug, slug, quantity: Math.min(MAX_PER_ITEM, quantity) })
-  }, [push, findProduct])
+  const add = useCallback(
+    (slug: string, quantity = 1) => {
+      const product = findProduct(slug)
+      if (!product || product.soldOut) return
+      push({ kind: 'product', id: slug, slug, quantity: Math.min(MAX_PER_ITEM, quantity) })
+    },
+    [push, findProduct],
+  )
 
   const addKit = useCallback((kit: KitSpec) => push({ kind: 'kit', id: kitId(kit), quantity: 1, kit }), [push])
 
   const update = useCallback((id: string, quantity: number) => {
-    setLines((current) => (quantity <= 0 ? current.filter((line) => line.id !== id) : current.map((line) => (line.id === id ? { ...line, quantity: Math.min(MAX_PER_ITEM, quantity) } : line))))
+    setLines((current) =>
+      quantity <= 0
+        ? current.filter((line) => line.id !== id)
+        : current.map((line) => (line.id === id ? { ...line, quantity: Math.min(MAX_PER_ITEM, quantity) } : line)),
+    )
   }, [])
   const remove = useCallback((id: string) => setLines((current) => current.filter((line) => line.id !== id)), [])
   const clear = useCallback(() => setLines([]), [])
@@ -94,12 +109,22 @@ export function CartProvider({ children }: { children: ReactNode }) {
     const items = lines.flatMap((line): CartItem[] => {
       if (line.kind === 'product') {
         const product = findProduct(line.slug)
-        return product && !product.soldOut ? [{ ...line, product, title: `${product.name} ${product.cacao}%`, unitPrice: product.price }] : []
+        return product && !product.soldOut
+          ? [{ ...line, product, title: `${product.name} ${product.cacao}%`, unitPrice: product.price }]
+          : []
       }
       if (!findBox(line.kit.box)) return []
       const totals = kitTotals(line.kit)
       if (!totals.products.length) return []
-      return [{ ...line, products: totals.products, title: line.kit.name, unitPrice: totals.total, fullPrice: totals.subtotal }]
+      return [
+        {
+          ...line,
+          products: totals.products,
+          title: line.kit.name,
+          unitPrice: totals.total,
+          fullPrice: totals.subtotal,
+        },
+      ]
     })
     return {
       items,
@@ -125,6 +150,16 @@ export function useCart() {
 }
 
 // Formato que o checkout manda para o servidor (sem preços: o banco recalcula)
-export const toCheckoutItems = (items: CartItem[]) => items.map((item) => (item.kind === 'product'
-  ? { kind: 'product' as const, slug: item.slug, quantity: item.quantity }
-  : { kind: 'kit' as const, name: item.kit.name, box: item.kit.box, slugs: item.kit.slugs, message: item.kit.message, quantity: item.quantity }))
+export const toCheckoutItems = (items: CartItem[]) =>
+  items.map((item) =>
+    item.kind === 'product'
+      ? { kind: 'product' as const, slug: item.slug, quantity: item.quantity }
+      : {
+          kind: 'kit' as const,
+          name: item.kit.name,
+          box: item.kit.box,
+          slugs: item.kit.slugs,
+          message: item.kit.message,
+          quantity: item.quantity,
+        },
+  )

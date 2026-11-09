@@ -5,9 +5,10 @@ import { MagnifyingGlass } from '@phosphor-icons/react/dist/ssr'
 import { ProductCard } from '@/components/product/product-card'
 import { SortSelect } from '@/components/catalog/sort-select'
 import { Button } from '@/components/ui/button'
-import { LINES, filterProducts, type Line } from '@/data/products'
-import { getCatalog } from '@/lib/catalog'
+import { LINES, filterProducts } from '@/data/products'
+import { getCatalog } from '@/lib/server/catalog'
 import { cn } from '@/lib/utils'
+import type { Line } from '@/types/product'
 
 type Search = { linha?: string; busca?: string; ordem?: string }
 
@@ -37,49 +38,77 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
   const line = (linha && linha in LINES ? linha : 'todos') as Line | 'todos'
   const { products } = await getCatalog()
   const list = filterProducts(products, { line: line === 'todos' ? undefined : line, search: busca, sort: ordem })
-  const tabs = [{ value: 'todos', label: 'Todos' }, ...Object.entries(LINES).map(([value, label]) => ({ value, label }))]
-  const count = (value: string) => (value === 'todos' ? products.length : products.filter((product) => product.line === value).length)
+  const tabs = [
+    { value: 'todos', label: 'Todos' },
+    ...Object.entries(LINES).map(([value, label]) => ({ value, label })),
+  ]
+  const count = (value: string) =>
+    value === 'todos' ? products.length : products.filter((product) => product.line === value).length
 
   return (
-    <div className="mx-auto max-w-7xl px-5 pb-20 pt-8 md:px-8 md:pt-12">
+    <div className="mx-auto max-w-7xl px-5 pt-8 pb-20 md:px-8 md:pt-12">
       <nav aria-label="Navegação estrutural" className="text-sm text-muted-foreground">
-        <Link href="/" className="hover:text-foreground">Início</Link> <span aria-hidden="true">/</span>{' '}
+        <Link href="/" className="hover:text-foreground">
+          Início
+        </Link>{' '}
+        <span aria-hidden="true">/</span>{' '}
         <span className="text-foreground">{line === 'todos' ? 'Chocolates' : LINES[line]}</span>
       </nav>
       <header className="mt-4 flex flex-col gap-3">
-        <h1 className="font-display text-5xl font-extrabold tracking-[-0.03em] md:text-6xl">
+        <h1 className="font-display text-5xl font-extrabold tracking-display md:text-6xl">
           {busca ? <>Busca: “{busca}”</> : line === 'todos' ? 'Chocolates' : LINES[line]}
         </h1>
         <p className="max-w-xl text-muted-foreground">{intro[line]}</p>
       </header>
 
       <div className="sticky top-20 z-20 -mx-5 mt-8 flex flex-col gap-3 border-y bg-background/95 px-5 py-3 backdrop-blur md:-mx-8 md:flex-row md:items-center md:justify-between md:px-8 lg:top-32">
-        <div className="flex gap-2 overflow-x-auto [scrollbar-width:none]">
+        <div className="flex [scrollbar-width:none] gap-2 overflow-x-auto">
           {tabs.map((tab) => {
             const active = line === tab.value
             const href = tab.value === 'todos' ? '/produtos' : `/produtos?linha=${tab.value}`
             return (
-              <Link key={tab.value} href={href} aria-current={active ? 'page' : undefined} className={cn('flex h-10 shrink-0 items-center gap-2 rounded-full border px-4 text-sm font-semibold transition-colors', active ? 'border-foreground bg-foreground text-background' : 'hover:border-foreground')}>
-                {tab.label} <span className={cn('text-xs', active ? 'text-background/70' : 'text-muted-foreground')}>{count(tab.value)}</span>
+              <Link
+                key={tab.value}
+                href={href}
+                aria-current={active ? 'page' : undefined}
+                className={cn(
+                  'flex h-10 shrink-0 items-center gap-2 rounded-full border px-4 text-sm font-semibold transition-colors',
+                  active ? 'border-foreground bg-foreground text-background' : 'hover:border-foreground',
+                )}
+              >
+                {tab.label}{' '}
+                <span className={cn('text-xs', active ? 'text-background/70' : 'text-muted-foreground')}>
+                  {count(tab.value)}
+                </span>
               </Link>
             )
           })}
         </div>
-        <Suspense><SortSelect /></Suspense>
+        <Suspense>
+          <SortSelect />
+        </Suspense>
       </div>
 
-      <p className="mt-6 text-sm text-muted-foreground">{list.length} {list.length === 1 ? 'chocolate' : 'chocolates'}</p>
+      <p className="mt-6 text-sm text-muted-foreground">
+        {list.length} {list.length === 1 ? 'chocolate' : 'chocolates'}
+      </p>
 
       {list.length === 0 ? (
         <div className="flex flex-col items-center gap-4 py-24 text-center">
-          <span className="grid size-20 place-items-center rounded-full bg-secondary"><MagnifyingGlass size={34} weight="duotone" /></span>
+          <span className="grid size-20 place-items-center rounded-full bg-secondary">
+            <MagnifyingGlass size={34} weight="duotone" />
+          </span>
           <h2 className="font-display text-2xl font-bold">Nenhum chocolate encontrado</h2>
           <p className="text-muted-foreground">Tente outro termo ou veja todos os sabores.</p>
-          <Button asChild><Link href="/produtos">Ver todos</Link></Button>
+          <Button asChild>
+            <Link href="/produtos">Ver todos</Link>
+          </Button>
         </div>
       ) : (
         <div className="mt-6 grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-3 lg:grid-cols-4">
-          {list.map((product) => <ProductCard key={product.slug} product={product} />)}
+          {list.map((product) => (
+            <ProductCard key={product.slug} product={product} />
+          ))}
         </div>
       )}
     </div>

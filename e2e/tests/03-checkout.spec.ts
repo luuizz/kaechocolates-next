@@ -1,4 +1,16 @@
-import { api, emailsTo, expect, fillAddress, mercadoPagoLog, signUp, sql, test, text, uniqueEmail } from './helpers'
+import {
+  api,
+  emailsTo,
+  expect,
+  fillAddress,
+  mercadoPagoLog,
+  signUp,
+  sql,
+  test,
+  text,
+  uniqueEmail,
+  sqlOne,
+} from './helpers'
 
 test.describe('Checkout', () => {
   test('Pix do início ao fim, com frete e desconto calculados no servidor', async ({ page }) => {
@@ -32,14 +44,20 @@ test.describe('Checkout', () => {
     await expect(page.locator('header button[aria-label^="Abrir sacola"]')).toContainText('0')
     // No modo de teste o Pix é aprovado sozinho e a página se atualiza
     await expect(page.getByText('Obrigado pela compra!')).toBeVisible({ timeout: 20_000 })
-    expect((await sql<{ status: string; total: string }>('select status, total from public.orders where code = $1', [code]))[0]).toEqual({ status: 'paid', total: '243.10' })
+    expect(
+      (
+        await sql<{ status: string; total: string }>('select status, total from public.orders where code = $1', [code])
+      )[0],
+    ).toEqual({ status: 'paid', total: '243.10' })
 
     const sent = (await mercadoPagoLog()).filter((entry) => entry.type === 'order').at(-1)!
     expect(sent.body.total_amount).toBe('243.10')
     expect(sent.body.payer?.first_name).toBe('APRO')
 
     // E-mails: pedido recebido (com o Pix) e pagamento aprovado, cada um uma vez só
-    await expect.poll(async () => (await emailsTo(email)).map((mail) => mail.subject)).toEqual(expect.arrayContaining([`Recebemos seu pedido ${code}`, `Pagamento aprovado · pedido ${code}`]))
+    await expect
+      .poll(async () => (await emailsTo(email)).map((mail) => mail.subject))
+      .toEqual(expect.arrayContaining([`Recebemos seu pedido ${code}`, `Pagamento aprovado · pedido ${code}`]))
     await page.reload()
     await page.waitForTimeout(1500)
     const mails = await emailsTo(email)
@@ -57,23 +75,40 @@ test.describe('Checkout', () => {
     await page.getByRole('button', { name: 'Novo endereço' }).click()
     await fillAddress(page)
     await expect(page.locator('main')).toContainText('Praça Marechal Deodoro')
-    const [{ id: addressId }] = await sql<{ id: string }>('select a.id from public.addresses a join public.profiles p on p.id = a.user_id where p.email = $1', [email])
+    const { id: addressId } = await sqlOne<{ id: string }>(
+      'select a.id from public.addresses a join public.profiles p on p.id = a.user_id where p.email = $1',
+      [email],
+    )
 
     await sql("update public.products set stock = 3 where slug = 'cafezinho-64'")
     const items = [{ kind: 'product', slug: 'cafezinho-64', quantity: 1 }]
     const base = { items, addressId: Number(addressId), cpf: '12345678909' }
 
-    let response = await api(page, '/api/checkout', { ...base, method: 'card', card: { token: 'tok', paymentMethodId: 'master', installments: 3 } })
+    let response = await api(page, '/api/checkout', {
+      ...base,
+      method: 'card',
+      card: { token: 'tok', paymentMethodId: 'master', installments: 3 },
+    })
     expect(response.status).toBe(201)
     expect(response.body.order.status).toBe('paid')
 
-    response = await api(page, '/api/checkout', { ...base, method: 'card', card: { token: 'rejeitar', paymentMethodId: 'master', installments: 1 } })
+    response = await api(page, '/api/checkout', {
+      ...base,
+      method: 'card',
+      card: { token: 'rejeitar', paymentMethodId: 'master', installments: 1 },
+    })
     expect(response.status).toBe(402)
     expect(response.body.error).toContain('limite')
     // Recusado: o estoque reservado volta
-    expect((await sql<{ stock: number }>("select stock from public.products where slug = 'cafezinho-64'"))[0].stock).toBe(2)
+    expect(
+      (await sqlOne<{ stock: number }>("select stock from public.products where slug = 'cafezinho-64'")).stock,
+    ).toBe(2)
 
-    response = await api(page, '/api/checkout', { ...base, items: [{ kind: 'product', slug: 'cafezinho-64', quantity: 5 }], method: 'pix' })
+    response = await api(page, '/api/checkout', {
+      ...base,
+      items: [{ kind: 'product', slug: 'cafezinho-64', quantity: 5 }],
+      method: 'pix',
+    })
     expect(response.status).toBe(409)
     expect(response.body.error).toContain('Só temos 2')
 

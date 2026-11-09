@@ -1,3 +1,4 @@
+import 'server-only'
 import { createHmac, randomUUID, timingSafeEqual } from 'node:crypto'
 
 // Integração com a API de Orders do Mercado Pago (Checkout Transparente).
@@ -10,13 +11,30 @@ export type MpPayment = {
   status: string
   status_detail: string
   amount: string
-  payment_method: { id: string; type: string; installments?: number; qr_code?: string; qr_code_base64?: string; ticket_url?: string }
+  payment_method: {
+    id: string
+    type: string
+    installments?: number
+    qr_code?: string
+    qr_code_base64?: string
+    ticket_url?: string
+  }
   date_of_expiration?: string
 }
-export type MpOrder = { id: string; status: string; status_detail: string; external_reference: string; transactions?: { payments?: MpPayment[] } }
+export type MpOrder = {
+  id: string
+  status: string
+  status_detail: string
+  external_reference: string
+  transactions?: { payments?: MpPayment[] }
+}
 
 export class MpError extends Error {
-  constructor(message: string, public status: number, public details?: unknown) {
+  constructor(
+    message: string,
+    public status: number,
+    public details?: unknown,
+  ) {
     super(message)
   }
 }
@@ -30,7 +48,12 @@ function token() {
 async function call<T>(url: string, init: RequestInit): Promise<T> {
   const response = await fetch(url, {
     ...init,
-    headers: { Accept: 'application/json', 'Content-Type': 'application/json', Authorization: `Bearer ${token()}`, ...init.headers },
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token()}`,
+      ...init.headers,
+    },
     cache: 'no-store',
   })
   const body = await response.json().catch(() => ({}))
@@ -44,13 +67,40 @@ async function call<T>(url: string, init: RequestInit): Promise<T> {
 type Payer = { email: string; firstName: string; lastName?: string; cpf: string }
 type Method =
   | { kind: 'pix' }
-  | { kind: 'card'; token: string; paymentMethodId: string; paymentTypeId?: 'credit_card' | 'debit_card'; installments: number }
+  | {
+      kind: 'card'
+      token: string
+      paymentMethodId: string
+      paymentTypeId?: 'credit_card' | 'debit_card'
+      installments: number
+    }
 
-export async function createMpOrder({ reference, amount, payer, method, idempotencyKey }: { reference: string; amount: number; payer: Payer; method: Method; idempotencyKey?: string }) {
+export async function createMpOrder({
+  reference,
+  amount,
+  payer,
+  method,
+  idempotencyKey,
+}: {
+  reference: string
+  amount: number
+  payer: Payer
+  method: Method
+  idempotencyKey?: string
+}) {
   const value = amount.toFixed(2)
-  const payment = method.kind === 'pix'
-    ? { amount: value, payment_method: { id: 'pix', type: 'bank_transfer' }, expiration_time: 'PT30M' }
-    : { amount: value, payment_method: { id: method.paymentMethodId, type: method.paymentTypeId ?? 'credit_card', token: method.token, installments: method.installments } }
+  const payment =
+    method.kind === 'pix'
+      ? { amount: value, payment_method: { id: 'pix', type: 'bank_transfer' }, expiration_time: 'PT30M' }
+      : {
+          amount: value,
+          payment_method: {
+            id: method.paymentMethodId,
+            type: method.paymentTypeId ?? 'credit_card',
+            token: method.token,
+            installments: method.installments,
+          },
+        }
 
   return call<MpOrder>(API, {
     method: 'POST',
@@ -130,8 +180,22 @@ export type MpAuthorizedPayment = {
   payment?: { id: number; status: string; status_detail?: string }
 }
 
-export async function createPreapproval({ reference, reason, amount, months, payerEmail, cardToken, backUrl }: {
-  reference: string; reason: string; amount: number; months: number; payerEmail: string; cardToken: string; backUrl: string
+export async function createPreapproval({
+  reference,
+  reason,
+  amount,
+  months,
+  payerEmail,
+  cardToken,
+  backUrl,
+}: {
+  reference: string
+  reason: string
+  amount: number
+  months: number
+  payerEmail: string
+  cardToken: string
+  backUrl: string
 }) {
   return call<MpPreapproval>(`${BASE}/preapproval`, {
     method: 'POST',
@@ -142,18 +206,28 @@ export async function createPreapproval({ reference, reason, amount, months, pay
       card_token_id: cardToken,
       back_url: backUrl,
       status: 'authorized',
-      auto_recurring: { frequency: months, frequency_type: 'months', transaction_amount: Number(amount.toFixed(2)), currency_id: 'BRL' },
+      auto_recurring: {
+        frequency: months,
+        frequency_type: 'months',
+        transaction_amount: Number(amount.toFixed(2)),
+        currency_id: 'BRL',
+      },
     }),
   })
 }
 
-export const getPreapproval = (id: string) => call<MpPreapproval>(`${BASE}/preapproval/${encodeURIComponent(id)}`, { method: 'GET' })
+export const getPreapproval = (id: string) =>
+  call<MpPreapproval>(`${BASE}/preapproval/${encodeURIComponent(id)}`, { method: 'GET' })
 
 export async function setPreapprovalStatus(id: string, status: 'authorized' | 'paused' | 'cancelled') {
-  return call<MpPreapproval>(`${BASE}/preapproval/${encodeURIComponent(id)}`, { method: 'PUT', body: JSON.stringify({ status }) })
+  return call<MpPreapproval>(`${BASE}/preapproval/${encodeURIComponent(id)}`, {
+    method: 'PUT',
+    body: JSON.stringify({ status }),
+  })
 }
 
-export const getAuthorizedPayment = (id: string) => call<MpAuthorizedPayment>(`${BASE}/authorized_payments/${encodeURIComponent(id)}`, { method: 'GET' })
+export const getAuthorizedPayment = (id: string) =>
+  call<MpAuthorizedPayment>(`${BASE}/authorized_payments/${encodeURIComponent(id)}`, { method: 'GET' })
 
 export const preapprovalSnapshot = (pre: MpPreapproval) => ({
   mp_preapproval_id: pre.id,
@@ -164,5 +238,7 @@ export const preapprovalSnapshot = (pre: MpPreapproval) => ({
 
 // Na conta de teste, o pagador precisa ser um usuário de teste do Mercado Pago
 export function payerEmailFor(email: string) {
-  return process.env.MERCADOPAGO_TEST_MODE === 'true' && process.env.MERCADOPAGO_TEST_PAYER_EMAIL ? process.env.MERCADOPAGO_TEST_PAYER_EMAIL : email
+  return process.env.MERCADOPAGO_TEST_MODE === 'true' && process.env.MERCADOPAGO_TEST_PAYER_EMAIL
+    ? process.env.MERCADOPAGO_TEST_PAYER_EMAIL
+    : email
 }

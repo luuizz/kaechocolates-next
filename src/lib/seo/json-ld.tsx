@@ -1,6 +1,6 @@
 import { brand } from '@/config/brand'
-import type { Product } from '@/data/products'
 import { LINES } from '@/data/products'
+import type { Product } from '@/types/product'
 
 // Dados estruturados (schema.org) para o Google entender loja, produtos e perguntas
 
@@ -8,7 +8,12 @@ export const absolute = (path: string) => (path.startsWith('http') ? path : `${b
 
 export function JsonLd({ data }: { data: Record<string, unknown> | Record<string, unknown>[] }) {
   // "<" escapado para o JSON nunca fechar a tag <script> antes da hora
-  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data).replace(/</g, '\\u003c') }} />
+  return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(data).replace(/</g, '\\u003c') }}
+    />
+  )
 }
 
 const organizationId = `${brand.url}/#organizacao`
@@ -72,11 +77,20 @@ export const productLd = (product: Product) => ({
 export const breadcrumbs = (items: { name: string; path: string }[]) => ({
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
-  itemListElement: items.map((item, index) => ({ '@type': 'ListItem', position: index + 1, name: item.name, item: absolute(item.path) })),
+  itemListElement: items.map((item, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    name: item.name,
+    item: absolute(item.path),
+  })),
 })
 
 export const faqPage = (items: { q: string; a: string }[]) => ({
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
-  mainEntity: items.map((item) => ({ '@type': 'Question', name: item.q, acceptedAnswer: { '@type': 'Answer', text: item.a } })),
+  mainEntity: items.map((item) => ({
+    '@type': 'Question',
+    name: item.q,
+    acceptedAnswer: { '@type': 'Answer', text: item.a },
+  })),
 })

@@ -21,7 +21,8 @@ import { startMercadoPago } from './mercadopago.mjs'
 const root = fileURLToPath(new URL('../..', import.meta.url))
 const adminUrl = new URL(process.env.E2E_DATABASE_URL ?? 'postgres://postgres:postgres@localhost:5432/postgres')
 const dbName = 'kae_e2e'
-const dbUrl = new URL(adminUrl); dbUrl.pathname = `/${dbName}`
+const dbUrl = new URL(adminUrl)
+dbUrl.pathname = `/${dbName}`
 const children = []
 
 const log = (message) => console.log(`[e2e] ${message}`)
@@ -59,13 +60,19 @@ async function resetDatabase() {
 function run(command, args, env = {}) {
   return new Promise((resolve, reject) => {
     const child = spawn(command, args, { cwd: root, stdio: 'inherit', env: { ...process.env, ...env } })
-    child.on('exit', (code) => (code === 0 ? resolve() : reject(new Error(`${command} ${args.join(' ')} saiu com ${code}`))))
+    child.on('exit', (code) =>
+      code === 0 ? resolve() : reject(new Error(`${command} ${args.join(' ')} saiu com ${code}`)),
+    )
   })
 }
 
 async function waitFor(url, label, tries = 60) {
   for (let i = 0; i < tries; i++) {
-    try { if ((await fetch(url)).status < 500) return } catch { /* ainda subindo */ }
+    try {
+      if ((await fetch(url)).status < 500) return
+    } catch {
+      /* ainda subindo */
+    }
     await new Promise((resolve) => setTimeout(resolve, 500))
   }
   throw new Error(`${label} não respondeu em ${url}`)
@@ -82,18 +89,23 @@ async function main() {
 
   // PostgREST valida os JWTs com as chaves públicas do auth
   const jwks = await auth.jwks()
-  const pgrstUrl = new URL(dbUrl); pgrstUrl.username = 'e2e_authenticator'; pgrstUrl.password = 'e2e'
+  const pgrstUrl = new URL(dbUrl)
+  pgrstUrl.username = 'e2e_authenticator'
+  pgrstUrl.password = 'e2e'
   const dir = mkdtempSync(join(tmpdir(), 'kae-e2e-'))
   const conf = join(dir, 'postgrest.conf')
-  writeFileSync(conf, [
-    `db-uri = "${pgrstUrl}"`,
-    'db-schemas = "public"',
-    'db-anon-role = "anonymous"',
-    `jwt-secret = ${JSON.stringify(JSON.stringify(jwks))}`,
-    'server-host = "127.0.0.1"',
-    'server-port = 3001',
-    'db-channel-enabled = true',
-  ].join('\n'))
+  writeFileSync(
+    conf,
+    [
+      `db-uri = "${pgrstUrl}"`,
+      'db-schemas = "public"',
+      'db-anon-role = "anonymous"',
+      `jwt-secret = ${JSON.stringify(JSON.stringify(jwks))}`,
+      'server-host = "127.0.0.1"',
+      'server-port = 3001',
+      'db-channel-enabled = true',
+    ].join('\n'),
+  )
   const postgrest = spawn(process.env.POSTGREST_BIN ?? 'postgrest', [conf], { stdio: 'inherit' })
   children.push(postgrest)
   await waitFor('http://127.0.0.1:3001/', 'PostgREST')
@@ -105,7 +117,13 @@ async function main() {
   log('pronto em http://localhost:54321 (health: /health)')
 }
 
-const stop = () => { for (const child of children) child.kill(); process.exit(0) }
+const stop = () => {
+  for (const child of children) child.kill()
+  process.exit(0)
+}
 process.on('SIGINT', stop)
 process.on('SIGTERM', stop)
-main().catch((error) => { console.error(error); stop() })
+main().catch((error) => {
+  console.error(error)
+  stop()
+})

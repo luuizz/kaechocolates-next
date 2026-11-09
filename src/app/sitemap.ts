@@ -1,12 +1,16 @@
 import type { MetadataRoute } from 'next'
 import { brand } from '@/config/brand'
 import { LINES } from '@/data/products'
-import { getCatalog } from '@/lib/catalog'
+import { getCatalog } from '@/lib/server/catalog'
 
 // Páginas públicas + uma entrada por barra do catálogo (atualiza junto com o painel)
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const { products } = await getCatalog()
-  const page = (path: string, priority: number, changeFrequency: MetadataRoute.Sitemap[number]['changeFrequency'] = 'monthly') => ({ url: `${brand.url}${path}`, priority, changeFrequency })
+  const page = (
+    path: string,
+    priority: number,
+    changeFrequency: MetadataRoute.Sitemap[number]['changeFrequency'] = 'monthly',
+  ) => ({ url: `${brand.url}${path}`, priority, changeFrequency })
 
   return [
     page('', 1, 'weekly'),

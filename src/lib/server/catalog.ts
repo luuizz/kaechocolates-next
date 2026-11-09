@@ -1,18 +1,14 @@
+import 'server-only'
 import { unstable_cache } from 'next/cache'
-import { FALLBACK_PRODUCTS, type Product } from '@/data/products'
-import { FALLBACK_BOXES, type Box } from '@/data/kits'
-import { FALLBACK_PERIODS, FALLBACK_PLANS, type Period, type Plan } from '@/data/club'
+import { FALLBACK_PRODUCTS } from '@/data/products'
+import { FALLBACK_BOXES } from '@/data/kits'
+import { FALLBACK_PERIODS, FALLBACK_PLANS } from '@/data/club'
 import { neonEnv } from '@/lib/env'
-import { productFromRow, type ProductRow } from '@/lib/catalog-rows'
-
-export type Catalog = {
-  products: Product[]
-  boxes: Box[]
-  plans: Plan[]
-  periods: Period[]
-  /** de onde veio: banco ou lista reserva do código */
-  source: 'db' | 'fallback'
-}
+import { productFromRow } from '@/lib/catalog-rows'
+import type { Catalog } from '@/types/catalog'
+import type { Period, Plan } from '@/types/club'
+import type { Box } from '@/types/kit'
+import type { ProductRow } from '@/types/product'
 
 export const CATALOG_TAG = 'catalog'
 
@@ -39,8 +35,11 @@ async function loadCatalog(): Promise<Catalog> {
 
   try {
     const token = await anonymousToken(authUrl)
-    const get = async <T,>(path: string): Promise<T[]> => {
-      const response = await fetch(`${dataApiUrl}/${path}`, { headers: { Authorization: `Bearer ${token}` }, cache: 'no-store' })
+    const get = async <T>(path: string): Promise<T[]> => {
+      const response = await fetch(`${dataApiUrl}/${path}`, {
+        headers: { Authorization: `Bearer ${token}` },
+        cache: 'no-store',
+      })
       if (!response.ok) throw new Error(`${path}: HTTP ${response.status} ${await response.text()}`)
       return response.json()
     }
@@ -48,14 +47,22 @@ async function loadCatalog(): Promise<Catalog> {
     const [products, boxes, plans, periods] = await Promise.all([
       get<ProductRow>(`products?select=*&active=is.true&${order},id.asc`),
       get<Box & { discount: number | string }>(`kit_boxes?select=id,name,size,discount,note&active=is.true&${order}`),
-      get<Plan & { price: number | string }>(`club_plans?select=id,name,bars,price,color,pitch,perks,featured&active=is.true&${order}`),
-      get<Period & { discount: number | string }>(`club_periods?select=id,label,months,discount,note&active=is.true&${order}`),
+      get<Plan & { price: number | string }>(
+        `club_plans?select=id,name,bars,price,color,pitch,perks,featured&active=is.true&${order}`,
+      ),
+      get<Period & { discount: number | string }>(
+        `club_periods?select=id,label,months,discount,note&active=is.true&${order}`,
+      ),
     ])
     return {
       products: products.map(productFromRow),
       boxes: boxes.map((box) => ({ ...box, discount: Number(box.discount), note: box.note ?? undefined })),
       plans: plans.map((plan) => ({ ...plan, price: Number(plan.price) })),
-      periods: periods.map((period) => ({ ...period, discount: Number(period.discount), note: period.note ?? undefined })),
+      periods: periods.map((period) => ({
+        ...period,
+        discount: Number(period.discount),
+        note: period.note ?? undefined,
+      })),
       source: 'db',
     }
   } catch (error) {

@@ -1,6 +1,7 @@
+import 'server-only'
 import { brand } from '@/config/brand'
 import { formatBRL } from '@/data/products'
-import type { OrderView } from '@/lib/orders'
+import type { OrderView } from '@/types/order'
 
 // Modelos dos e-mails automáticos. HTML em tabelas e estilos inline, porque é o que os
 // programas de e-mail (Gmail, Outlook, Apple Mail) entendem; sempre com versão em texto.
@@ -10,7 +11,8 @@ export type Email = { subject: string; html: string; text: string }
 const C = { ink: '#111111', muted: '#6b6b69', line: '#ebebeb', soft: '#f4f4f2', yellow: '#e8b630' }
 const FONT = "font-family:'Helvetica Neue',Helvetica,Arial,sans-serif"
 
-const escape = (value: string) => value.replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]!)
+const escape = (value: string) =>
+  value.replace(/[&<>"']/g, (char) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]!)
 const url = (path: string) => `${brand.url}${path}`
 const firstName = (name: string) => name.trim().split(/\s+/)[0] || 'chocólatra'
 
@@ -20,7 +22,17 @@ function button(label: string, href: string) {
   </td></tr></table>`
 }
 
-function layout({ preheader, accent = C.yellow, title, body }: { preheader: string; accent?: string; title: string; body: string }) {
+function layout({
+  preheader,
+  accent = C.yellow,
+  title,
+  body,
+}: {
+  preheader: string
+  accent?: string
+  title: string
+  body: string
+}) {
   const c = brand.contact
   return `<!doctype html>
 <html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>${escape(title)}</title></head>
@@ -48,15 +60,20 @@ function layout({ preheader, accent = C.yellow, title, body }: { preheader: stri
 const p = (html: string) => `<p style="margin:0 0 14px;font-size:16px;line-height:1.55">${html}</p>`
 
 function itemsTable(order: OrderView) {
-  const rows = order.items.map((item) => `<tr>
+  const rows = order.items
+    .map(
+      (item) => `<tr>
     <td style="padding:10px 0;border-bottom:1px solid ${C.line};font-size:14px;line-height:1.4">
       <strong>${escape(item.name)}</strong> <span style="color:${C.muted}">× ${item.quantity}</span>
       ${item.kit ? `<br><span style="color:${C.muted};font-size:13px">${escape(item.kit.names.join(', '))}</span>` : ''}
       ${item.kit?.message ? `<br><span style="color:${C.muted};font-size:13px;font-style:italic">Cartão: “${escape(item.kit.message)}”</span>` : ''}
     </td>
     <td align="right" style="padding:10px 0;border-bottom:1px solid ${C.line};font-size:14px;white-space:nowrap;vertical-align:top">${formatBRL(item.total)}</td>
-  </tr>`).join('')
-  const line = (label: string, value: string, strong = false) => `<tr><td style="padding:4px 0;font-size:${strong ? 16 : 14}px;${strong ? 'font-weight:800' : `color:${C.muted}`}">${label}</td><td align="right" style="padding:4px 0;font-size:${strong ? 18 : 14}px;${strong ? 'font-weight:800' : ''}">${value}</td></tr>`
+  </tr>`,
+    )
+    .join('')
+  const line = (label: string, value: string, strong = false) =>
+    `<tr><td style="padding:4px 0;font-size:${strong ? 16 : 14}px;${strong ? 'font-weight:800' : `color:${C.muted}`}">${label}</td><td align="right" style="padding:4px 0;font-size:${strong ? 18 : 14}px;${strong ? 'font-weight:800' : ''}">${value}</td></tr>`
   return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:20px 0 4px">${rows}
     <tr><td colspan="2" style="height:10px"></td></tr>
     ${line('Produtos', formatBRL(order.subtotal))}
@@ -75,11 +92,12 @@ function addressBlock(order: OrderView) {
   </div>`
 }
 
-const itemsText = (order: OrderView) => [
-  ...order.items.map((item) => `- ${item.name} × ${item.quantity}: ${formatBRL(item.total)}`),
-  `Frete: ${order.shipping === 0 ? 'grátis' : formatBRL(order.shipping)}`,
-  `Total: ${formatBRL(order.total)}`,
-].join('\n')
+const itemsText = (order: OrderView) =>
+  [
+    ...order.items.map((item) => `- ${item.name} × ${item.quantity}: ${formatBRL(item.total)}`),
+    `Frete: ${order.shipping === 0 ? 'grátis' : formatBRL(order.shipping)}`,
+    `Total: ${formatBRL(order.total)}`,
+  ].join('\n')
 
 // Pix gerado, aguardando pagamento
 export function orderReceived(order: OrderView): Email {
@@ -89,10 +107,16 @@ export function orderReceived(order: OrderView): Email {
     html: layout({
       preheader: `Falta só pagar o Pix de ${formatBRL(order.total)}.`,
       title: 'Pedido recebido!',
-      body: p(`Oi, ${escape(firstName(order.customer.name))}! Seu pedido <strong>${order.code}</strong> está reservado. Falta só pagar o Pix: o código vale por 30 minutos.`)
-        + (order.pix_qr_code ? `<div style="margin:16px 0 0;padding:14px 16px;background:${C.soft};border-radius:12px;font-family:Menlo,Consolas,monospace;font-size:12px;line-height:1.5;word-break:break-all">${escape(order.pix_qr_code)}</div><p style="margin:8px 0 0;font-size:13px;color:${C.muted}">Copie o código acima e cole no app do seu banco, em Pix copia e cola.</p>` : '')
-        + button('Ver QR Code do Pix', link)
-        + itemsTable(order) + addressBlock(order),
+      body:
+        p(
+          `Oi, ${escape(firstName(order.customer.name))}! Seu pedido <strong>${order.code}</strong> está reservado. Falta só pagar o Pix: o código vale por 30 minutos.`,
+        ) +
+        (order.pix_qr_code
+          ? `<div style="margin:16px 0 0;padding:14px 16px;background:${C.soft};border-radius:12px;font-family:Menlo,Consolas,monospace;font-size:12px;line-height:1.5;word-break:break-all">${escape(order.pix_qr_code)}</div><p style="margin:8px 0 0;font-size:13px;color:${C.muted}">Copie o código acima e cole no app do seu banco, em Pix copia e cola.</p>`
+          : '') +
+        button('Ver QR Code do Pix', link) +
+        itemsTable(order) +
+        addressBlock(order),
     }),
     text: `Oi, ${firstName(order.customer.name)}! Recebemos seu pedido ${order.code}. Falta só pagar o Pix (vale por 30 minutos).\n\n${order.pix_qr_code ? `Pix copia e cola:\n${order.pix_qr_code}\n\n` : ''}QR Code e andamento: ${link}\n\n${itemsText(order)}`,
   }
@@ -106,10 +130,14 @@ export function orderPaid(order: OrderView): Email {
       preheader: 'Já estamos separando suas barras.',
       accent: '#3aa55a',
       title: 'Pagamento aprovado!',
-      body: p(`Oba, ${escape(firstName(order.customer.name))}! O pagamento do pedido <strong>${order.code}</strong> foi confirmado. Agora a gente separa e embala suas barras com todo o cuidado (e axé).`)
-        + p('Quando o pedido sair, você recebe outro e-mail com o código de rastreio.')
-        + button('Acompanhar pedido', link)
-        + itemsTable(order) + addressBlock(order),
+      body:
+        p(
+          `Oba, ${escape(firstName(order.customer.name))}! O pagamento do pedido <strong>${order.code}</strong> foi confirmado. Agora a gente separa e embala suas barras com todo o cuidado (e axé).`,
+        ) +
+        p('Quando o pedido sair, você recebe outro e-mail com o código de rastreio.') +
+        button('Acompanhar pedido', link) +
+        itemsTable(order) +
+        addressBlock(order),
     }),
     text: `Oba, ${firstName(order.customer.name)}! O pagamento do pedido ${order.code} foi aprovado. Quando sair para entrega, mandamos o rastreio.\n\nAcompanhe: ${link}\n\n${itemsText(order)}`,
   }
@@ -118,18 +146,25 @@ export function orderPaid(order: OrderView): Email {
 export function orderShipped(order: OrderView): Email {
   const link = url(`/pedido/${order.code}`)
   const tracking = order.tracking_code
-  const trackingUrl = tracking ? `https://rastreamento.correios.com.br/app/index.php?objeto=${encodeURIComponent(tracking)}` : link
+  const trackingUrl = tracking
+    ? `https://rastreamento.correios.com.br/app/index.php?objeto=${encodeURIComponent(tracking)}`
+    : link
   return {
     subject: `Seu pedido ${order.code} saiu para entrega`,
     html: layout({
       preheader: tracking ? `Código de rastreio: ${tracking}` : 'Seu chocolate está a caminho.',
       accent: '#e47a24',
       title: 'Seu chocolate está a caminho!',
-      body: p(`${escape(firstName(order.customer.name))}, o pedido <strong>${order.code}</strong> foi enviado.`)
-        + (tracking ? `<div style="margin:16px 0 0;padding:16px 18px;background:${C.soft};border-radius:16px"><span style="font-size:13px;color:${C.muted}">Código de rastreio</span><br><strong style="font-size:20px;letter-spacing:1px">${escape(tracking)}</strong></div>` : '')
-        + button(tracking ? 'Rastrear pedido' : 'Ver pedido', trackingUrl)
-        + p(`<span style="font-size:14px;color:${C.muted}">Chocolate gosta de lugar fresco: quando chegar, guarde longe do sol e do calor (entre 15 °C e 20 °C é o ideal).</span>`)
-        + addressBlock(order),
+      body:
+        p(`${escape(firstName(order.customer.name))}, o pedido <strong>${order.code}</strong> foi enviado.`) +
+        (tracking
+          ? `<div style="margin:16px 0 0;padding:16px 18px;background:${C.soft};border-radius:16px"><span style="font-size:13px;color:${C.muted}">Código de rastreio</span><br><strong style="font-size:20px;letter-spacing:1px">${escape(tracking)}</strong></div>`
+          : '') +
+        button(tracking ? 'Rastrear pedido' : 'Ver pedido', trackingUrl) +
+        p(
+          `<span style="font-size:14px;color:${C.muted}">Chocolate gosta de lugar fresco: quando chegar, guarde longe do sol e do calor (entre 15 °C e 20 °C é o ideal).</span>`,
+        ) +
+        addressBlock(order),
     }),
     text: `${firstName(order.customer.name)}, o pedido ${order.code} foi enviado.${tracking ? `\nRastreio: ${tracking}\n${trackingUrl}` : `\n${link}`}`,
   }
@@ -146,7 +181,11 @@ export type WelcomeSubscription = {
 
 export function clubWelcome(sub: WelcomeSubscription): Email {
   const link = url('/conta?aba=clube')
-  const next = sub.next_payment_date ? new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: 'long', timeZone: 'America/Sao_Paulo' }).format(new Date(sub.next_payment_date)) : null
+  const next = sub.next_payment_date
+    ? new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: 'long', timeZone: 'America/Sao_Paulo' }).format(
+        new Date(sub.next_payment_date),
+      )
+    : null
   const charge = `${formatBRL(sub.amount)} ${sub.period.months === 1 ? 'por mês' : `a cada ${sub.period.months} meses`}`
   return {
     subject: `Boas-vindas ao Clube ${brand.shortName}!`,
@@ -154,14 +193,19 @@ export function clubWelcome(sub: WelcomeSubscription): Email {
       preheader: `Plano ${sub.plan.name}: ${sub.plan.bars} barras por mês.`,
       accent: '#e2708e',
       title: 'Boas-vindas ao clube!',
-      body: p(`${escape(firstName(sub.customer.name))}, que alegria ter você com a gente. Todo mês chega uma caixa com barras da casa e edições limitadas que não vão para a loja.`)
-        + `<div style="margin:16px 0 0;padding:18px;background:${C.soft};border-radius:16px;font-size:14px;line-height:1.6">
+      body:
+        p(
+          `${escape(firstName(sub.customer.name))}, que alegria ter você com a gente. Todo mês chega uma caixa com barras da casa e edições limitadas que não vão para a loja.`,
+        ) +
+        `<div style="margin:16px 0 0;padding:18px;background:${C.soft};border-radius:16px;font-size:14px;line-height:1.6">
             <strong style="font-size:18px">${escape(sub.plan.name)}</strong> · ${escape(sub.period.label)}<br>
             ${sub.plan.bars} barras por mês · frete grátis<br>
             <span style="color:${C.muted}">Cobrança: ${charge}${next ? ` · próxima em ${next}` : ''}</span>
-          </div>`
-        + p('<br>As caixas saem na primeira quinzena de cada mês. Em Minha conta você acompanha as cobranças e pode pausar, retomar ou cancelar quando quiser.')
-        + button('Ver minha assinatura', link),
+          </div>` +
+        p(
+          '<br>As caixas saem na primeira quinzena de cada mês. Em Minha conta você acompanha as cobranças e pode pausar, retomar ou cancelar quando quiser.',
+        ) +
+        button('Ver minha assinatura', link),
     }),
     text: `${firstName(sub.customer.name)}, boas-vindas ao Clube ${brand.shortName}!\n\nPlano ${sub.plan.name} (${sub.period.label}): ${sub.plan.bars} barras por mês, frete grátis.\nCobrança: ${charge}${next ? `, próxima em ${next}` : ''}.\n\nGerencie em: ${link}`,
   }

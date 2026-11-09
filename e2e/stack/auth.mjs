@@ -17,21 +17,28 @@ export async function startAuth(databaseUrl) {
     trustedOrigins: ['http://localhost:3100', 'http://127.0.0.1:3100'],
     emailAndPassword: { enabled: true, sendResetPassword: async () => {} },
     advanced: { database: { generateId: 'uuid' }, defaultCookieAttributes: { sameSite: 'none', secure: true } },
-    plugins: [jwt({ jwks: { keyPairConfig: { alg: 'RS256' } }, jwt: { definePayload: ({ user }) => ({ email: user.email, role: 'authenticated' }) } })],
+    plugins: [
+      jwt({
+        jwks: { keyPairConfig: { alg: 'RS256' } },
+        jwt: { definePayload: ({ user }) => ({ email: user.email, role: 'authenticated' }) },
+      }),
+    ],
   })
 
   const { runMigrations } = await getMigrations(auth.options)
   await runMigrations()
 
   const handler = toNodeHandler(auth)
-  http.createServer(async (req, res) => {
-    if (req.url.startsWith('/neondb/auth/token/anonymous')) {
-      const { token } = await auth.api.signJWT({ body: { payload: { role: 'anonymous' } } })
-      res.writeHead(200, { 'Content-Type': 'application/json' })
-      return res.end(JSON.stringify({ token, expires_at: Math.floor(Date.now() / 1000) + 900 }))
-    }
-    return handler(req, res)
-  }).listen(4000, '127.0.0.1')
+  http
+    .createServer(async (req, res) => {
+      if (req.url.startsWith('/neondb/auth/token/anonymous')) {
+        const { token } = await auth.api.signJWT({ body: { payload: { role: 'anonymous' } } })
+        res.writeHead(200, { 'Content-Type': 'application/json' })
+        return res.end(JSON.stringify({ token, expires_at: Math.floor(Date.now() / 1000) + 900 }))
+      }
+      return handler(req, res)
+    })
+    .listen(4000, '127.0.0.1')
 
   return {
     // Gera a chave (se ainda não existe) e devolve as chaves públicas

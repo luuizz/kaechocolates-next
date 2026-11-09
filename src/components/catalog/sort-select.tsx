@@ -20,9 +20,13 @@ export function SortSelect() {
           else next.set('ordem', event.target.value)
           router.replace(`${pathname}${next.size ? `?${next}` : ''}`, { scroll: false })
         }}
-        className="h-10 cursor-pointer rounded-full border bg-background pl-4 pr-9 font-semibold outline-none focus:border-foreground focus:ring-4 focus:ring-foreground/10"
+        className="h-10 cursor-pointer rounded-full border bg-background pr-9 pl-4 font-semibold outline-none focus:border-foreground focus:ring-4 focus:ring-foreground/10"
       >
-        {Object.entries(SORTS).map(([key, label]) => <option key={key} value={key}>{label}</option>)}
+        {Object.entries(SORTS).map(([key, label]) => (
+          <option key={key} value={key}>
+            {label}
+          </option>
+        ))}
       </select>
     </label>
   )

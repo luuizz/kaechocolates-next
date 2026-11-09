@@ -1,6 +1,14 @@
+import 'server-only'
 import { brand } from '@/config/brand'
 import { db } from './db'
-import { clubWelcome, orderPaid, orderReceived, orderShipped, type Email, type WelcomeSubscription } from './email-templates'
+import {
+  clubWelcome,
+  orderPaid,
+  orderReceived,
+  orderShipped,
+  type Email,
+  type WelcomeSubscription,
+} from './email-templates'
 import { loadOrder } from './orders'
 
 // E-mails automáticos pelo Resend (resend.com). Sem RESEND_API_KEY, nada é enviado
@@ -18,19 +26,35 @@ async function send(kind: Kind, ref: string, to: string, email: Email) {
   if (!key || !to) return
 
   // Reserva o envio; se outra chamada já reservou (webhook e página ao mesmo tempo), para aqui
-  const { rowCount } = await db().query('insert into public.email_log (kind, ref, recipient) values ($1, $2, $3) on conflict (kind, ref) do nothing', [kind, ref, to])
+  const { rowCount } = await db().query(
+    'insert into public.email_log (kind, ref, recipient) values ($1, $2, $3) on conflict (kind, ref) do nothing',
+    [kind, ref, to],
+  )
   if (!rowCount) return
 
   try {
     const response = await fetch(API, {
       method: 'POST',
-      headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json', 'Idempotency-Key': `${kind}-${ref}` },
-      body: JSON.stringify({ from: FROM, to: [to], reply_to: REPLY_TO, subject: email.subject, html: email.html, text: email.text }),
+      headers: {
+        Authorization: `Bearer ${key}`,
+        'Content-Type': 'application/json',
+        'Idempotency-Key': `${kind}-${ref}`,
+      },
+      body: JSON.stringify({
+        from: FROM,
+        to: [to],
+        reply_to: REPLY_TO,
+        subject: email.subject,
+        html: email.html,
+        text: email.text,
+      }),
     })
     if (!response.ok) throw new Error(`Resend ${response.status}: ${await response.text()}`)
   } catch (error) {
     // Libera a reserva para tentar de novo no próximo aviso
-    await db().query('delete from public.email_log where kind = $1 and ref = $2', [kind, ref]).catch(() => {})
+    await db()
+      .query('delete from public.email_log where kind = $1 and ref = $2', [kind, ref])
+      .catch(() => {})
     console.error('[e-mail]', kind, ref, error)
   }
 }

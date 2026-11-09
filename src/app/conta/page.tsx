@@ -9,8 +9,10 @@ export default function Account() {
   return (
     <>
       <PageHeader title="Minha conta" />
-      <div className="mx-auto max-w-7xl px-5 pb-20 pt-10 md:px-8">
-        <Suspense><AccountPage /></Suspense>
+      <div className="mx-auto max-w-7xl px-5 pt-10 pb-20 md:px-8">
+        <Suspense>
+          <AccountPage />
+        </Suspense>
       </div>
     </>
   )

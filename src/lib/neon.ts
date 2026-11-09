@@ -14,7 +14,8 @@ type NeonClient = ReturnType<typeof createClient>
 let client: NeonClient | null = null
 
 export function getNeon(): NeonClient {
-  if (!isNeonConfigured) throw new Error('Login indisponível: faltam NEXT_PUBLIC_NEON_AUTH_URL e NEXT_PUBLIC_NEON_DATA_API_URL.')
+  if (!isNeonConfigured)
+    throw new Error('Login indisponível: faltam NEXT_PUBLIC_NEON_AUTH_URL e NEXT_PUBLIC_NEON_DATA_API_URL.')
   if (typeof window === 'undefined') throw new Error('O cliente do Neon só roda no navegador.')
   client ??= createClient({ auth: { url: authUrl, allowAnonymous: true }, dataApi: { url: dataApiUrl } })
   return client
@@ -38,7 +39,7 @@ type ErrorLike = { code?: string; message?: string } | string | null | undefined
 export function friendlyError(error: unknown): string {
   if (!error) return ''
   const err = error as ErrorLike
-  const message = typeof err === 'string' ? err : err?.message ?? String(error)
+  const message = typeof err === 'string' ? err : (err?.message ?? String(error))
   const code = typeof err === 'object' && err ? err.code : undefined
 
   const byCode: Record<string, string> = {
@@ -64,7 +65,8 @@ export function friendlyError(error: unknown): string {
     'Invalid password': 'Senha atual incorreta.',
     'User already exists': 'Já existe uma conta com este e-mail.',
     'Invalid token': 'O link expirou ou já foi usado. Peça um novo.',
-    'Invalid origin': 'Este endereço não está autorizado a fazer login. Adicione-o aos domínios confiáveis do Neon Auth.',
+    'Invalid origin':
+      'Este endereço não está autorizado a fazer login. Adicione-o aos domínios confiáveis do Neon Auth.',
     'Failed to fetch': 'Não foi possível conectar ao servidor. Verifique sua internet.',
   }
   for (const [key, value] of Object.entries(byMessage)) {
