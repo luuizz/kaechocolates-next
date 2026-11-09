@@ -10,18 +10,13 @@ import { OrderItems, OrderProgress, OrderShipping, StatusBadge } from '@/compone
 import { getOrder, notifyOrderChange, refreshStore, updateOrder } from '@/lib/admin-api'
 import { formatCpf } from '@/lib/cpf'
 import { getAccessToken } from '@/lib/neon'
-import { ORDER_STATUS, formatDateTime } from '@/lib/orders'
+import { formatDateTime } from '@/lib/orders'
 import { formatPhone } from '@/lib/utils'
 import { AdminHeader, Panel } from './admin-shell'
 import type { OrderStatus, OrderView } from '@/types/order'
 import { PageLoader } from '@/components/ui/page-loader'
-
-// Próximo passo sugerido para cada status (botão principal)
-const NEXT: Partial<Record<OrderStatus, OrderStatus>> = {
-  paid: 'preparing',
-  preparing: 'shipped',
-  shipped: 'delivered',
-}
+import { ORDER_STATUS } from '@/constants/orders'
+import { ORDER_NEXT_STATUS } from '@/constants/orders'
 
 export function OrderDetail({ code }: { code: string }) {
   const [order, setOrder] = useState<OrderView | null>(null)
@@ -92,7 +87,7 @@ export function OrderDetail({ code }: { code: string }) {
     setSyncing(false)
   }
 
-  const next = NEXT[order.status]
+  const next = ORDER_NEXT_STATUS[order.status]
   const c = order.customer
 
   return (

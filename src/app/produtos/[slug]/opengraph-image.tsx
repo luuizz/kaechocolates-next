@@ -1,8 +1,9 @@
 import { ImageResponse } from 'next/og'
 import { brand } from '@/config/brand'
-import { LINE_SINGULAR, findProduct, formatBRL } from '@/data/products'
+import { findProduct, formatBRL } from '@/data/products'
 import { getCatalog } from '@/lib/server/catalog'
 import { OG_SIZE, OgPackage, ogAsset, ogFonts } from '@/lib/seo/og'
+import { LINE_SINGULAR } from '@/constants/catalog'
 
 export const alt = 'Barra de chocolate Kaê'
 export const size = OG_SIZE

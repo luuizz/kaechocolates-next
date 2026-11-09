@@ -41,13 +41,21 @@ src/
     server/       código só de servidor (cada arquivo começa com import 'server-only'): banco, auth, catálogo, pedidos, Mercado Pago, e-mail
     seo/          JSON-LD e imagens OG
     validation/   schemas Zod da entrada das rotas (reaproveitáveis nos formulários)
-  config/         configuração estática (brand.ts concentra a identidade)
+  config/         configuração da marca e da loja (brand.ts concentra a identidade)
+  constants/      constantes de regra de negócio e compartilhadas: status, rótulos, limites, padrões, navegação
   data/           conteúdo estático (FAQ, textos, seeds de catálogo)
   types/          tipos compartilhados (ver "Tipagem")
 database/         migrations SQL; preço, frete e estoque são decididos por funções do Postgres
 ```
 
 Para dúvidas de estrutura, consultar as skills `nextjs-arquitetura` e `nextjs-qualidade`.
+
+## Constantes
+
+- Valor fixo que é regra de negócio ou aparece em mais de um lugar vai para `src/constants/<assunto>.ts` (`orders`, `club`, `catalog`, `limits`, `patterns`, `navigation`, `storage`, `address`).
+- Limites que valem no navegador e no servidor (tamanho de foto, itens por sacola, tamanho do recado) vêm sempre de `constants/limits.ts`, nunca de número solto.
+- Rótulos usados por uma única tela (colunas de tabela, filtros daquela lista) podem ficar no componente.
+- Tipos derivados de constantes ficam em `src/types/` com `import type` (ex.: `Sort`, `AccountTabId`).
 
 ## Componentes e arquivos TSX
 

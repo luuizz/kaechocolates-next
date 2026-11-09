@@ -1,18 +1,10 @@
 'use client'
 
 import Link from 'next/link'
-import { Gauge, IdentificationCard, Key, MapPin, Package, SignOut, Sparkle } from '@phosphor-icons/react'
+import { Gauge, SignOut } from '@phosphor-icons/react'
+import { ACCOUNT_TABS } from '@/constants/navigation'
 import { cn } from '@/lib/utils'
-
-export const ACCOUNT_TABS = [
-  { id: 'pedidos', label: 'Pedidos', icon: Package },
-  { id: 'clube', label: 'Clube', icon: Sparkle },
-  { id: 'enderecos', label: 'Endereços', icon: MapPin },
-  { id: 'dados', label: 'Meus dados', icon: IdentificationCard },
-  { id: 'senha', label: 'Senha', icon: Key },
-] as const
-
-export type AccountTabId = (typeof ACCOUNT_TABS)[number]['id']
+import type { AccountTabId } from '@/types/account'
 
 type AccountNavProps = { tab: AccountTabId; firstName: string; email: string; isAdmin: boolean; onSignOut: () => void }
 

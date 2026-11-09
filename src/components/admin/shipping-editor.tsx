@@ -3,7 +3,6 @@
 import { ArrowDown, ArrowUp, CircleNotch, Plus, Trash } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { Field, Input } from '@/components/ui/field'
-import { STATES } from '@/lib/address'
 import { brand } from '@/config/brand'
 import { formatBRL } from '@/data/products'
 import { listZones } from '@/lib/admin-api'
@@ -12,6 +11,7 @@ import { AdminHeader, Panel } from './admin-shell'
 import { useListEditor } from './list-editor'
 import { Switch } from './switch'
 import type { AdminZone } from '@/types/shipping'
+import { STATES } from '@/constants/address'
 
 const money = (value: string) => Number(value.replace(/\./g, '').replace(',', '.')) || 0
 

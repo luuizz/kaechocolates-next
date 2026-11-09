@@ -4,10 +4,10 @@ import Link from 'next/link'
 import { useState } from 'react'
 import { ArrowRight } from '@phosphor-icons/react'
 import { ProductCard } from '@/components/product/product-card'
-import { LINES } from '@/data/products'
 import { useCatalog } from '@/components/catalog/catalog-provider'
 import { cn } from '@/lib/utils'
 import type { Line } from '@/types/product'
+import { LINES } from '@/constants/catalog'
 
 const filters: Array<{ value: Line | 'todos'; label: string }> = [
   { value: 'todos', label: 'Todos' },

@@ -5,15 +5,8 @@ import { useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
 import { deleteImage, deleteProduct, getProduct, refreshStore, saveProduct, uploadImage } from '@/lib/admin-api'
 import { slugify } from '@/lib/utils'
-import {
-  draftFromProduct,
-  EMPTY_DRAFT,
-  inputFromDraft,
-  MAX_IMAGE,
-  validateDraft,
-  type Draft,
-  type SetField,
-} from './draft'
+import { draftFromProduct, EMPTY_DRAFT, inputFromDraft, validateDraft, type Draft, type SetField } from './draft'
+import { IMAGE_MAX_BYTES, IMAGE_TYPES } from '@/constants/limits'
 
 const message = (err: unknown, fallback: string) => (err instanceof Error ? err.message : fallback)
 
@@ -72,8 +65,8 @@ export function useProductEditor(id: number | null) {
 
   const uploadPhoto = async (file?: File | null) => {
     if (!file) return
-    if (!/^image\/(png|jpeg|webp|avif)$/.test(file.type)) return toast.error('Envie uma imagem PNG, JPG, WebP ou AVIF.')
-    if (file.size > MAX_IMAGE) return toast.error('A imagem deve ter no máximo 4 MB.')
+    if (!(file.type in IMAGE_TYPES)) return toast.error('Envie uma imagem PNG, JPG, WebP ou AVIF.')
+    if (file.size > IMAGE_MAX_BYTES) return toast.error('A imagem deve ter no máximo 4 MB.')
     setUploading(true)
     try {
       const url = await uploadImage(file)

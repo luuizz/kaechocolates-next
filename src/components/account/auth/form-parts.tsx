@@ -5,9 +5,6 @@ import { CircleNotch, Eye, EyeSlash } from '@phosphor-icons/react'
 import { Field, Input } from '@/components/ui/field'
 import { Button } from '@/components/ui/button'
 
-export const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-export const MIN_PASSWORD = 8
-
 // Só volta para caminhos internos (evita redirecionar para outro site)
 export function safeNext(value: string | null, fallback = '/conta') {
   return value && value.startsWith('/') && !value.startsWith('//') ? value : fallback

@@ -6,7 +6,9 @@ import { useState } from 'react'
 import { Field, FormMessage, Input } from '@/components/ui/field'
 import { useAuth } from '@/components/auth/auth-provider'
 import { AuthUnavailable } from '../auth-unavailable'
-import { EMAIL, MIN_PASSWORD, safeNext, PasswordField, Submit } from './form-parts'
+import { safeNext, PasswordField, Submit } from './form-parts'
+import { EMAIL_PATTERN } from '@/constants/patterns'
+import { PASSWORD_MIN } from '@/constants/limits'
 
 export function SignUpForm() {
   const auth = useAuth()
@@ -22,8 +24,8 @@ export function SignUpForm() {
 
   const errors = {
     name: form.name.trim().length < 2 ? 'Conta pra gente seu nome.' : null,
-    email: !EMAIL.test(form.email.trim()) ? 'Informe um e-mail válido.' : null,
-    password: form.password.length < MIN_PASSWORD ? `Use pelo menos ${MIN_PASSWORD} caracteres.` : null,
+    email: !EMAIL_PATTERN.test(form.email.trim()) ? 'Informe um e-mail válido.' : null,
+    password: form.password.length < PASSWORD_MIN ? `Use pelo menos ${PASSWORD_MIN} caracteres.` : null,
   }
 
   const submit = async (event: React.FormEvent) => {
@@ -79,7 +81,7 @@ export function SignUpForm() {
       </Field>
       <PasswordField
         label="Senha"
-        hint={`Pelo menos ${MIN_PASSWORD} caracteres.`}
+        hint={`Pelo menos ${PASSWORD_MIN} caracteres.`}
         error={tried ? errors.password : null}
         value={form.password}
         onChange={(password) => setForm({ ...form, password })}

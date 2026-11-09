@@ -4,6 +4,8 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState, t
 import { useCatalog } from '@/components/catalog/catalog-provider'
 import type { KitSpec } from '@/types/kit'
 import type { Product } from '@/types/product'
+import { CART_STORAGE_KEY } from '@/constants/storage'
+import { MAX_PER_ITEM } from '@/constants/limits'
 
 type ProductLine = { kind: 'product'; id: string; slug: string; quantity: number }
 type KitLine = { kind: 'kit'; id: string; quantity: number; kit: KitSpec }
@@ -27,8 +29,6 @@ type CartContextValue = {
 }
 
 const CartContext = createContext<CartContextValue | null>(null)
-const STORAGE_KEY = 'kae:sacola'
-export const MAX_PER_ITEM = 20
 
 const kitId = (kit: KitSpec) => `kit:${kit.box}:${[...kit.slugs].sort().join(',')}:${kit.message ?? ''}`
 
@@ -56,7 +56,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     try {
       // eslint-disable-next-line react-hooks/set-state-in-effect -- leitura única do navegador
-      setLines(restore(JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]')))
+      setLines(restore(JSON.parse(localStorage.getItem(CART_STORAGE_KEY) || '[]')))
     } catch {
       /* sem armazenamento: sacola começa vazia */
     }
@@ -66,7 +66,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!loaded) return
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(lines))
+      localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(lines))
     } catch {
       /* ignora */
     }
