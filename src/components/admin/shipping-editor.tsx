@@ -28,7 +28,8 @@ export function ShippingEditor() {
   )
 
   const toggleState = (index: number, uf: string) => {
-    const zone = list.rows![index]
+    const zone = list.rows?.[index]
+    if (!zone) return
     list.update(index, { states: zone.states.includes(uf) ? zone.states.filter((item) => item !== uf) : [...zone.states, uf] })
   }
 

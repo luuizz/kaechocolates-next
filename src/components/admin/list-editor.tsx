@@ -31,7 +31,10 @@ export function useListEditor<T extends { id: string; sort_order: number }>(
     const target = index + delta
     if (target < 0 || target >= current.length) return current
     const next = [...current]
-    ;[next[index], next[target]] = [next[target], next[index]]
+    const [from, to] = [next[index], next[target]]
+    if (from === undefined || to === undefined) return current
+    next[index] = to
+    next[target] = from
     return next
   })
 

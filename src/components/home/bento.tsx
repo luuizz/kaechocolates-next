@@ -29,7 +29,7 @@ export function Bento({ products }: { products: Product[] }) {
   const [a, b, c, d, e, f, g, h, i, j, k, l, m, n] = list
   // Barras decorativas dos blocos do clube e do kit (as que têm foto primeiro)
   const pool = [...products.filter((product) => product.image), ...products.filter((product) => !product.image && !product.soldOut)]
-  const deco = (index: number) => pool[index % Math.max(pool.length, 1)]
+  const deco = (...indexes: number[]) => (pool.length ? indexes.flatMap((index) => pool[index % pool.length] ?? []) : [])
 
   return (
     <section aria-label="Destaques" className="mx-auto max-w-7xl px-5 pt-6 md:px-8 md:pt-8">
@@ -43,10 +43,9 @@ export function Bento({ products }: { products: Product[] }) {
             Conhecer planos <ArrowUpRight weight="bold" className="transition-transform group-hover:rotate-45" />
           </span>
           <div className="absolute -bottom-6 -right-2 flex w-[42%] max-w-56 -rotate-6 transition-transform duration-500 group-hover:-rotate-2">
-            {pool.length > 1 && <>
-              <BarPackage product={deco(4)} className="w-1/2 translate-x-4" />
-              <BarPackage product={deco(6)} className="w-1/2 -translate-x-4 rotate-12" />
-            </>}
+            {pool.length > 1 && deco(4, 6).map((product, index) => (
+              <BarPackage key={`${product.slug}-${index}`} product={product} className={index === 0 ? 'w-1/2 translate-x-4' : 'w-1/2 -translate-x-4 rotate-12'} />
+            ))}
           </div>
         </Link>
 
@@ -59,7 +58,7 @@ export function Bento({ products }: { products: Product[] }) {
           <h2 className="mt-4 font-display text-4xl font-extrabold leading-display tracking-display">Monte seu kit</h2>
           <p className="mt-3 text-sm text-background/70">Escolha as barras, a caixa e o cartão. A gente embrulha com axé.</p>
           <div className="absolute -bottom-6 left-1/2 flex w-[110%] -translate-x-1/2 justify-center">
-            {pool.length > 2 && [deco(0), deco(2), deco(3)].map((product, index) => (
+            {pool.length > 2 && deco(0, 2, 3).map((product, index) => (
               <BarPackage key={`${product.slug}-${index}`} product={product} className={cn('-mx-6 w-1/2 transition-transform duration-500', index === 1 ? 'z-10 -translate-y-6 group-hover:-translate-y-10' : 'rotate-[-10deg] group-hover:rotate-[-14deg]', index === 2 && 'rotate-[10deg] group-hover:rotate-[14deg]')} />
             ))}
           </div>

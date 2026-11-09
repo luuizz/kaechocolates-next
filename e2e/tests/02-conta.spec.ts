@@ -1,4 +1,4 @@
-import { expect, fillAddress, signUp, sql, test, uniqueEmail } from './helpers'
+import { expect, fillAddress, signUp, sql, test, uniqueEmail, sqlOne } from './helpers'
 
 test.describe('Conta', () => {
   test('cadastro, endereço, dados, sair e entrar', async ({ page }) => {
@@ -26,7 +26,7 @@ test.describe('Conta', () => {
     await page.locator('input[autocomplete="tel-national"]').fill('35984773733')
     await page.getByRole('button', { name: 'Salvar' }).click()
     await expect(page.getByText('Dados salvos.')).toBeVisible()
-    expect((await sql<{ phone: string }>('select phone from public.profiles where email = $1', [email]))[0].phone).toBe('35984773733')
+    expect((await sqlOne<{ phone: string }>('select phone from public.profiles where email = $1', [email])).phone).toBe('35984773733')
 
     // Cliente não entra no painel
     await page.goto('/admin')

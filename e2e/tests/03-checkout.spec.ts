@@ -1,4 +1,4 @@
-import { api, emailsTo, expect, fillAddress, mercadoPagoLog, signUp, sql, test, text, uniqueEmail } from './helpers'
+import { api, emailsTo, expect, fillAddress, mercadoPagoLog, signUp, sql, test, text, uniqueEmail, sqlOne } from './helpers'
 
 test.describe('Checkout', () => {
   test('Pix do início ao fim, com frete e desconto calculados no servidor', async ({ page }) => {
@@ -57,7 +57,7 @@ test.describe('Checkout', () => {
     await page.getByRole('button', { name: 'Novo endereço' }).click()
     await fillAddress(page)
     await expect(page.locator('main')).toContainText('Praça Marechal Deodoro')
-    const [{ id: addressId }] = await sql<{ id: string }>('select a.id from public.addresses a join public.profiles p on p.id = a.user_id where p.email = $1', [email])
+    const { id: addressId } = await sqlOne<{ id: string }>('select a.id from public.addresses a join public.profiles p on p.id = a.user_id where p.email = $1', [email])
 
     await sql("update public.products set stock = 3 where slug = 'cafezinho-64'")
     const items = [{ kind: 'product', slug: 'cafezinho-64', quantity: 1 }]
@@ -71,7 +71,7 @@ test.describe('Checkout', () => {
     expect(response.status).toBe(402)
     expect(response.body.error).toContain('limite')
     // Recusado: o estoque reservado volta
-    expect((await sql<{ stock: number }>("select stock from public.products where slug = 'cafezinho-64'"))[0].stock).toBe(2)
+    expect((await sqlOne<{ stock: number }>("select stock from public.products where slug = 'cafezinho-64'")).stock).toBe(2)
 
     response = await api(page, '/api/checkout', { ...base, items: [{ kind: 'product', slug: 'cafezinho-64', quantity: 5 }], method: 'pix' })
     expect(response.status).toBe(409)

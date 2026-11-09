@@ -47,7 +47,7 @@ export async function POST(request: Request) {
       reference: code,
       amount: total,
       idempotencyKey: randomUUID(),
-      payer: { email: user.email ?? '', firstName: testMode && method === 'pix' ? 'APRO' : firstName, lastName: rest.join(' ') || undefined, cpf },
+      payer: { email: user.email ?? '', firstName: testMode && method === 'pix' ? 'APRO' : (firstName ?? 'Cliente'), lastName: rest.join(' ') || undefined, cpf },
       method: payment.method === 'pix'
         ? { kind: 'pix' }
         : { kind: 'card', ...payment.card, installments: Math.min(Math.max(payment.card.installments, 1), brand.commerce.maxInstallments) },

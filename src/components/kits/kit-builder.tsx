@@ -40,7 +40,7 @@ export function KitBuilder() {
   }
   const surprise = () => {
     const missing = box.size - picked.length
-    const extra = Array.from({ length: missing }, () => available[Math.floor(Math.random() * available.length)].slug)
+    const extra = Array.from({ length: missing }).flatMap(() => available[Math.floor(Math.random() * available.length)]?.slug ?? [])
     setPicked((current) => [...current, ...extra])
   }
   const submit = () => {

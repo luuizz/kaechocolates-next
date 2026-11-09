@@ -37,7 +37,7 @@ export async function POST(request: Request) {
   if (misconfigured) return json(503, { error: misconfigured })
   if (!(await isAdminRequest(request))) return json(403, { error: 'Acesso restrito a administradores.' })
 
-  const type = (request.headers.get('content-type') ?? '').split(';')[0].trim()
+  const type = (request.headers.get('content-type') ?? '').split(';')[0]?.trim() ?? ''
   const ext = TYPES[type]
   if (!ext) return json(415, { error: 'Envie uma imagem JPG, PNG, WebP ou AVIF.' })
 

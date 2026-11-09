@@ -16,6 +16,13 @@ export async function sql<T = Record<string, unknown>>(query: string, params: un
   return (await pool.query(query, params)).rows as T[]
 }
 
+// Primeira linha da consulta; falha o teste se não vier nenhuma
+export async function sqlOne<T = Record<string, unknown>>(query: string, params: unknown[] = []) {
+  const [row] = await sql<T>(query, params)
+  if (!row) throw new Error(`Consulta sem resultado: ${query}`)
+  return row
+}
+
 export const uniqueEmail = (name: string) => `${name}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}@kae.test`
 
 // Texto com espaço comum no lugar do espaço fixo do Intl (R$ 32,70)

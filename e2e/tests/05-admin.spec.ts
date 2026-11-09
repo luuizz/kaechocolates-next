@@ -1,4 +1,4 @@
-import { api, emailsTo, expect, fillAddress, makeAdmin, signUp, sql, test, text, uniqueEmail } from './helpers'
+import { api, emailsTo, expect, fillAddress, makeAdmin, signUp, sql, test, text, uniqueEmail, sqlOne } from './helpers'
 
 test.describe('Painel', () => {
   test.beforeEach(async ({ page }) => {
@@ -77,7 +77,7 @@ test.describe('Painel', () => {
     await shipping.blur()
     await page.getByRole('button', { name: 'Salvar' }).click()
     await expect(page.getByText('Alterações salvas.')).toBeVisible()
-    expect((await sql<{ price: string }>("select price from public.shipping_zones where id = 'nordeste'"))[0].price).toBe('25.00')
+    expect((await sqlOne<{ price: string }>("select price from public.shipping_zones where id = 'nordeste'")).price).toBe('25.00')
 
     await sql("update public.kit_boxes set discount = 0.08 where id = 'm'; update public.club_plans set price = 109.90 where id = 'chocolatra'; update public.shipping_zones set price = 29.90 where id = 'nordeste'")
     await api(page, '/api/revalidate', {})
@@ -94,7 +94,7 @@ test.describe('Painel', () => {
     await customer.getByRole('button', { name: 'Novo endereço' }).click()
     await fillAddress(customer)
     await expect(customer.locator('main')).toContainText('Praça Marechal Deodoro')
-    const [{ id: addressId }] = await sql<{ id: string }>('select a.id from public.addresses a join public.profiles p on p.id = a.user_id where p.email = $1', [email])
+    const { id: addressId } = await sqlOne<{ id: string }>('select a.id from public.addresses a join public.profiles p on p.id = a.user_id where p.email = $1', [email])
     const order = await api(customer, '/api/checkout', { items: [{ kind: 'product', slug: 'guru-60', quantity: 2 }], addressId: Number(addressId), method: 'card', cpf: '12345678909', card: { token: 'tok', paymentMethodId: 'master', installments: 1 } })
     expect(order.status).toBe(201)
     const code = order.body.order.code as string

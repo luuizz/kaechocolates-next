@@ -47,7 +47,9 @@ async function callBetterAuth(method: 'resetPassword' | 'changePassword', args: 
   let result: { error?: { code?: string; error?: { code?: string } } | null } | undefined
   try {
     const instance = getNeon().auth.getBetterAuthInstance() as unknown as Record<string, (input: unknown) => Promise<typeof result>>
-    result = await instance[method](args)
+    const call = instance[method]
+    if (!call) throw new Error('Função de conta indisponível.')
+    result = await call(args)
   } catch (error) {
     result = { error: error as { code?: string } }
   }

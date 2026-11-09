@@ -1,4 +1,4 @@
-import { api, emailsTo, expect, fillAddress, mercadoPagoLog, signUp, sql, test, text, uniqueEmail } from './helpers'
+import { api, emailsTo, expect, fillAddress, mercadoPagoLog, signUp, test, text, uniqueEmail, sqlOne } from './helpers'
 
 // O formulário de cartão é do Mercado Pago (carrega de fora); aqui a assinatura é
 // feita pela rota do site com um token de cartão simulado.
@@ -17,7 +17,7 @@ test.describe('Clube', () => {
     await expect(page.getByRole('radio', { name: /Praça Marechal Deodoro/ })).toBeVisible()
     await expect(page.getByText(/se repete a cada 3 meses/)).toBeVisible()
 
-    const [{ id: addressId }] = await sql<{ id: string }>('select a.id from public.addresses a join public.profiles p on p.id = a.user_id where p.email = $1', [email])
+    const { id: addressId } = await sqlOne<{ id: string }>('select a.id from public.addresses a join public.profiles p on p.id = a.user_id where p.email = $1', [email])
     const subscribe = (plan: string, period: string, token = 'tok') => api(page, '/api/club/subscribe', { plan, period, addressId: Number(addressId), cpf: '12345678909', notes: 'sem castanhas', card: { token } })
 
     let response = await subscribe('chocolatra', 'trimestral', 'rejeitar')
