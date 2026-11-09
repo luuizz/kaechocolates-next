@@ -1,5 +1,5 @@
 import 'server-only'
-import { db } from './db'
+import { db, DatabaseConfigError } from './db'
 import { getNeonAuth } from './neon-auth'
 import type { Profile } from '@/types/account'
 
@@ -28,12 +28,20 @@ export async function getCurrentProfile() {
 }
 
 export type SessionAccess =
-  { status: 'anonymous' } | { status: 'forbidden'; profile: Profile | null } | { status: 'admin'; profile: Profile }
+  | { status: 'anonymous' }
+  | { status: 'unavailable'; reason: string }
+  | { status: 'forbidden'; profile: Profile | null }
+  | { status: 'admin'; profile: Profile }
 
 // Quem pode abrir o painel: só perfis com papel admin
 export async function getAdminAccess(): Promise<SessionAccess> {
   const user = await getSessionUser()
   if (!user) return { status: 'anonymous' }
-  const profile = await getProfile(user.id)
-  return profile?.role === 'admin' ? { status: 'admin', profile } : { status: 'forbidden', profile }
+  try {
+    const profile = await getProfile(user.id)
+    return profile?.role === 'admin' ? { status: 'admin', profile } : { status: 'forbidden', profile }
+  } catch (error) {
+    if (error instanceof DatabaseConfigError) return { status: 'unavailable', reason: error.message }
+    throw error
+  }
 }
