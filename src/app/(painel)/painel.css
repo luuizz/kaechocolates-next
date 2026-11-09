@@ -1,0 +1,15 @@
+/*
+ * Tokens do painel. Só existem no layout raiz do painel; os componentes de
+ * src/components/admin usam as classes panel-* (registradas em globals.css).
+ */
+:root {
+  --panel-canvas: #f4f4f2;
+  --panel-surface: #ffffff;
+  --panel-sidebar: #111111;
+  --panel-sidebar-foreground: #ffffff;
+  --panel-sidebar-muted: rgb(255 255 255 / 0.7);
+  --panel-sidebar-hover: rgb(255 255 255 / 0.1);
+  --panel-sidebar-border: rgb(255 255 255 / 0.15);
+  --panel-active: #ffffff;
+  --panel-active-foreground: #111111;
+}

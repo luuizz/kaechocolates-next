@@ -7,7 +7,7 @@ import { brand } from '@/config/brand'
 import { formatBRL } from '@/data/products'
 import { listZones } from '@/lib/admin-api'
 import { cn, slugify } from '@/lib/utils'
-import { AdminHeader, Panel } from './admin-shell'
+import { AdminHeader, Panel } from './admin-page'
 import { useListEditor } from './list-editor'
 import { Switch } from './switch'
 import type { AdminZone } from '@/types/shipping'
@@ -66,7 +66,7 @@ export function ShippingEditor() {
         </p>
       )}
       {!list.rows ? (
-        <div className="h-72 animate-pulse rounded-tile bg-background" />
+        <div className="h-72 animate-pulse rounded-tile bg-panel-surface" />
       ) : (
         <div className="flex flex-col gap-4">
           {list.rows.map((zone, index) => (

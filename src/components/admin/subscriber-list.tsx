@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/field'
 import { formatBRL } from '@/data/products'
 import { cn } from '@/lib/utils'
-import { AdminHeader, Panel } from './admin-shell'
+import { AdminHeader, Panel } from './admin-page'
 import { downloadShippingList } from './subscribers/csv'
 import { SubscriberRow } from './subscribers/subscriber-row'
 import { useSubscribers, type SubscriberFilter } from './subscribers/use-subscribers'
@@ -42,7 +42,7 @@ export function SubscriberList() {
       />
       <div className="mb-6 grid gap-4 sm:grid-cols-3">
         {cards.map((card) => (
-          <div key={card.label} className="rounded-tile bg-background p-5">
+          <div key={card.label} className="rounded-tile bg-panel-surface p-5">
             <p className="text-sm text-muted-foreground">{card.label}</p>
             {card.value === null ? (
               <span className="mt-1 block h-9 w-20 animate-pulse rounded-lg bg-secondary" />
