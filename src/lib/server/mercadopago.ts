@@ -1,3 +1,4 @@
+import 'server-only'
 import { createHmac, randomUUID, timingSafeEqual } from 'node:crypto'
 
 // Integração com a API de Orders do Mercado Pago (Checkout Transparente).

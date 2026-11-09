@@ -1,3 +1,4 @@
+import 'server-only'
 // Valida o formato da sacola que chega do navegador (os preços NÃO vêm daqui:
 // o banco recalcula tudo em quote_order/place_order)
 export type CartInput =

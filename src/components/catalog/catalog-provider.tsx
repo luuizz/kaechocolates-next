@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, useContext, useMemo } from 'react'
-import type { Catalog } from '@/lib/catalog'
+import type { Catalog } from '@/lib/server/catalog'
 import { findProduct } from '@/data/products'
 import { findBox, kitTotals, type KitSpec } from '@/data/kits'
 

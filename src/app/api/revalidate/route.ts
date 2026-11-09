@@ -1,6 +1,6 @@
 import { revalidatePath, revalidateTag } from 'next/cache'
-import { CATALOG_TAG } from '@/lib/catalog'
-import { isAdminRequest } from '@/lib/admin-guard'
+import { CATALOG_TAG } from '@/lib/server/catalog'
+import { isAdminRequest } from '@/lib/server/admin-guard'
 
 // Chamado pelo painel depois de salvar: a loja mostra a mudança na hora,
 // sem esperar os 5 minutos do cache do catálogo.

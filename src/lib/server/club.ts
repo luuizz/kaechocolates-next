@@ -1,3 +1,4 @@
+import 'server-only'
 import { db } from './db'
 import { getPreapproval, preapprovalSnapshot } from './mercadopago'
 

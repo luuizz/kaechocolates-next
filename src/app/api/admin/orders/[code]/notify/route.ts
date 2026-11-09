@@ -1,4 +1,4 @@
-import { isAdminRequest } from '@/lib/admin-guard'
+import { isAdminRequest } from '@/lib/server/admin-guard'
 import { notifyOrder } from '@/lib/server/email'
 
 // O painel chama depois de mudar o andamento do pedido (ex.: enviado com rastreio)

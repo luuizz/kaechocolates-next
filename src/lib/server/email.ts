@@ -1,3 +1,4 @@
+import 'server-only'
 import { brand } from '@/config/brand'
 import { db } from './db'
 import { clubWelcome, orderPaid, orderReceived, orderShipped, type Email, type WelcomeSubscription } from './email-templates'

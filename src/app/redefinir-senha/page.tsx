@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { Suspense } from 'react'
 import { AuthShell } from '@/components/account/auth-shell'
 import { ResetPasswordForm } from '@/components/account/auth-forms'
-import { getCatalog } from '@/lib/catalog'
+import { getCatalog } from '@/lib/server/catalog'
 
 export const metadata: Metadata = { title: 'Nova senha', robots: { index: false } }
 

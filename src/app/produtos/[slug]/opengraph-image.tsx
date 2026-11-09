@@ -1,7 +1,7 @@
 import { ImageResponse } from 'next/og'
 import { brand } from '@/config/brand'
 import { LINE_SINGULAR, findProduct, formatBRL } from '@/data/products'
-import { getCatalog } from '@/lib/catalog'
+import { getCatalog } from '@/lib/server/catalog'
 import { OG_SIZE, OgPackage, ogAsset, ogFonts } from '@/lib/seo/og'
 
 export const alt = 'Barra de chocolate Kaê'
