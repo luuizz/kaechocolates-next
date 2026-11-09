@@ -3,7 +3,7 @@
 import { CircleNotch, Plus } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { listPeriods, listPlans } from '@/lib/admin-api'
-import { AdminHeader, Panel } from './admin-shell'
+import { AdminHeader, Panel } from './admin-page'
 import { PeriodsTable } from './club/periods-table'
 import { PlanCard } from './club/plan-card'
 import { useListEditor } from './list-editor'
@@ -85,7 +85,7 @@ export function ClubEditor() {
 
       <h2 className="mb-3 font-display text-xl font-bold">Planos</h2>
       {!plans.rows ? (
-        <div className="h-72 animate-pulse rounded-tile bg-background" />
+        <div className="h-72 animate-pulse rounded-tile bg-panel-surface" />
       ) : (
         <div className="grid gap-4 lg:grid-cols-3">
           {plans.rows.map((plan, index, all) => (
@@ -108,7 +108,7 @@ export function ClubEditor() {
           <button
             type="button"
             onClick={() => plans.add(newPlan(plans.rows?.length ?? 0))}
-            className="flex min-h-48 flex-col items-center justify-center gap-2 rounded-tile border-2 border-dashed text-sm font-semibold transition-colors hover:border-foreground hover:bg-background"
+            className="flex min-h-48 flex-col items-center justify-center gap-2 rounded-tile border-2 border-dashed text-sm font-semibold transition-colors hover:border-foreground hover:bg-panel-surface"
           >
             <Plus size={22} weight="bold" /> Novo plano
           </button>

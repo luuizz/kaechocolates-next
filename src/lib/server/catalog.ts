@@ -9,8 +9,7 @@ import type { Catalog } from '@/types/catalog'
 import type { Period, Plan } from '@/types/club'
 import type { Box } from '@/types/kit'
 import type { ProductRow } from '@/types/product'
-
-export const CATALOG_TAG = 'catalog'
+import { CATALOG_TAG } from '@/constants/catalog'
 
 const FALLBACK: Catalog = {
   products: FALLBACK_PRODUCTS,

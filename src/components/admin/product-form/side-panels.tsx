@@ -2,7 +2,7 @@ import { Field, Input } from '@/components/ui/field'
 import { BarPackage } from '@/components/product/bar-package'
 import { formatBRL } from '@/data/products'
 import { cn } from '@/lib/utils'
-import { Panel } from '../admin-shell'
+import { Panel } from '../admin-page'
 import { Switch } from '../switch'
 import type { Draft, DraftPreview, SetField } from './draft'
 

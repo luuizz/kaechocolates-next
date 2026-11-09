@@ -6,7 +6,8 @@ import { useEffect, useState } from 'react'
 import { Field, FormMessage, Input } from '@/components/ui/field'
 import { useAuth } from '@/components/auth/auth-provider'
 import { AuthUnavailable } from '../auth-unavailable'
-import { EMAIL, safeNext, PasswordField, Submit } from './form-parts'
+import { safeNext, PasswordField, Submit } from './form-parts'
+import { EMAIL_PATTERN } from '@/constants/patterns'
 
 export function SignInForm() {
   const auth = useAuth()
@@ -26,7 +27,7 @@ export function SignInForm() {
   const submit = async (event: React.FormEvent) => {
     event.preventDefault()
     setError('')
-    if (!EMAIL.test(form.email.trim()) || !form.password) return setError('Preencha e-mail e senha.')
+    if (!EMAIL_PATTERN.test(form.email.trim()) || !form.password) return setError('Preencha e-mail e senha.')
     setBusy(true)
     try {
       await auth.signIn(form.email.trim(), form.password)

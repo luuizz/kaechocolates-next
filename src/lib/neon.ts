@@ -1,11 +1,14 @@
 'use client'
 
 import { createClient } from '@neon/neon-js/supabase'
+import { PASSWORD_MIN } from '@/constants/limits'
 import { neonEnv } from '@/lib/env'
 
 // Cliente do Neon no navegador: `neon.auth` (login, no estilo Supabase) e
 // `neon.from()` / `neon.rpc()` (Data API, com o token do usuário logado).
-// Visitantes sem login usam um token anônimo, que só lê o catálogo.
+// O login passa por /api/auth (mesmo domínio), que guarda a sessão em cookie
+// para o servidor também enxergar. Visitantes sem login usam um token anônimo,
+// que só lê o catálogo.
 const { authUrl, dataApiUrl } = neonEnv()
 
 export const isNeonConfigured = Boolean(authUrl && dataApiUrl)
@@ -17,14 +20,11 @@ export function getNeon(): NeonClient {
   if (!isNeonConfigured)
     throw new Error('Login indisponível: faltam NEXT_PUBLIC_NEON_AUTH_URL e NEXT_PUBLIC_NEON_DATA_API_URL.')
   if (typeof window === 'undefined') throw new Error('O cliente do Neon só roda no navegador.')
-  client ??= createClient({ auth: { url: authUrl, allowAnonymous: true }, dataApi: { url: dataApiUrl } })
+  client ??= createClient({
+    auth: { url: `${window.location.origin}/api/auth`, allowAnonymous: true },
+    dataApi: { url: dataApiUrl },
+  })
   return client
-}
-
-// JWT do usuário logado (o mesmo que a Data API recebe), para as rotas /api do site
-export async function getAccessToken() {
-  const { data } = await getNeon().auth.getSession()
-  return data.session?.access_token ?? null
 }
 
 // Devolve `data` ou lança o erro já traduzido
@@ -47,13 +47,13 @@ export function friendlyError(error: unknown): string {
     user_already_exists: 'Já existe uma conta com este e-mail.',
     email_exists: 'Já existe uma conta com este e-mail.',
     email_not_confirmed: 'Confirme seu e-mail antes de entrar. Veja sua caixa de entrada.',
-    weak_password: 'A senha precisa ter pelo menos 8 caracteres.',
+    weak_password: `A senha precisa ter pelo menos ${PASSWORD_MIN} caracteres.`,
     email_address_invalid: 'E-mail inválido.',
     over_request_rate_limit: 'Muitas tentativas. Aguarde um pouco e tente de novo.',
     INVALID_ORIGIN: 'Este endereço não está autorizado a fazer login. Adicione-o aos domínios confiáveis do Neon Auth.',
     INVALID_PASSWORD: 'Senha atual incorreta.',
     INVALID_TOKEN: 'O link expirou ou já foi usado. Peça um novo.',
-    PASSWORD_TOO_SHORT: 'A senha precisa ter pelo menos 8 caracteres.',
+    PASSWORD_TOO_SHORT: `A senha precisa ter pelo menos ${PASSWORD_MIN} caracteres.`,
     '23505': 'Já existe um registro com esse identificador.',
     '23503': 'Este registro está em uso e não pode ser removido.',
     '23514': 'Algum campo está com um valor inválido. Confira e tente de novo.',

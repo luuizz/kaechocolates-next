@@ -1,4 +1,5 @@
-import { test as base, expect, type Page } from '@playwright/test'
+import { readFileSync } from 'node:fs'
+import { test as base, expect, type APIRequestContext, type Page } from '@playwright/test'
 import pg from 'pg'
 import { e2eEnv } from '../env.mjs'
 
@@ -65,21 +66,70 @@ export async function fillAddress(
   await page.getByRole('button', { name: 'Salvar endereço' }).click()
 }
 
-// Chama uma rota do site com o token do usuário logado nesta página
-export async function api(page: Page, path: string, body?: unknown) {
-  return page.evaluate(
-    async ({ path, body }) => {
-      const auth = await fetch('http://localhost:54321/neondb/auth/token', { credentials: 'include' })
-      const { token } = await auth.json()
-      const response = await fetch(path, {
-        method: body === undefined ? 'GET' : 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: body === undefined ? undefined : JSON.stringify(body),
-      })
-      return { status: response.status, body: await response.json().catch(() => ({})) }
-    },
-    { path, body },
+// Chama uma Server Action como o navegador faz: POST na página onde ela está
+// registrada, com o cabeçalho Next-Action e os cookies da sessão de `request`.
+// O id vem do manifesto do build. Devolve o status HTTP e o resultado da action.
+type ActionEntry = { workers: Record<string, unknown>; exportedName: string }
+type ActionCall<T> = { status: number; location: string | null; result: T | null }
+
+function findAction(name: string) {
+  const manifest = JSON.parse(readFileSync('.next/server/server-reference-manifest.json', 'utf8')).node as Record<
+    string,
+    ActionEntry
+  >
+  const found = Object.entries(manifest).find(([, entry]) => entry.exportedName === name)
+  if (!found) throw new Error(`Server Action não encontrada: ${name}`)
+  const [id, entry] = found
+  // 'app/(loja)/checkout/page' → '/checkout' (sem grupos; ignora páginas com segmento dinâmico)
+  const route = Object.keys(entry.workers)
+    .map(
+      (worker) =>
+        worker
+          .replace(/^app/, '')
+          .replace(/\/\([^)]+\)/g, '')
+          .replace(/\/page$/, '') || '/',
+    )
+    .find((path) => !path.includes('['))
+  return { id, route: route ?? '/' }
+}
+
+// Linhas "id:json" do RSC; a linha 0 aponta ("$@n") para o retorno da action
+function decodeActionResponse(body: string) {
+  const rows = new Map(
+    body
+      .split('\n')
+      .filter(Boolean)
+      .map((line) => [line.slice(0, line.indexOf(':')), line.slice(line.indexOf(':') + 1)]),
   )
+  const root = JSON.parse(rows.get('0') ?? 'null') as { a?: string } | null
+  const ref = root?.a?.replace('$@', '')
+  return ref && rows.has(ref) ? JSON.parse(rows.get(ref)!) : null
+}
+
+// Campos que os testes leem dos resultados (pedido e assinatura)
+export type ActionOutcome = {
+  ok: boolean
+  error?: string
+  data?: { code?: string; status?: string; order?: { code: string; status: string } | null }
+}
+
+export async function action<T = ActionOutcome>(
+  request: APIRequestContext,
+  name: string,
+  ...args: unknown[]
+): Promise<ActionCall<T>> {
+  const { id, route } = findAction(name)
+  const response = await request.post(route, {
+    headers: { 'Next-Action': id, 'Content-Type': 'text/plain;charset=UTF-8', Accept: 'text/x-component' },
+    data: JSON.stringify(args),
+    maxRedirects: 0,
+  })
+  const ok = response.status() === 200
+  return {
+    status: response.status(),
+    location: response.headers()['location'] ?? null,
+    result: ok ? (decodeActionResponse(await response.text()) as T) : null,
+  }
 }
 
 // O que o site mandou para o Mercado Pago simulado

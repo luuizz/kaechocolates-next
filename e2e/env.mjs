@@ -3,6 +3,7 @@ export const e2eEnv = {
   NEXT_PUBLIC_NEON_AUTH_URL: 'http://localhost:54321/neondb/auth',
   NEXT_PUBLIC_NEON_DATA_API_URL: 'http://localhost:54321/neondb/rest/v1',
   NEXT_PUBLIC_SITE_URL: 'http://localhost:3100',
+  NEON_AUTH_COOKIE_SECRET: 'e2e-cookie-secret-only-for-local-tests-0123456789',
   DATABASE_URL: (() => {
     const url = new URL(process.env.E2E_DATABASE_URL ?? 'postgres://postgres:postgres@localhost:5432/postgres')
     url.pathname = '/kae_e2e'

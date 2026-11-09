@@ -1,7 +1,8 @@
 import { z } from 'zod'
 import { addressIdSchema, cpfSchema } from './checkout'
+import { SLUG_PATTERN } from '@/constants/patterns'
 
-const id = z.string().regex(/^[a-z0-9]+(-[a-z0-9]+)*$/)
+const id = z.string().regex(SLUG_PATTERN)
 
 export const subscribeSchema = z.object({
   plan: id,
@@ -27,3 +28,6 @@ export const subscriptionActionSchema = z.object({
   action: z.enum(['pause', 'resume', 'cancel']),
   id: z.coerce.number().int().positive().optional().catch(undefined),
 })
+
+export type SubscribeInput = z.output<typeof subscribeSchema>
+export type SubscriptionActionInput = z.output<typeof subscriptionActionSchema>

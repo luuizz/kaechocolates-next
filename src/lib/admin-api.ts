@@ -1,7 +1,7 @@
 'use client'
 
 import { productFromRow } from '@/lib/catalog-rows'
-import { getAccessToken, getNeon, unwrap } from '@/lib/neon'
+import { getNeon, unwrap } from '@/lib/neon'
 import { normalizeOrder } from '@/lib/orders'
 import { normalizeSubscription } from '@/lib/club'
 import type { Customer } from '@/types/account'
@@ -10,6 +10,9 @@ import type { AdminBox } from '@/types/kit'
 import type { AdminOrderRow, OrderItemRow, OrderRow } from '@/types/order'
 import type { AdminProduct, ProductInput } from '@/types/product'
 import type { AdminZone } from '@/types/shipping'
+import { notifyOrderUpdate, refreshStore as refreshStoreAction } from '@/actions/admin'
+import { manageSubscription as manageSubscriptionAction } from '@/actions/club'
+import { expectOk } from '@/lib/result'
 
 // Acesso do painel ao banco. Todas as chamadas vão com o token do admin;
 // quem barra quem não é admin são as políticas (RLS) do banco.
@@ -123,12 +126,10 @@ export async function listCustomers() {
   ) as Customer[]
 }
 
-// ---- rotas do site (fotos e cache da loja) -------------------------------
+// ---- fotos (rota /api/images, com a sessão do admin) ----------------------
 
 async function callSite(path: string, init: RequestInit) {
-  const token = await getAccessToken()
-  if (!token) throw new Error('Sessão expirada. Entre de novo.')
-  const response = await fetch(path, { ...init, headers: { ...init.headers, Authorization: `Bearer ${token}` } })
+  const response = await fetch(path, init)
   const body = await response.json().catch(() => ({}))
   if (!response.ok) throw new Error(body.error || `Erro ${response.status}`)
   return body
@@ -151,7 +152,7 @@ export async function deleteImage(url: string) {
 
 // Avisa a loja para recarregar o catálogo (sem esperar o cache de 5 minutos)
 export async function refreshStore() {
-  await callSite('/api/revalidate', { method: 'POST' })
+  expectOk(await refreshStoreAction())
 }
 
 // ---- pedidos e frete -----------------------------------------------------
@@ -186,7 +187,7 @@ export async function updateOrder(id: number, status: string, tracking: string) 
 
 // Avisa o cliente por e-mail do novo andamento (ex.: enviado com rastreio)
 export async function notifyOrderChange(code: string) {
-  await callSite(`/api/admin/orders/${encodeURIComponent(code)}/notify`, { method: 'POST' })
+  expectOk(await notifyOrderUpdate(code))
 }
 
 export async function listZones() {
@@ -206,9 +207,5 @@ export async function listSubscriptions() {
 }
 
 export async function manageSubscription(id: number, action: 'pause' | 'resume' | 'cancel') {
-  await callSite('/api/club/subscription', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ id, action }),
-  })
+  expectOk(await manageSubscriptionAction({ id, action }))
 }

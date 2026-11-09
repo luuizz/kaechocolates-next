@@ -1,5 +1,4 @@
 import {
-  api,
   emailsTo,
   expect,
   fillAddress,
@@ -10,6 +9,7 @@ import {
   text,
   uniqueEmail,
   sqlOne,
+  action,
 } from './helpers'
 
 test.describe('Checkout', () => {
@@ -84,39 +84,36 @@ test.describe('Checkout', () => {
     const items = [{ kind: 'product', slug: 'cafezinho-64', quantity: 1 }]
     const base = { items, addressId: Number(addressId), cpf: '12345678909' }
 
-    let response = await api(page, '/api/checkout', {
+    let { result } = await action(page.request, 'placeOrder', {
       ...base,
       method: 'card',
       card: { token: 'tok', paymentMethodId: 'master', installments: 3 },
     })
-    expect(response.status).toBe(201)
-    expect(response.body.order.status).toBe('paid')
+    expect(result?.ok).toBe(true)
+    expect(result?.data?.order?.status).toBe('paid')
 
-    response = await api(page, '/api/checkout', {
+    ;({ result } = await action(page.request, 'placeOrder', {
       ...base,
       method: 'card',
       card: { token: 'rejeitar', paymentMethodId: 'master', installments: 1 },
-    })
-    expect(response.status).toBe(402)
-    expect(response.body.error).toContain('limite')
+    }))
+    expect(result?.ok).toBe(false)
+    expect(result?.error).toContain('limite')
     // Recusado: o estoque reservado volta
     expect(
       (await sqlOne<{ stock: number }>("select stock from public.products where slug = 'cafezinho-64'")).stock,
     ).toBe(2)
 
-    response = await api(page, '/api/checkout', {
+    ;({ result } = await action(page.request, 'placeOrder', {
       ...base,
       items: [{ kind: 'product', slug: 'cafezinho-64', quantity: 5 }],
       method: 'pix',
-    })
-    expect(response.status).toBe(409)
-    expect(response.body.error).toContain('Só temos 2')
+    }))
+    expect(result?.ok).toBe(false)
+    expect(result?.error).toContain('Só temos 2')
 
-    response = await api(page, '/api/checkout', { ...base, cpf: '11111111111', method: 'pix' })
-    expect(response.status).toBe(400)
-
-    const anonymous = await page.request.post('/api/checkout', { data: { ...base, method: 'pix' } })
-    expect(anonymous.status()).toBe(401)
+    ;({ result } = await action(page.request, 'placeOrder', { ...base, cpf: '11111111111', method: 'pix' }))
+    expect(result).toMatchObject({ ok: false, error: 'Informe um CPF válido.' })
 
     await sql("update public.products set stock = null where slug = 'cafezinho-64'")
   })

@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/field'
 import { slugify } from '@/lib/utils'
 import { listBoxes } from '@/lib/admin-api'
-import { AdminHeader, Panel } from './admin-shell'
+import { AdminHeader, Panel } from './admin-page'
 import { fromPercent, percent, useListEditor } from './list-editor'
 import { Switch } from './switch'
 import type { AdminBox } from '@/types/kit'
@@ -41,7 +41,7 @@ export function BoxesEditor() {
       />
       <Panel className="p-0 md:p-0">
         {!list.rows ? (
-          <div className="h-48 animate-pulse rounded-tile bg-background" />
+          <div className="h-48 animate-pulse rounded-tile bg-panel-surface" />
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full min-w-[48rem] text-sm">

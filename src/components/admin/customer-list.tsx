@@ -6,7 +6,7 @@ import { toast } from 'sonner'
 import { Input } from '@/components/ui/field'
 import { listCustomers } from '@/lib/admin-api'
 import { formatPhone } from '@/lib/utils'
-import { AdminHeader, Panel } from './admin-shell'
+import { AdminHeader, Panel } from './admin-page'
 import type { Customer } from '@/types/account'
 
 const date = new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' })

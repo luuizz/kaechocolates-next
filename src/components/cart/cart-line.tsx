@@ -5,8 +5,9 @@ import { Package, Trash } from '@phosphor-icons/react'
 import { BarPackage } from '@/components/product/bar-package'
 import { formatBRL } from '@/data/products'
 import { useCatalog } from '@/components/catalog/catalog-provider'
-import { useCart, MAX_PER_ITEM, type CartItem } from './cart-provider'
+import { useCart, type CartItem } from './cart-provider'
 import { QuantityStepper } from './quantity-stepper'
+import { MAX_PER_ITEM } from '@/constants/limits'
 
 export function CartLine({ item, onNavigate }: { item: CartItem; onNavigate?: () => void }) {
   const { update, remove } = useCart()

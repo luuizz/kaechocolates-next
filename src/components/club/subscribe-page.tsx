@@ -11,10 +11,11 @@ import { CardForm } from '@/components/checkout/card-form'
 import { FormMessage, Textarea } from '@/components/ui/field'
 import { planPrice } from '@/data/club'
 import { formatBRL } from '@/data/products'
-import { getAccessToken } from '@/lib/neon'
 import { cn } from '@/lib/utils'
 import type { Address } from '@/types/account'
 import { PageLoader } from '@/components/ui/page-loader'
+import { subscribeToClub } from '@/actions/club'
+import { expectOk } from '@/lib/result'
 
 // Assinatura do clube: plano + período, endereço das caixas e cartão
 export function SubscribePage() {
@@ -46,11 +47,8 @@ export function SubscribePage() {
 
   const subscribe = async (card: { token: string }, cpf: string) => {
     setError('')
-    const token = await getAccessToken()
-    const response = await fetch('/api/club/subscribe', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-      body: JSON.stringify({
+    expectOk(
+      await subscribeToClub({
         plan: plan.id,
         period: period.id,
         addressId: address?.id,
@@ -58,9 +56,7 @@ export function SubscribePage() {
         notes,
         card: { token: card.token },
       }),
-    })
-    const body = await response.json().catch(() => ({}))
-    if (!response.ok) throw new Error(body.error || 'Não foi possível assinar.')
+    )
     router.push('/conta?aba=clube&assinou=1')
   }
 

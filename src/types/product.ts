@@ -1,3 +1,5 @@
+import type { SORTS } from '@/constants/catalog'
+
 export type Line = 'intensos' | 'ao-leite' | 'brancos'
 
 export type ProductBadge = 'Edição limitada' | 'Zero açúcar' | 'Novo'
@@ -59,3 +61,5 @@ export type AdminProduct = Product & {
 }
 
 export type ProductInput = Omit<AdminProduct, 'id' | 'updatedAt' | 'soldOutFlag'> & { id?: number }
+
+export type Sort = keyof typeof SORTS

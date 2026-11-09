@@ -5,6 +5,7 @@ import { CircleNotch } from '@phosphor-icons/react'
 import { useAuth } from '@/components/auth/auth-provider'
 import { Button } from '@/components/ui/button'
 import { Field, FormMessage, Input } from '@/components/ui/field'
+import { PASSWORD_MIN } from '@/constants/limits'
 import { TabTitle } from '../tab-title'
 import { useFormFeedback } from '../use-form-feedback'
 
@@ -19,7 +20,7 @@ export function PasswordTab() {
     event.preventDefault()
     clear()
     if (!form.current) return fail('Informe a senha atual.')
-    if (form.next.length < 8) return fail('A nova senha precisa ter pelo menos 8 caracteres.')
+    if (form.next.length < PASSWORD_MIN) return fail(`A nova senha precisa ter pelo menos ${PASSWORD_MIN} caracteres.`)
     if (form.next !== form.confirm) return fail('As senhas não conferem.')
     run(
       async () => {
@@ -44,7 +45,7 @@ export function PasswordTab() {
             autoComplete="current-password"
           />
         </Field>
-        <Field label="Nova senha" hint="Pelo menos 8 caracteres.">
+        <Field label="Nova senha" hint={`Pelo menos ${PASSWORD_MIN} caracteres.`}>
           <Input
             type="password"
             value={form.next}

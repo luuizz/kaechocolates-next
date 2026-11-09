@@ -1,6 +1,6 @@
 import { del, put } from '@vercel/blob'
-import { neonEnv } from '@/lib/env'
-import { isAdminRequest } from '@/lib/server/admin-guard'
+import { getAdminAccess } from '@/lib/server/session'
+import { IMAGE_FOLDER, IMAGE_MAX_BYTES, IMAGE_TYPES } from '@/constants/limits'
 
 // Upload e remoção das fotos de produto no Vercel Blob (só admin).
 //
@@ -9,20 +9,9 @@ import { isAdminRequest } from '@/lib/server/admin-guard'
 //
 // Na Vercel: conecte um Blob Store (público) ao projeto; ele cria BLOB_READ_WRITE_TOKEN.
 
-// Limite de corpo das funções da Vercel é 4,5 MB; deixamos uma folga
-const MAX_SIZE = 4 * 1024 * 1024
-const TYPES: Record<string, string> = {
-  'image/jpeg': 'jpg',
-  'image/png': 'png',
-  'image/webp': 'webp',
-  'image/avif': 'avif',
-}
-const FOLDER = 'produtos'
-
 const json = (status: number, body: unknown) => Response.json(body, { status })
 
 function configError() {
-  if (!neonEnv().dataApiUrl) return 'Upload indisponível: falta NEXT_PUBLIC_NEON_DATA_API_URL.'
   if (!process.env.BLOB_READ_WRITE_TOKEN) return 'Upload indisponível: conecte um Blob Store ao projeto na Vercel.'
   return null
 }
@@ -34,7 +23,7 @@ function isOwnBlob(url: string) {
     return (
       protocol === 'https:' &&
       hostname.endsWith('.public.blob.vercel-storage.com') &&
-      pathname.startsWith(`/${FOLDER}/`)
+      pathname.startsWith(`/${IMAGE_FOLDER}/`)
     )
   } catch {
     return false
@@ -42,19 +31,19 @@ function isOwnBlob(url: string) {
 }
 
 export async function POST(request: Request) {
+  if ((await getAdminAccess()).status !== 'admin') return json(403, { error: 'Acesso restrito a administradores.' })
   const misconfigured = configError()
   if (misconfigured) return json(503, { error: misconfigured })
-  if (!(await isAdminRequest(request))) return json(403, { error: 'Acesso restrito a administradores.' })
 
   const type = (request.headers.get('content-type') ?? '').split(';')[0]?.trim() ?? ''
-  const ext = TYPES[type]
+  const ext = IMAGE_TYPES[type]
   if (!ext) return json(415, { error: 'Envie uma imagem JPG, PNG, WebP ou AVIF.' })
 
   const body = await request.arrayBuffer()
   if (body.byteLength === 0) return json(400, { error: 'Arquivo vazio.' })
-  if (body.byteLength > MAX_SIZE) return json(413, { error: 'A imagem deve ter no máximo 4 MB.' })
+  if (body.byteLength > IMAGE_MAX_BYTES) return json(413, { error: 'A imagem deve ter no máximo 4 MB.' })
 
-  const blob = await put(`${FOLDER}/${new Date().getFullYear()}/foto.${ext}`, body, {
+  const blob = await put(`${IMAGE_FOLDER}/${new Date().getFullYear()}/foto.${ext}`, body, {
     access: 'public',
     contentType: type,
     addRandomSuffix: true,
@@ -73,9 +62,9 @@ export async function POST(request: Request) {
 }
 
 export async function DELETE(request: Request) {
+  if ((await getAdminAccess()).status !== 'admin') return json(403, { error: 'Acesso restrito a administradores.' })
   const misconfigured = configError()
   if (misconfigured) return json(503, { error: misconfigured })
-  if (!(await isAdminRequest(request))) return json(403, { error: 'Acesso restrito a administradores.' })
 
   const { url } = (await request.json().catch(() => ({}))) as { url?: unknown }
   if (typeof url !== 'string' || !isOwnBlob(url))

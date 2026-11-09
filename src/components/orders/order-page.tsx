@@ -6,11 +6,13 @@ import { useCallback, useEffect, useState } from 'react'
 import { CheckCircle, CircleNotch, Copy, PixLogo, WarningCircle, XCircle } from '@phosphor-icons/react'
 import { useAuth } from '@/components/auth/auth-provider'
 import { Button } from '@/components/ui/button'
-import { getAccessToken } from '@/lib/neon'
-import { ORDER_STATUS, formatDateTime, paymentProblem } from '@/lib/orders'
+import { formatDateTime, paymentProblem } from '@/lib/orders'
 import { OrderItems, OrderProgress, OrderShipping, StatusBadge } from './order-parts'
 import type { OrderView } from '@/types/order'
 import { PageLoader } from '@/components/ui/page-loader'
+import { ORDER_STATUS } from '@/constants/orders'
+import { getMyOrder } from '@/actions/orders'
+import { expectOk } from '@/lib/result'
 
 // Página do pedido: Pix para pagar (com atualização automática) ou o andamento
 export function OrderPage({ code }: { code: string }) {
@@ -24,15 +26,9 @@ export function OrderPage({ code }: { code: string }) {
   }, [auth.configured, auth.loading, auth.user, code, router])
 
   const load = useCallback(async () => {
-    const token = await getAccessToken()
-    const response = await fetch(`/api/orders/${encodeURIComponent(code)}`, {
-      headers: { Authorization: `Bearer ${token}` },
-      cache: 'no-store',
-    })
-    const body = await response.json().catch(() => ({}))
-    if (!response.ok) throw new Error(body.error || 'Não foi possível carregar o pedido.')
-    setOrder(body.order)
-    return body.order as OrderView
+    const order = expectOk(await getMyOrder(code)) as OrderView
+    setOrder(order)
+    return order
   }, [code])
 
   useEffect(() => {

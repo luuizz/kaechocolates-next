@@ -1,10 +1,11 @@
 import { Pause, Play, X } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { formatBRL } from '@/data/products'
-import { SUBSCRIPTION_STATUS, formatDate } from '@/lib/club'
+import { formatDate } from '@/lib/club'
 import { cn } from '@/lib/utils'
 import type { SubscriptionAction } from './use-subscribers'
 import type { Subscription } from '@/types/club'
+import { SUBSCRIPTION_STATUS } from '@/constants/club'
 
 function nextCharge(sub: Subscription) {
   if (sub.status === 'canceled') return sub.ends_at ? `caixas até ${formatDate(sub.ends_at)}` : '—'

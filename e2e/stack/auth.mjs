@@ -16,7 +16,13 @@ export async function startAuth(databaseUrl) {
     secret: 'e2e-secret-only-for-local-tests-0123456789',
     trustedOrigins: ['http://localhost:3100', 'http://127.0.0.1:3100'],
     emailAndPassword: { enabled: true, sendResetPassword: async () => {} },
-    advanced: { database: { generateId: 'uuid' }, defaultCookieAttributes: { sameSite: 'none', secure: true } },
+    // Mesmo nome de cookie do Neon Auth (__Secure-neon-auth.*): o proxy do site só repassa esses
+    advanced: {
+      database: { generateId: 'uuid' },
+      cookiePrefix: 'neon-auth',
+      useSecureCookies: true,
+      defaultCookieAttributes: { sameSite: 'none', secure: true },
+    },
     plugins: [
       jwt({
         jwks: { keyPairConfig: { alg: 'RS256' } },

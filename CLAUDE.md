@@ -33,7 +33,11 @@ Seguir o padrão já estabelecido no projeto (convenção do App Router, não MV
 ```
 src/
   app/            rotas e páginas (finas: buscam dados e compõem componentes)
-    api/          só para chamadas externas: webhooks, integrações, rotas consumidas pelo cliente
+    (loja)/       layout raiz da loja: catálogo, sacola, cabeçalho e rodapé
+    (painel)/     layout raiz do painel (/admin), com tokens próprios em painel.css
+    api/          só o que não pode ser action: login (/api/auth), webhook do Mercado Pago e upload de foto
+  actions/        Server Actions ('use server'), um arquivo por domínio: checkout, orders, club, admin
+    global-not-found.tsx  404 de URL inexistente (há dois layouts raiz)
   components/
     ui/           primitivos genéricos e sem regra de negócio (padrão shadcn/ui)
     <área>/       componentes de uma área: cart, checkout, admin, club...
@@ -41,13 +45,21 @@ src/
     server/       código só de servidor (cada arquivo começa com import 'server-only'): banco, auth, catálogo, pedidos, Mercado Pago, e-mail
     seo/          JSON-LD e imagens OG
     validation/   schemas Zod da entrada das rotas (reaproveitáveis nos formulários)
-  config/         configuração estática (brand.ts concentra a identidade)
+  config/         configuração da marca e da loja (brand.ts concentra a identidade)
+  constants/      constantes de regra de negócio e compartilhadas: status, rótulos, limites, padrões, navegação
   data/           conteúdo estático (FAQ, textos, seeds de catálogo)
   types/          tipos compartilhados (ver "Tipagem")
 database/         migrations SQL; preço, frete e estoque são decididos por funções do Postgres
 ```
 
 Para dúvidas de estrutura, consultar as skills `nextjs-arquitetura` e `nextjs-qualidade`.
+
+## Constantes
+
+- Valor fixo que é regra de negócio ou aparece em mais de um lugar vai para `src/constants/<assunto>.ts` (`orders`, `club`, `catalog`, `limits`, `patterns`, `navigation`, `storage`, `address`).
+- Limites que valem no navegador e no servidor (tamanho de foto, itens por sacola, tamanho do recado) vêm sempre de `constants/limits.ts`, nunca de número solto.
+- Rótulos usados por uma única tela (colunas de tabela, filtros daquela lista) podem ficar no componente.
+- Tipos derivados de constantes ficam em `src/types/` com `import type` (ex.: `Sort`, `AccountTabId`).
 
 ## Componentes e arquivos TSX
 
@@ -60,6 +72,8 @@ Para dúvidas de estrutura, consultar as skills `nextjs-arquitetura` e `nextjs-q
 - Server Components por padrão; `'use client'` só onde houver interatividade, e o mais baixo possível na árvore. Nunca importar `lib/server/**` de um arquivo cliente.
 
 ## Estilo (Tailwind)
+
+- Loja e painel têm layouts raiz separados (navegar entre eles recarrega a página). O painel usa as cores `panel-*` (`bg-panel-canvas`, `bg-panel-surface`, `bg-panel-sidebar`...), definidas em `src/app/(painel)/painel.css`; não use `panel-*` na loja.
 
 - **Evitar valores arbitrários** (`rounded-[1.75rem]`, `tracking-[-0.03em]`, `bg-[#a9d8ef]`, `text-[0.7rem]`...). Se o valor se repete ou faz parte da identidade, criar um token em `src/app/globals.css` (`:root` + `@theme inline`) com nome semântico e usar a classe gerada.
 - Cores sempre pelos tokens semânticos (`primary`, `muted`, `flavor-*`, `cocoa`, `sky`, `mint`, `ink`, `paper`, `pix`), nunca hex direto no componente.
@@ -78,6 +92,21 @@ Para dúvidas de estrutura, consultar as skills `nextjs-arquitetura` e `nextjs-q
 - Sem `any`; preferir `unknown` + validação nas bordas (requests, webhooks, respostas de API).
 - Corpo de requisição sempre validado com Zod (`src/lib/validation/`), com `parseWith` para devolver a mensagem do primeiro campo inválido. Tipo da entrada derivado do schema (`z.output`), não escrito à mão.
 - Linhas do banco têm tipo próprio (`OrderRow`, `ProductRow`...) e são convertidas na borda; sem `as unknown as`.
+
+## Server Actions
+
+- Gravações e consultas do próprio site que precisam do servidor são Server Actions em `src/actions/<domínio>.ts`. Rota em `app/api` só para quem chama de fora (webhook), para o login e para upload de arquivo grande.
+- Toda action: recebe `unknown`, valida com o schema de `lib/validation`, confere a sessão (`getCurrentProfile` ou `getAdminAccess`), chama o serviço de `lib/server` e devolve `ActionResult` (`{ ok: true, data } | { ok: false, error }`, helpers `ok`/`fail` de `lib/result`). Exceção só para erro inesperado.
+- A action fica fina; a regra mora no serviço de `lib/server` (ex.: `checkout.ts`, `club-subscription.ts`).
+- No cliente, `expectOk(await action(...))` devolve os dados ou lança o erro para o try/catch.
+- No e2e, chame a action com `action(page.request, 'nomeExportado', ...args)` (lê o id do manifesto do build).
+
+## Sessão e acesso
+
+- O login passa por `/api/auth/[...path]` (handler do `@neon/neon-js/auth/next/server`) e a sessão fica em cookie no domínio da loja. Instância em `lib/server/neon-auth.ts`, criada sob demanda (sem `NEON_AUTH_COOKIE_SECRET` o login fica indisponível, mas o build e o site sobem).
+- `src/proxy.ts` exige login em `/admin`, `/conta`, `/checkout`, `/pedido` e `/clube/assinar`, redirecionando para `/entrar?volta=...`. Rota nova que precise de login entra no `matcher`.
+- O papel de admin é conferido no servidor, no layout do painel (`getAdminAccess` em `lib/server/session.ts`), que é dinâmico. O banco (RLS e funções) continua conferindo cada gravação.
+- No servidor, o usuário vem de `getSessionUser()`; não confie em id de usuário vindo do navegador.
 
 ## Variáveis de ambiente
 

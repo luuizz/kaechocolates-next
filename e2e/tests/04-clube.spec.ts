@@ -1,4 +1,15 @@
-import { api, emailsTo, expect, fillAddress, mercadoPagoLog, signUp, test, text, uniqueEmail, sqlOne } from './helpers'
+import {
+  emailsTo,
+  expect,
+  fillAddress,
+  mercadoPagoLog,
+  signUp,
+  test,
+  text,
+  uniqueEmail,
+  sqlOne,
+  action,
+} from './helpers'
 
 // O formulário de cartão é do Mercado Pago (carrega de fora); aqui a assinatura é
 // feita pela rota do site com um token de cartão simulado.
@@ -22,7 +33,7 @@ test.describe('Clube', () => {
       [email],
     )
     const subscribe = (plan: string, period: string, token = 'tok') =>
-      api(page, '/api/club/subscribe', {
+      action(page.request, 'subscribeToClub', {
         plan,
         period,
         addressId: Number(addressId),
@@ -31,12 +42,12 @@ test.describe('Clube', () => {
         card: { token },
       })
 
-    let response = await subscribe('chocolatra', 'trimestral', 'rejeitar')
-    expect(response.status).toBe(502)
+    let { result } = await subscribe('chocolatra', 'trimestral', 'rejeitar')
+    expect(result?.ok).toBe(false)
 
-    response = await subscribe('chocolatra', 'trimestral')
-    expect(response.status).toBe(201)
-    expect(response.body.subscription.status).toBe('active')
+    ;({ result } = await subscribe('chocolatra', 'trimestral'))
+    expect(result?.ok).toBe(true)
+    expect(result?.data?.status).toBe('active')
     const sent = (await mercadoPagoLog()).filter((entry) => entry.type === 'preapproval').at(-1)!
     expect(sent.body.auto_recurring).toMatchObject({
       frequency: 3,
@@ -49,22 +60,22 @@ test.describe('Clube', () => {
       .poll(async () => (await emailsTo(email)).map((mail) => mail.subject))
       .toContain('Boas-vindas ao Clube Kaê!')
 
-    response = await subscribe('familia', 'mensal')
-    expect(response.status).toBe(409) // uma assinatura em andamento por cliente
+    ;({ result } = await subscribe('familia', 'mensal'))
+    expect(result?.ok).toBe(false) // uma assinatura em andamento por cliente
 
     await page.goto('/conta?aba=clube')
     await expect(page.locator('main')).toContainText('Chocólatra')
     await expect(page.locator('main')).toContainText('Ativa')
     await expect(page.locator('main')).toContainText('final 6351')
     await expect(page.getByRole('button', { name: 'Pausar' })).toHaveCount(0) // trimestral não pausa
-    expect((await api(page, '/api/club/subscription', { action: 'pause' })).status).toBe(400)
+    expect((await action(page.request, 'manageSubscription', { action: 'pause' })).result?.ok).toBe(false)
 
     page.once('dialog', (dialog) => dialog.accept())
     await page.getByRole('button', { name: 'Cancelar renovação' }).click()
     await expect(page.getByText('Caixas até')).toBeVisible()
 
     // Mensal: pausar e retomar
-    expect((await subscribe('degustacao', 'mensal')).status).toBe(201)
+    expect((await subscribe('degustacao', 'mensal')).result?.ok).toBe(true)
     await page.reload()
     await page.getByRole('button', { name: 'Pausar' }).click()
     await expect(page.getByText('Pausada').first()).toBeVisible()

@@ -1,6 +1,5 @@
 import type { AddressDraft } from '@/types/account'
-
-export const STATES = 'AC AL AP AM BA CE DF ES GO MA MT MS MG PA PB PR PE PI RJ RN RS RO RR SC SP SE TO'.split(' ')
+import { DEFAULT_STATE } from '@/constants/address'
 
 export const formatCep = (cep: string) =>
   cep
@@ -17,7 +16,7 @@ export const emptyAddress = (recipient: string): AddressDraft => ({
   complement: '',
   district: '',
   city: '',
-  state: 'MG',
+  state: DEFAULT_STATE,
   is_default: false,
 })
 

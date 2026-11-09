@@ -1,4 +1,16 @@
-import { api, emailsTo, expect, fillAddress, makeAdmin, signUp, sql, test, text, uniqueEmail, sqlOne } from './helpers'
+import {
+  emailsTo,
+  expect,
+  fillAddress,
+  makeAdmin,
+  signUp,
+  sql,
+  test,
+  text,
+  uniqueEmail,
+  sqlOne,
+  action,
+} from './helpers'
 
 test.describe('Painel', () => {
   test.beforeEach(async ({ page }) => {
@@ -48,7 +60,7 @@ test.describe('Painel', () => {
       "update public.products set price = 32.70, compare_at_price = 35.00, sold_out = false where slug in ('pao-de-mel-64', 'pingado-55')",
     )
     await sql("delete from public.products where slug = 'jabuticaba-50'")
-    await api(page, '/api/revalidate', {})
+    expect((await action(page.request, 'refreshStore')).result?.ok).toBe(true)
     await visitor.close()
   })
 
@@ -86,7 +98,7 @@ test.describe('Painel', () => {
     await sql(
       "update public.kit_boxes set discount = 0.08 where id = 'm'; update public.club_plans set price = 109.90 where id = 'chocolatra'; update public.shipping_zones set price = 29.90 where id = 'nordeste'",
     )
-    await api(page, '/api/revalidate', {})
+    expect((await action(page.request, 'refreshStore')).result?.ok).toBe(true)
     await visitor.close()
   })
 
@@ -104,16 +116,16 @@ test.describe('Painel', () => {
       'select a.id from public.addresses a join public.profiles p on p.id = a.user_id where p.email = $1',
       [email],
     )
-    const order = await api(customer, '/api/checkout', {
+    const order = await action(customer.request, 'placeOrder', {
       items: [{ kind: 'product', slug: 'guru-60', quantity: 2 }],
       addressId: Number(addressId),
       method: 'card',
       cpf: '12345678909',
       card: { token: 'tok', paymentMethodId: 'master', installments: 1 },
     })
-    expect(order.status).toBe(201)
-    const code = order.body.order.code as string
-    await api(customer, '/api/club/subscribe', {
+    expect(order.result?.ok).toBe(true)
+    const code = order.result?.data?.code as string
+    await action(customer.request, 'subscribeToClub', {
       plan: 'degustacao',
       period: 'mensal',
       addressId: Number(addressId),

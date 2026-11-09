@@ -66,8 +66,9 @@ valor mostrado bater com o cobrado.
 Leituras e gravações do dia a dia (catálogo, conta, endereços, painel) vão direto do navegador
 para a Data API do Neon, com o token de quem está logado. Quem pode o quê é decidido no banco,
 por RLS: visitante lê só o catálogo ativo, cliente vê só os próprios dados, admin edita.
-Rotas próprias (`src/app/api`) existem só onde é preciso um segredo: cobrar no Mercado Pago,
-receber webhooks, enviar fotos para o Blob e limpar o cache da loja.
+O que precisa de segredo roda no servidor do próprio site: cobrar no Mercado Pago, assinar o
+clube e limpar o cache da loja são Server Actions (`src/actions`), que leem a sessão do cookie.
+Em `src/app/api` ficam só o login (`/api/auth`), o webhook do Mercado Pago e o envio de fotos.
 
 ### Loja rápida, painel em tempo real
 
@@ -133,11 +134,15 @@ flowchart LR
 
 ```
 src/
-  app/            rotas (loja, conta, checkout, clube, admin) e rotas de API
+  app/            (loja) e (painel) com layouts próprios, e api/ (login, webhook, fotos)
+  actions/        Server Actions (checkout, pedido, clube, painel)
   components/     componentes por área (cart, checkout, club, admin, account, ui…)
   config/brand.ts identidade da marca em um só lugar
-  data/           tipos, regras de exibição e catálogo de reserva
-  lib/            acesso a dados; lib/server só roda no servidor (banco, Mercado Pago)
+  constants/      status, rótulos, limites e navegação
+  data/           catálogo de reserva e textos
+  lib/            regras puras e validação; lib/server só roda no servidor (banco, sessão, Mercado Pago)
+  types/          tipos compartilhados
+  proxy.ts        exige login nas áreas privadas
 database/
   migrations/     schema, RLS, pedidos e clube (aplicadas em ordem)
 e2e/              testes de ponta a ponta e o ambiente simulado

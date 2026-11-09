@@ -1,7 +1,7 @@
 import { Field, Input, Select, Textarea } from '@/components/ui/field'
-import { BADGES, LINES } from '@/data/products'
-import { Panel } from '../admin-shell'
+import { Panel } from '../admin-page'
 import type { Draft, DraftErrors, SetField } from './draft'
+import { BADGES, LINES } from '@/constants/catalog'
 
 type PanelProps = {
   draft: Draft

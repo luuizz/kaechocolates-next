@@ -4,9 +4,10 @@ import { useRef, useState } from 'react'
 import { CircleNotch, Image as ImageIcon, Trash, UploadSimple } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import { Panel } from '../admin-shell'
+import { Panel } from '../admin-page'
 import { ColorField } from './color-field'
 import type { Draft, SetField } from './draft'
+import { IMAGE_TYPES } from '@/constants/limits'
 
 type PhotoPanelProps = {
   draft: Draft
@@ -62,7 +63,7 @@ export function PhotoPanel({ draft, set, uploading, onFile }: PhotoPanelProps) {
             <input
               ref={fileInput}
               type="file"
-              accept="image/png,image/jpeg,image/webp,image/avif"
+              accept={Object.keys(IMAGE_TYPES).join(',')}
               className="sr-only"
               onChange={(event) => {
                 onFile(event.target.files?.[0])

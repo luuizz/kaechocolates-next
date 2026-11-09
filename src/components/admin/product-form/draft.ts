@@ -1,4 +1,5 @@
 import type { AdminProduct, Line, ProductInput } from '@/types/product'
+import { SLUG_PATTERN } from '@/constants/patterns'
 
 // Rascunho do formulário de barra: tudo em texto, como o admin digita
 export type Draft = {
@@ -48,8 +49,6 @@ export const EMPTY_DRAFT: Draft = {
   stock: '',
 }
 
-export const MAX_IMAGE = 4 * 1024 * 1024
-
 const money = (value: string) => Number(value.replace(/\./g, '').replace(',', '.'))
 const toMoney = (value?: number) => (value === undefined ? '' : value.toFixed(2).replace('.', ','))
 
@@ -83,7 +82,7 @@ export function validateDraft(draft: Draft) {
   return {
     name: !draft.name.trim() ? 'Dê um nome à barra.' : null,
     cacao: draft.cacao === '' || !Number.isInteger(cacao) || cacao < 0 || cacao > 100 ? 'De 0 a 100.' : null,
-    slug: !/^[a-z0-9]+(-[a-z0-9]+)*$/.test(draft.slug) ? 'Use letras minúsculas, números e hífen.' : null,
+    slug: !SLUG_PATTERN.test(draft.slug) ? 'Use letras minúsculas, números e hífen.' : null,
     price: !(price >= 0) || draft.price.trim() === '' ? 'Informe o preço.' : null,
     compareAt: compareAt !== undefined && !(compareAt > price) ? 'O preço "de" precisa ser maior que o preço.' : null,
     short: !draft.short.trim() ? 'Uma frase sobre o sabor.' : null,

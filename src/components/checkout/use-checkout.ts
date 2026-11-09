@@ -5,9 +5,10 @@ import { useEffect, useMemo, useState } from 'react'
 import { useAuth } from '@/components/auth/auth-provider'
 import { toCheckoutItems, useCart } from '@/components/cart/cart-provider'
 import { validCpf } from '@/lib/cpf'
-import { getAccessToken } from '@/lib/neon'
 import type { Address } from '@/types/account'
 import type { Quote } from '@/types/shipping'
+import { getQuote, placeOrder } from '@/actions/checkout'
+import { expectOk } from '@/lib/result'
 
 export type PaymentMethod = 'pix' | 'card'
 
@@ -40,15 +41,10 @@ export function useCheckout() {
     let active = true
     // eslint-disable-next-line react-hooks/set-state-in-effect -- indicador de carregamento da prévia
     setQuoting(true)
-    fetch('/api/checkout/quote', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ items, state }),
-    })
-      .then(async (response) => {
-        const body = await response.json()
-        if (!response.ok) throw new Error(body.error || 'Não foi possível calcular o pedido.')
-        if (active) setQuote(body)
+    getQuote({ items, state })
+      .then((result) => {
+        const data = expectOk(result)
+        if (active) setQuote(data)
       })
       .catch((err) => active && setError(err.message))
       .finally(() => active && setQuoting(false))
@@ -60,19 +56,11 @@ export function useCheckout() {
 
   const pay = async (payload: { method: PaymentMethod; cpf: string; card?: Record<string, unknown> }) => {
     setError('')
-    const token = await getAccessToken()
-    if (!token) throw new Error('Sua sessão expirou. Entre de novo.')
-    const response = await fetch('/api/checkout', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-      body: JSON.stringify({ items, addressId, ...payload }),
-    })
-    const body = await response.json().catch(() => ({}))
-    if (!response.ok) throw new Error(body.error || 'Não foi possível finalizar a compra.')
+    const { code } = expectOk(await placeOrder({ items, addressId, ...payload }))
     setDone(true)
     cart.clear()
-    // 202: cobrança feita, status ainda sendo gravado; a página do pedido acompanha
-    router.push(`/pedido/${body.order?.code ?? body.code}`)
+    // Se o status ainda está sendo gravado, a página do pedido acompanha
+    router.push(`/pedido/${code}`)
   }
 
   const payPix = async () => {

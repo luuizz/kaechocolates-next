@@ -1,8 +1,9 @@
 import { MapPin, Package, Truck } from '@phosphor-icons/react'
 import { formatBRL } from '@/data/products'
-import { ORDER_STATUS } from '@/lib/orders'
 import { cn } from '@/lib/utils'
 import type { OrderStatus, OrderView } from '@/types/order'
+import { ORDER_STATUS } from '@/constants/orders'
+import { ORDER_STEPS } from '@/constants/orders'
 
 export function StatusBadge({ status, className }: { status: OrderStatus; className?: string }) {
   return (
@@ -14,15 +15,13 @@ export function StatusBadge({ status, className }: { status: OrderStatus; classN
   )
 }
 
-const STEPS: OrderStatus[] = ['pending_payment', 'paid', 'preparing', 'shipped', 'delivered']
-
 // Linha do tempo do pedido
 export function OrderProgress({ status }: { status: OrderStatus }) {
   if (status === 'canceled') return null
-  const current = STEPS.indexOf(status)
+  const current = ORDER_STEPS.indexOf(status)
   return (
     <ol className="grid grid-cols-5 gap-1.5" aria-label="Andamento do pedido">
-      {STEPS.map((step, index) => (
+      {ORDER_STEPS.map((step, index) => (
         <li key={step} className="flex flex-col gap-2">
           <span className={cn('h-1.5 rounded-full', index <= current ? 'bg-foreground' : 'bg-border')} />
           <span
