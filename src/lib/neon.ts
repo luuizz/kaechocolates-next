@@ -6,7 +6,9 @@ import { neonEnv } from '@/lib/env'
 
 // Cliente do Neon no navegador: `neon.auth` (login, no estilo Supabase) e
 // `neon.from()` / `neon.rpc()` (Data API, com o token do usuário logado).
-// Visitantes sem login usam um token anônimo, que só lê o catálogo.
+// O login passa por /api/auth (mesmo domínio), que guarda a sessão em cookie
+// para o servidor também enxergar. Visitantes sem login usam um token anônimo,
+// que só lê o catálogo.
 const { authUrl, dataApiUrl } = neonEnv()
 
 export const isNeonConfigured = Boolean(authUrl && dataApiUrl)
@@ -18,7 +20,10 @@ export function getNeon(): NeonClient {
   if (!isNeonConfigured)
     throw new Error('Login indisponível: faltam NEXT_PUBLIC_NEON_AUTH_URL e NEXT_PUBLIC_NEON_DATA_API_URL.')
   if (typeof window === 'undefined') throw new Error('O cliente do Neon só roda no navegador.')
-  client ??= createClient({ auth: { url: authUrl, allowAnonymous: true }, dataApi: { url: dataApiUrl } })
+  client ??= createClient({
+    auth: { url: `${window.location.origin}/api/auth`, allowAnonymous: true },
+    dataApi: { url: dataApiUrl },
+  })
   return client
 }
 

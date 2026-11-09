@@ -69,7 +69,7 @@ export async function fillAddress(
 export async function api(page: Page, path: string, body?: unknown) {
   return page.evaluate(
     async ({ path, body }) => {
-      const auth = await fetch('http://localhost:54321/neondb/auth/token', { credentials: 'include' })
+      const auth = await fetch('/api/auth/token')
       const { token } = await auth.json()
       const response = await fetch(path, {
         method: body === undefined ? 'GET' : 'POST',
