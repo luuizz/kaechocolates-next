@@ -9,7 +9,6 @@ import { Field, Input, Select } from '@/components/ui/field'
 import { OrderItems, OrderProgress, OrderShipping, StatusBadge } from '@/components/orders/order-parts'
 import { getOrder, notifyOrderChange, refreshStore, updateOrder } from '@/lib/admin-api'
 import { formatCpf } from '@/lib/cpf'
-import { getAccessToken } from '@/lib/neon'
 import { formatDateTime } from '@/lib/orders'
 import { formatPhone } from '@/lib/utils'
 import { AdminHeader, Panel } from './admin-page'
@@ -17,6 +16,8 @@ import type { OrderStatus, OrderView } from '@/types/order'
 import { PageLoader } from '@/components/ui/page-loader'
 import { ORDER_STATUS } from '@/constants/orders'
 import { ORDER_NEXT_STATUS } from '@/constants/orders'
+import { getMyOrder } from '@/actions/orders'
+import { expectOk } from '@/lib/result'
 
 export function OrderDetail({ code }: { code: string }) {
   const [order, setOrder] = useState<OrderView | null>(null)
@@ -73,12 +74,7 @@ export function OrderDetail({ code }: { code: string }) {
   const sync = async () => {
     setSyncing(true)
     try {
-      const token = await getAccessToken()
-      const response = await fetch(`/api/orders/${encodeURIComponent(order.code)}`, {
-        headers: { Authorization: `Bearer ${token}` },
-        cache: 'no-store',
-      })
-      if (!response.ok) throw new Error((await response.json().catch(() => ({}))).error || 'Falha ao consultar.')
+      expectOk(await getMyOrder(order.code))
       await load()
       toast.success('Pagamento conferido no Mercado Pago.')
     } catch (err) {

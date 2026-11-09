@@ -7,21 +7,16 @@ import { Button } from '@/components/ui/button'
 import { FormMessage } from '@/components/ui/field'
 import { formatBRL } from '@/data/products'
 import { formatDate, normalizeSubscription } from '@/lib/club'
-import { getAccessToken, getNeon, unwrap } from '@/lib/neon'
+import { getNeon, unwrap } from '@/lib/neon'
 import { cn } from '@/lib/utils'
 import type { Subscription } from '@/types/club'
 import { EmptyState } from '@/components/ui/empty-state'
 import { SUBSCRIPTION_STATUS } from '@/constants/club'
+import { manageSubscription, syncMySubscription } from '@/actions/club'
+import { expectOk } from '@/lib/result'
 
 async function callClub(method: 'GET' | 'POST', body?: unknown) {
-  const token = await getAccessToken()
-  const response = await fetch('/api/club/subscription', {
-    method,
-    headers: { Authorization: `Bearer ${token}`, ...(body ? { 'Content-Type': 'application/json' } : {}) },
-    body: body ? JSON.stringify(body) : undefined,
-  })
-  const data = await response.json().catch(() => ({}))
-  if (!response.ok) throw new Error(data.error || 'Não foi possível atualizar a assinatura.')
+  expectOk(method === 'GET' ? await syncMySubscription() : await manageSubscription(body))
 }
 
 // Aba Clube da conta: assinatura atual, ações e cobranças

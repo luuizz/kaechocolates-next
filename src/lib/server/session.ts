@@ -21,6 +21,12 @@ export async function getProfile(userId: string): Promise<Profile | null> {
   return rows[0] ?? null
 }
 
+// Perfil de quem está logado (usado pelas Server Actions da loja)
+export async function getCurrentProfile() {
+  const user = await getSessionUser()
+  return user ? getProfile(user.id) : null
+}
+
 export type SessionAccess =
   { status: 'anonymous' } | { status: 'forbidden'; profile: Profile | null } | { status: 'admin'; profile: Profile }
 
