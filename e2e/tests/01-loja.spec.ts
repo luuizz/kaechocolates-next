@@ -74,7 +74,10 @@ test.describe('Loja', () => {
     expect(JSON.parse(ld!)[0]).toMatchObject({ '@type': 'Product', offers: { priceCurrency: 'BRL' } })
     await expect(page.locator('link[rel=canonical]')).toHaveAttribute('href', /\/produtos\/cupuacu-64$/)
 
-    const og = await request.get('/produtos/cupuacu-64/opengraph-image')
+    // O endereço da imagem tem sufixo gerado pelo Next (rota dentro de um route group): vem da meta tag
+    const ogUrl = await page.locator('meta[property="og:image"]').first().getAttribute('content')
+    expect(ogUrl).toContain('/produtos/cupuacu-64/opengraph-image')
+    const og = await request.get(new URL(ogUrl!).pathname)
     expect(og.headers()['content-type']).toContain('image/png')
   })
 })
