@@ -1,9 +1,10 @@
 import 'server-only'
+import type { SubscriptionStatus } from '@/types/club'
 import { db } from './db'
 import { getPreapproval, preapprovalSnapshot } from './mercadopago'
 
 export type SubscriptionRow = {
-  id: string; user_id: string; status: 'pending' | 'active' | 'paused' | 'canceled'; mp_preapproval_id: string | null
+  id: string; user_id: string; status: SubscriptionStatus; mp_preapproval_id: string | null
   period: { months: number }
 }
 

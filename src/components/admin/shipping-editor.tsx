@@ -6,11 +6,12 @@ import { Field, Input } from '@/components/ui/field'
 import { STATES } from '@/components/account/address-book'
 import { brand } from '@/config/brand'
 import { formatBRL } from '@/data/products'
-import { listZones, type AdminZone } from '@/lib/admin-api'
+import { listZones } from '@/lib/admin-api'
 import { cn, slugify } from '@/lib/utils'
 import { AdminHeader, Panel } from './admin-shell'
 import { useListEditor } from './list-editor'
 import { Switch } from './switch'
+import type { AdminZone } from '@/types/shipping'
 
 const money = (value: string) => Number(value.replace(/\./g, '').replace(',', '.')) || 0
 

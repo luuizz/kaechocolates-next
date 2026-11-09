@@ -7,11 +7,12 @@ import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/field'
 import { BarPackage } from '@/components/product/bar-package'
-import { LINES, formatBRL, type Line } from '@/data/products'
-import { listProducts, refreshStore, updateProductFields, type AdminProduct } from '@/lib/admin-api'
+import { LINES, formatBRL } from '@/data/products'
+import { listProducts, refreshStore, updateProductFields } from '@/lib/admin-api'
 import { cn } from '@/lib/utils'
 import { AdminHeader, Panel } from './admin-shell'
 import { Switch } from './switch'
+import type { AdminProduct, Line } from '@/types/product'
 
 const normalize = (text: string) => text.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
 

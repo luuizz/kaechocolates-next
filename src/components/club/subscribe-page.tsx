@@ -6,7 +6,6 @@ import { useEffect, useState } from 'react'
 import { CalendarCheck, Check, CircleNotch, CreditCard, MapPin, Sparkle } from '@phosphor-icons/react'
 import { useAuth } from '@/components/auth/auth-provider'
 import { useCatalog } from '@/components/catalog/catalog-provider'
-import type { Address } from '@/components/account/address-book'
 import { AddressPicker } from '@/components/checkout/address-picker'
 import { CardForm } from '@/components/checkout/card-form'
 import { FormMessage, Textarea } from '@/components/ui/field'
@@ -14,6 +13,7 @@ import { planPrice } from '@/data/club'
 import { formatBRL } from '@/data/products'
 import { getAccessToken } from '@/lib/neon'
 import { cn } from '@/lib/utils'
+import type { Address } from '@/types/account'
 
 // Assinatura do clube: plano + período, endereço das caixas e cartão
 export function SubscribePage() {

@@ -1,7 +1,8 @@
 import { MapPin, Package, Truck } from '@phosphor-icons/react'
 import { formatBRL } from '@/data/products'
-import { ORDER_STATUS, type OrderStatus, type OrderView } from '@/lib/orders'
+import { ORDER_STATUS } from '@/lib/orders'
 import { cn } from '@/lib/utils'
+import type { OrderStatus, OrderView } from '@/types/order'
 
 export function StatusBadge({ status, className }: { status: OrderStatus; className?: string }) {
   return <span className={cn('inline-flex rounded-full px-2.5 py-1 text-xs font-bold', ORDER_STATUS[status].tone, className)}>{ORDER_STATUS[status].label}</span>

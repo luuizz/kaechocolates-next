@@ -1,10 +1,10 @@
 import { roundMoney } from '@/lib/utils'
-import { findProduct, type Product } from './products'
+import { findProduct } from './products'
+import type { Box, KitSpec } from '@/types/kit'
+import type { Product } from '@/types/product'
 
 // Caixas do "Monte seu kit" (tabela kit_boxes, editável em /admin/kits).
 // A lista abaixo é a reserva para quando o banco não está configurado.
-export type Box = { id: string; name: string; size: number; discount: number; note?: string }
-
 export const FALLBACK_BOXES: Box[] = [
   { id: 'p', name: 'Caixa P', size: 3, discount: 0.05, note: 'Para provar' },
   { id: 'm', name: 'Caixa M', size: 6, discount: 0.08, note: 'A mais pedida' },
@@ -12,8 +12,6 @@ export const FALLBACK_BOXES: Box[] = [
 ]
 
 export const findBox = (boxes: Box[], id: string) => boxes.find((box) => box.id === id)
-
-export type KitSpec = { name: string; box: string; slugs: string[]; message?: string }
 
 const round = roundMoney
 

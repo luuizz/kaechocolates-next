@@ -4,10 +4,11 @@ import { ArrowDown, ArrowUp, CircleNotch, Plus, Trash } from '@phosphor-icons/re
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/field'
 import { slugify } from '@/lib/utils'
-import { listBoxes, type AdminBox } from '@/lib/admin-api'
+import { listBoxes } from '@/lib/admin-api'
 import { AdminHeader, Panel } from './admin-shell'
 import { fromPercent, percent, useListEditor } from './list-editor'
 import { Switch } from './switch'
+import type { AdminBox } from '@/types/kit'
 
 export function BoxesEditor() {
   const list = useListEditor<AdminBox>('kit_boxes', listBoxes)

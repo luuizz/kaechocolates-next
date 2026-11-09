@@ -1,34 +1,9 @@
-// Tipos e regras do catálogo de barras.
+import type { Line, Product, ProductBadge } from '@/types/product'
+
+// Regras do catálogo de barras.
 // O catálogo de verdade vem do banco (tabela products, editável em /admin).
 // A lista abaixo é a reserva: usada quando o site roda sem banco configurado
 // (CI, primeiro `yarn dev`) ou se a Data API estiver fora do ar.
-
-export type Line = 'intensos' | 'ao-leite' | 'brancos'
-
-export type Product = {
-  id?: number
-  slug: string
-  name: string
-  cacao: number
-  line: Line
-  /** cor da etiqueta da embalagem */
-  label: string
-  /** cor de fundo do bloco na vitrine */
-  tile: string
-  /** texto da etiqueta escuro ou claro */
-  labelText?: 'dark' | 'light'
-  price: number
-  compareAt?: number
-  weight: string
-  short: string
-  description?: string
-  ingredients?: string
-  badge?: (typeof BADGES)[number]
-  soldOut?: boolean
-  /** vazio = estoque não controlado */
-  stock?: number
-  image?: string
-}
 
 export const LINE_SINGULAR: Record<Line, string> = { intensos: 'intenso', 'ao-leite': 'ao leite', brancos: 'branco' }
 
@@ -57,7 +32,7 @@ export const FALLBACK_PRODUCTS: Product[] = [
   { ...base, slug: 'prodigio-64', name: 'Prodígio', cacao: 64, line: 'intensos', label: '#151515', tile: '#c9a54c', labelText: 'light', short: 'Edição limitada com coco.', badge: 'Edição limitada', soldOut: true },
 ]
 
-export const BADGES = ['Edição limitada', 'Zero açúcar', 'Novo'] as const
+export const BADGES = ['Edição limitada', 'Zero açúcar', 'Novo'] as const satisfies readonly ProductBadge[]
 
 export const findProduct = (list: Product[], slug: string) => list.find((product) => product.slug === slug)
 

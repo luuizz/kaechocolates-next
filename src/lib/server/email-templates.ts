@@ -1,7 +1,7 @@
 import 'server-only'
 import { brand } from '@/config/brand'
 import { formatBRL } from '@/data/products'
-import type { OrderView } from '@/lib/orders'
+import type { OrderView } from '@/types/order'
 
 // Modelos dos e-mails automáticos. HTML em tabelas e estilos inline, porque é o que os
 // programas de e-mail (Gmail, Outlook, Apple Mail) entendem; sempre com versão em texto.

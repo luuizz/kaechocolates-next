@@ -5,7 +5,8 @@ import { ShoppingBagOpen } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { QuantityStepper } from '@/components/cart/quantity-stepper'
 import { useCart, MAX_PER_ITEM } from '@/components/cart/cart-provider'
-import { formatBRL, type Product } from '@/data/products'
+import { formatBRL } from '@/data/products'
+import type { Product } from '@/types/product'
 
 // Quantidade + adicionar à sacola na página do produto
 export function BuyBox({ product }: { product: Product }) {

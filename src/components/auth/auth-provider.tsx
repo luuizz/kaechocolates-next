@@ -2,8 +2,8 @@
 
 import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { friendlyError, getNeon, isNeonConfigured, unwrap } from '@/lib/neon'
+import type { Profile } from '@/types/account'
 
-export type Profile = { id: string; email: string | null; full_name: string | null; phone: string | null; role: 'customer' | 'admin' }
 type Session = { access_token: string; user: { id: string; email?: string; user_metadata?: Record<string, unknown> } }
 
 type AuthValue = {

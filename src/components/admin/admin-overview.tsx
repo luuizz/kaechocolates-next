@@ -6,8 +6,10 @@ import { ArrowRight, Barcode, CurrencyCircleDollar, Package, Users, WarningCircl
 import { useAuth } from '@/components/auth/auth-provider'
 import { StatusBadge } from '@/components/orders/order-parts'
 import { formatBRL } from '@/data/products'
-import { listBoxes, listCustomers, listOrders, listPlans, listProducts, type AdminOrderRow, type AdminProduct } from '@/lib/admin-api'
+import { listBoxes, listCustomers, listOrders, listPlans, listProducts } from '@/lib/admin-api'
 import { AdminHeader, Panel } from './admin-shell'
+import type { AdminOrderRow } from '@/types/order'
+import type { AdminProduct } from '@/types/product'
 
 type Stats = { products: AdminProduct[]; boxes: number; plans: number; customers: number; orders: AdminOrderRow[]; loadedAt: number }
 

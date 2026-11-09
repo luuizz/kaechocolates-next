@@ -3,11 +3,11 @@ import { after } from 'next/server'
 import { brand } from '@/config/brand'
 import { db, dbMessage } from '@/lib/server/db'
 import { userFromRequest } from '@/lib/server/auth'
-import { parseCart } from '@/lib/server/cart-input'
 import { createMpOrder, MpError, paymentSnapshot, type MpOrder } from '@/lib/server/mercadopago'
 import { applyPayment, loadOrder, publicOrder, recordCharge } from '@/lib/server/orders'
 import { paymentProblem } from '@/lib/orders'
-import { validCpf } from '@/lib/cpf'
+import { CHECKOUT_ERRORS, checkoutSchema } from '@/lib/validation/checkout'
+import { parseWith } from '@/lib/validation/parse'
 import { notifyOrder } from '@/lib/server/email'
 
 const json = (status: number, body: unknown) => Response.json(body, { status })
@@ -20,20 +20,10 @@ export async function POST(request: Request) {
   const user = await userFromRequest(request)
   if (!user) return json(401, { error: 'Entre na sua conta para finalizar a compra.' })
 
-  const body = await request.json().catch(() => null)
-  const items = parseCart(body?.items)
-  const addressId = Number(body?.addressId)
-  const method = body?.method === 'card' ? 'card' : body?.method === 'pix' ? 'pix' : null
-  const cpf = String(body?.cpf ?? '').replace(/\D/g, '')
-  if (!items) return json(400, { error: 'Sacola inválida.' })
-  if (!Number.isInteger(addressId) || addressId <= 0) return json(400, { error: 'Escolha um endereço de entrega.' })
-  if (!method) return json(400, { error: 'Escolha a forma de pagamento.' })
-  if (!validCpf(cpf)) return json(400, { error: 'Informe um CPF válido.' })
-
-  const card = body?.card
-  if (method === 'card' && (typeof card?.token !== 'string' || typeof card?.paymentMethodId !== 'string')) {
-    return json(400, { error: 'Preencha os dados do cartão.' })
-  }
+  const input = parseWith(checkoutSchema, await request.json().catch(() => null), CHECKOUT_ERRORS)
+  if (!input.ok) return json(400, { error: input.error })
+  const { items, addressId, cpf, ...payment } = input.data
+  const { method } = payment
 
   let code: string
   let total: number
@@ -58,9 +48,9 @@ export async function POST(request: Request) {
       amount: total,
       idempotencyKey: randomUUID(),
       payer: { email: user.email ?? '', firstName: testMode && method === 'pix' ? 'APRO' : firstName, lastName: rest.join(' ') || undefined, cpf },
-      method: method === 'pix'
+      method: payment.method === 'pix'
         ? { kind: 'pix' }
-        : { kind: 'card', token: card.token, paymentMethodId: card.paymentMethodId, paymentTypeId: card.paymentTypeId === 'debit_card' ? 'debit_card' : 'credit_card', installments: Math.min(Math.max(Number(card.installments) || 1, 1), brand.commerce.maxInstallments) },
+        : { kind: 'card', ...payment.card, installments: Math.min(Math.max(payment.card.installments, 1), brand.commerce.maxInstallments) },
     })
   } catch (error) {
     // Cobrança não saiu: cancela o pedido e devolve o estoque

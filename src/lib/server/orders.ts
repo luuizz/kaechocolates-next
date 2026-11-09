@@ -1,7 +1,8 @@
 import 'server-only'
 import { db } from './db'
 import { getMpOrder, paymentSnapshot } from './mercadopago'
-import { normalizeOrder, type OrderView } from '@/lib/orders'
+import { normalizeOrder } from '@/lib/orders'
+import type { OrderView } from '@/types/order'
 
 export async function loadOrder(code: string): Promise<(OrderView & { user_id: string; mp_order_id: string | null }) | null> {
   const { rows } = await db().query('select * from public.orders where code = $1', [code])

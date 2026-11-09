@@ -1,7 +1,8 @@
 import Link from 'next/link'
 import { BarPackage } from './bar-package'
 import { AddToCartIcon } from '@/components/cart/add-to-cart'
-import { formatBRL, installment, type Product } from '@/data/products'
+import { formatBRL, installment } from '@/data/products'
+import type { Product } from '@/types/product'
 
 // Cartão da vitrine: embalagem sobre a cor do sabor, preço e botão de comprar
 export function ProductCard({ product }: { product: Product }) {
