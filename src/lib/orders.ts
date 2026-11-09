@@ -2,9 +2,21 @@
 import type { OrderItemRow, OrderRow, OrderStatus, OrderView } from '@/types/order'
 
 export const ORDER_STATUS: Record<OrderStatus, { label: string; tone: string; text: string }> = {
-  pending_payment: { label: 'Aguardando pagamento', tone: 'bg-flavor-yellow text-foreground', text: 'Assim que o pagamento for aprovado, a gente começa a separar.' },
-  paid: { label: 'Pagamento aprovado', tone: 'bg-success text-white', text: 'Pagamento confirmado! Já já começamos a separar seu pedido.' },
-  preparing: { label: 'Em separação', tone: 'bg-flavor-blue text-white', text: 'Estamos embalando seu pedido com todo o cuidado.' },
+  pending_payment: {
+    label: 'Aguardando pagamento',
+    tone: 'bg-flavor-yellow text-foreground',
+    text: 'Assim que o pagamento for aprovado, a gente começa a separar.',
+  },
+  paid: {
+    label: 'Pagamento aprovado',
+    tone: 'bg-success text-white',
+    text: 'Pagamento confirmado! Já já começamos a separar seu pedido.',
+  },
+  preparing: {
+    label: 'Em separação',
+    tone: 'bg-flavor-blue text-white',
+    text: 'Estamos embalando seu pedido com todo o cuidado.',
+  },
   shipped: { label: 'Enviado', tone: 'bg-flavor-orange text-white', text: 'Seu pedido está a caminho.' },
   delivered: { label: 'Entregue', tone: 'bg-foreground text-background', text: 'Pedido entregue. Bom proveito!' },
   canceled: { label: 'Cancelado', tone: 'bg-destructive text-white', text: 'Este pedido foi cancelado.' },
@@ -42,4 +54,12 @@ export function paymentProblem(detail: string | null) {
   return (detail && messages[detail]) || 'O pagamento não foi aprovado. Tente de novo ou escolha outra forma.'
 }
 
-export const formatDateTime = (value: string) => new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'America/Sao_Paulo' }).format(new Date(value))
+export const formatDateTime = (value: string) =>
+  new Intl.DateTimeFormat('pt-BR', {
+    day: '2-digit',
+    month: 'short',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    timeZone: 'America/Sao_Paulo',
+  }).format(new Date(value))

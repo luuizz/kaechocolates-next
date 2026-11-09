@@ -44,7 +44,9 @@ test.describe('Painel', () => {
     await expect(visitor.locator('h1')).toContainText('Jabuticaba')
 
     // Volta ao estado inicial para os outros testes
-    await sql("update public.products set price = 32.70, compare_at_price = 35.00, sold_out = false where slug in ('pao-de-mel-64', 'pingado-55')")
+    await sql(
+      "update public.products set price = 32.70, compare_at_price = 35.00, sold_out = false where slug in ('pao-de-mel-64', 'pingado-55')",
+    )
     await sql("delete from public.products where slug = 'jabuticaba-50'")
     await api(page, '/api/revalidate', {})
     await visitor.close()
@@ -77,9 +79,13 @@ test.describe('Painel', () => {
     await shipping.blur()
     await page.getByRole('button', { name: 'Salvar' }).click()
     await expect(page.getByText('Alterações salvas.')).toBeVisible()
-    expect((await sqlOne<{ price: string }>("select price from public.shipping_zones where id = 'nordeste'")).price).toBe('25.00')
+    expect(
+      (await sqlOne<{ price: string }>("select price from public.shipping_zones where id = 'nordeste'")).price,
+    ).toBe('25.00')
 
-    await sql("update public.kit_boxes set discount = 0.08 where id = 'm'; update public.club_plans set price = 109.90 where id = 'chocolatra'; update public.shipping_zones set price = 29.90 where id = 'nordeste'")
+    await sql(
+      "update public.kit_boxes set discount = 0.08 where id = 'm'; update public.club_plans set price = 109.90 where id = 'chocolatra'; update public.shipping_zones set price = 29.90 where id = 'nordeste'",
+    )
     await api(page, '/api/revalidate', {})
     await visitor.close()
   })
@@ -94,11 +100,27 @@ test.describe('Painel', () => {
     await customer.getByRole('button', { name: 'Novo endereço' }).click()
     await fillAddress(customer)
     await expect(customer.locator('main')).toContainText('Praça Marechal Deodoro')
-    const { id: addressId } = await sqlOne<{ id: string }>('select a.id from public.addresses a join public.profiles p on p.id = a.user_id where p.email = $1', [email])
-    const order = await api(customer, '/api/checkout', { items: [{ kind: 'product', slug: 'guru-60', quantity: 2 }], addressId: Number(addressId), method: 'card', cpf: '12345678909', card: { token: 'tok', paymentMethodId: 'master', installments: 1 } })
+    const { id: addressId } = await sqlOne<{ id: string }>(
+      'select a.id from public.addresses a join public.profiles p on p.id = a.user_id where p.email = $1',
+      [email],
+    )
+    const order = await api(customer, '/api/checkout', {
+      items: [{ kind: 'product', slug: 'guru-60', quantity: 2 }],
+      addressId: Number(addressId),
+      method: 'card',
+      cpf: '12345678909',
+      card: { token: 'tok', paymentMethodId: 'master', installments: 1 },
+    })
     expect(order.status).toBe(201)
     const code = order.body.order.code as string
-    await api(customer, '/api/club/subscribe', { plan: 'degustacao', period: 'mensal', addressId: Number(addressId), cpf: '12345678909', notes: 'sem lactose', card: { token: 'tok' } })
+    await api(customer, '/api/club/subscribe', {
+      plan: 'degustacao',
+      period: 'mensal',
+      addressId: Number(addressId),
+      cpf: '12345678909',
+      notes: 'sem lactose',
+      card: { token: 'tok' },
+    })
 
     await page.goto('/admin/pedidos')
     await expect(page.locator('tbody')).toContainText(code)
@@ -108,16 +130,31 @@ test.describe('Painel', () => {
     await page.getByPlaceholder('AA123456789BR').fill('qa123456789br')
     await page.getByRole('button', { name: 'Marcar como enviado' }).click()
     await expect(page.getByRole('button', { name: 'Marcar como entregue' })).toBeVisible()
-    expect((await sql<{ status: string; tracking_code: string }>('select status, tracking_code from public.orders where code = $1', [code]))[0]).toEqual({ status: 'shipped', tracking_code: 'QA123456789BR' })
+    expect(
+      (
+        await sql<{ status: string; tracking_code: string }>(
+          'select status, tracking_code from public.orders where code = $1',
+          [code],
+        )
+      )[0],
+    ).toEqual({ status: 'shipped', tracking_code: 'QA123456789BR' })
 
-    await expect.poll(async () => (await emailsTo(email)).find((mail) => mail.subject === `Seu pedido ${code} saiu para entrega`)?.html ?? '').toContain('QA123456789BR')
+    await expect
+      .poll(
+        async () =>
+          (await emailsTo(email)).find((mail) => mail.subject === `Seu pedido ${code} saiu para entrega`)?.html ?? '',
+      )
+      .toContain('QA123456789BR')
 
     await customer.goto(`/pedido/${code}`)
     await expect(customer.locator('main')).toContainText('QA123456789BR')
 
     await page.goto('/admin/assinantes')
     await expect(page.locator('tbody')).toContainText('Eva Costa')
-    const [download] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: /Lista de envio/ }).click()])
+    const [download] = await Promise.all([
+      page.waitForEvent('download'),
+      page.getByRole('button', { name: /Lista de envio/ }).click(),
+    ])
     const { readFileSync } = await import('node:fs')
     const csv = readFileSync((await download.path())!, 'utf8')
     expect(csv).toContain('Eva Costa')

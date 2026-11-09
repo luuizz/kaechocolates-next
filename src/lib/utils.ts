@@ -20,7 +20,13 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 // Texto livre → código de URL ("Pão de mel 64" → "pao-de-mel-64")
-export const slugify = (text: string) => text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
+export const slugify = (text: string) =>
+  text
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
 
 // Telefone brasileiro com DDD: 35984773733 → (35) 98477-3733
 export function formatPhone(value: string) {

@@ -18,7 +18,12 @@ function PasswordInput(props: React.ComponentProps<typeof Input>) {
   return (
     <div className="relative">
       <Input {...props} type={visible ? 'text' : 'password'} className="pr-12" />
-      <button type="button" onClick={() => setVisible((value) => !value)} aria-label={visible ? 'Esconder senha' : 'Mostrar senha'} className="absolute right-1.5 top-1.5 grid size-9 place-items-center rounded-lg text-muted-foreground hover:bg-secondary hover:text-foreground">
+      <button
+        type="button"
+        onClick={() => setVisible((value) => !value)}
+        aria-label={visible ? 'Esconder senha' : 'Mostrar senha'}
+        className="absolute top-1.5 right-1.5 grid size-9 place-items-center rounded-lg text-muted-foreground hover:bg-secondary hover:text-foreground"
+      >
         {visible ? <EyeSlash size={18} /> : <Eye size={18} />}
       </button>
     </div>
@@ -26,10 +31,29 @@ function PasswordInput(props: React.ComponentProps<typeof Input>) {
 }
 
 // Field passa id/aria para o filho direto; aqui o filho é o wrapper do campo de senha
-export function PasswordField({ label, value, onChange, error, autoComplete, hint }: { label: string; value: string; onChange: (value: string) => void; error?: string | null; autoComplete: string; hint?: string }) {
+export function PasswordField({
+  label,
+  value,
+  onChange,
+  error,
+  autoComplete,
+  hint,
+}: {
+  label: string
+  value: string
+  onChange: (value: string) => void
+  error?: string | null
+  autoComplete: string
+  hint?: string
+}) {
   return (
     <Field label={label} error={error} hint={hint}>
-      <PasswordInput value={value} onChange={(event) => onChange(event.target.value)} autoComplete={autoComplete} required />
+      <PasswordInput
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+        autoComplete={autoComplete}
+        required
+      />
     </Field>
   )
 }

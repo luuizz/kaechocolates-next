@@ -87,5 +87,5 @@ Para dúvidas de estrutura, consultar as skills `nextjs-arquitetura` e `nextjs-q
 ## Escrita de código e documentação
 
 - Comentários, commits, PRs e docs tratam só do que é relevante para o projeto. Não registrar decisões ou comentários de conversa, contexto pessoal ou justificativas que não ajudam quem vai ler o código.
-- Comentário explica o *porquê* quando não é óbvio; não narrar o que o código faz.
+- Comentário explica o _porquê_ quando não é óbvio; não narrar o que o código faz.
 - Textos da interface em português do Brasil.

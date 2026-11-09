@@ -7,11 +7,19 @@ import { Reveal } from '@/components/motion/reveal'
 import { CLUB_FAQ } from '@/data/club'
 import { getCatalog } from '@/lib/server/catalog'
 
-export const metadata: Metadata = { title: 'Clube de assinatura', description: 'Todo mês uma caixa com chocolates bean to bar brasileiros, edições limitadas e frete grátis.', alternates: { canonical: '/clube' } }
+export const metadata: Metadata = {
+  title: 'Clube de assinatura',
+  description: 'Todo mês uma caixa com chocolates bean to bar brasileiros, edições limitadas e frete grátis.',
+  alternates: { canonical: '/clube' },
+}
 
 const steps = [
   { icon: Package, title: 'Escolha o plano', text: 'De 2 a 6 barras por mês, no período que fizer sentido para você.' },
-  { icon: Gift, title: 'A Kaê monta a caixa', text: 'Uma seleção diferente todo mês, com edições que não vão para a loja.' },
+  {
+    icon: Gift,
+    title: 'A Kaê monta a caixa',
+    text: 'Uma seleção diferente todo mês, com edições que não vão para a loja.',
+  },
   { icon: Truck, title: 'Chega na sua porta', text: 'Frete grátis para todo o Brasil, na primeira quinzena do mês.' },
   { icon: CalendarCheck, title: 'Você no controle', text: 'Pause, troque de plano ou cancele pela sua conta.' },
 ]
@@ -24,15 +32,35 @@ export default async function ClubPage() {
         <div className="mx-auto grid max-w-7xl items-center gap-10 px-5 py-14 md:px-8 md:py-20 lg:grid-cols-2">
           <div>
             <nav aria-label="Navegação estrutural" className="text-sm text-foreground/70">
-              <Link href="/" className="hover:text-foreground">Início</Link> <span aria-hidden="true">/</span> <span className="text-foreground">Clube</span>
+              <Link href="/" className="hover:text-foreground">
+                Início
+              </Link>{' '}
+              <span aria-hidden="true">/</span> <span className="text-foreground">Clube</span>
             </nav>
-            <h1 className="mt-4 font-display text-5xl font-extrabold leading-display tracking-display text-white md:text-7xl">Clube de assinaturas</h1>
-            <p className="mt-5 max-w-md text-lg text-foreground/80">Um Brasil novo chegando todo mês: barras bean to bar escolhidas por quem faz, com edições limitadas e frete grátis.</p>
-            <a href="#planos" className="mt-8 inline-flex h-12 items-center rounded-full bg-foreground px-7 font-bold text-background transition-transform hover:scale-[1.03]">Ver planos</a>
+            <h1 className="mt-4 font-display text-5xl leading-display font-extrabold tracking-display text-white md:text-7xl">
+              Clube de assinaturas
+            </h1>
+            <p className="mt-5 max-w-md text-lg text-foreground/80">
+              Um Brasil novo chegando todo mês: barras bean to bar escolhidas por quem faz, com edições limitadas e
+              frete grátis.
+            </p>
+            <a
+              href="#planos"
+              className="mt-8 inline-flex h-12 items-center rounded-full bg-foreground px-7 font-bold text-background transition-transform hover:scale-[1.03]"
+            >
+              Ver planos
+            </a>
           </div>
           <div className="relative mx-auto flex w-full max-w-md justify-center" aria-hidden="true">
             {bars.map((product, index) => (
-              <div key={product.slug} className="-mx-8 w-1/2" style={{ transform: `rotate(${(index - 1) * 10}deg) translateY(${Math.abs(index - 1) * 24}px)`, zIndex: index === 1 ? 2 : 1 }}>
+              <div
+                key={product.slug}
+                className="-mx-8 w-1/2"
+                style={{
+                  transform: `rotate(${(index - 1) * 10}deg) translateY(${Math.abs(index - 1) * 24}px)`,
+                  zIndex: index === 1 ? 2 : 1,
+                }}
+              >
                 <BarPackage product={product} />
               </div>
             ))}
@@ -75,7 +103,9 @@ export default async function ClubPage() {
             <details key={item.q} className="group px-5 py-4">
               <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-display text-lg font-bold">
                 {item.q}
-                <span className="text-2xl transition-transform group-open:rotate-45" aria-hidden="true">+</span>
+                <span className="text-2xl transition-transform group-open:rotate-45" aria-hidden="true">
+                  +
+                </span>
               </summary>
               <p className="mt-3 text-muted-foreground">{item.a}</p>
             </details>

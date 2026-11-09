@@ -24,17 +24,26 @@ export function CheckoutPage() {
         icon={<ShoppingBagOpen size={44} weight="duotone" />}
         title="Sua sacola está vazia"
         description="Escolha suas barras e volte aqui para finalizar."
-        action={<Button asChild size="lg"><Link href="/produtos">Ver chocolates</Link></Button>}
+        action={
+          <Button asChild size="lg">
+            <Link href="/produtos">Ver chocolates</Link>
+          </Button>
+        }
       />
     )
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-5 pb-24 pt-8 md:px-8 md:pt-12">
+    <div className="mx-auto max-w-7xl px-5 pt-8 pb-24 md:px-8 md:pt-12">
       <nav aria-label="Navegação estrutural" className="text-sm text-muted-foreground">
-        <Link href="/carrinho" className="hover:text-foreground">Sacola</Link> <span aria-hidden="true">/</span> <span className="text-foreground">Finalizar compra</span>
+        <Link href="/carrinho" className="hover:text-foreground">
+          Sacola
+        </Link>{' '}
+        <span aria-hidden="true">/</span> <span className="text-foreground">Finalizar compra</span>
       </nav>
-      <h1 className="mt-4 font-display text-5xl font-extrabold leading-display tracking-display md:text-6xl">Finalizar compra</h1>
+      <h1 className="mt-4 font-display text-5xl leading-display font-extrabold tracking-display md:text-6xl">
+        Finalizar compra
+      </h1>
 
       <div className="mt-10 grid gap-8 lg:grid-cols-[1fr_24rem] lg:gap-12">
         <div className="flex flex-col gap-6">
@@ -64,7 +73,12 @@ export function CheckoutPage() {
           </CheckoutStep>
         </div>
 
-        <OrderSummary items={checkout.cartItems} quote={checkout.quote} quoting={checkout.quoting} problems={checkout.problems} />
+        <OrderSummary
+          items={checkout.cartItems}
+          quote={checkout.quote}
+          quoting={checkout.quoting}
+          problems={checkout.problems}
+        />
       </div>
     </div>
   )

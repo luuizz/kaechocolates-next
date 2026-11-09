@@ -16,12 +16,15 @@ const CatalogContext = createContext<CatalogValue | null>(null)
 
 // Catálogo carregado no servidor (layout) e compartilhado com os componentes do navegador
 export function CatalogProvider({ catalog, children }: { catalog: Catalog; children: React.ReactNode }) {
-  const value = useMemo<CatalogValue>(() => ({
-    ...catalog,
-    findProduct: (slug) => findProduct(catalog.products, slug),
-    findBox: (id) => findBox(catalog.boxes, id),
-    kitTotals: (spec) => kitTotals(spec, catalog),
-  }), [catalog])
+  const value = useMemo<CatalogValue>(
+    () => ({
+      ...catalog,
+      findProduct: (slug) => findProduct(catalog.products, slug),
+      findBox: (id) => findBox(catalog.boxes, id),
+      kitTotals: (spec) => kitTotals(spec, catalog),
+    }),
+    [catalog],
+  )
   return <CatalogContext.Provider value={value}>{children}</CatalogContext.Provider>
 }
 

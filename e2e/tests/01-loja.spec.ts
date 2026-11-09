@@ -5,7 +5,11 @@ test.describe('Loja', () => {
     await page.goto('/produtos')
     await expect(page.locator('main article')).toHaveCount(14)
 
-    await page.locator('main').getByRole('link', { name: /Brancos/ }).first().click()
+    await page
+      .locator('main')
+      .getByRole('link', { name: /Brancos/ })
+      .first()
+      .click()
     await expect(page).toHaveURL(/linha=brancos/)
     await expect(page.locator('main article')).toHaveCount(3)
 
@@ -40,7 +44,8 @@ test.describe('Loja', () => {
     await page.keyboard.press('Escape')
 
     await page.getByRole('radio', { name: /Caixa P/ }).click()
-    for (const name of ['Cupuaçu', 'Cupuaçu', 'Caipira']) await page.getByRole('button', { name: `Colocar ${name}` }).click()
+    for (const name of ['Cupuaçu', 'Cupuaçu', 'Caipira'])
+      await page.getByRole('button', { name: `Colocar ${name}` }).click()
     await expect(page.getByRole('button', { name: 'Colocar Intenso' })).toBeDisabled()
     await page.locator('#kit-message').fill('Feliz aniversário!')
     await page.getByRole('button', { name: 'Adicionar kit à sacola' }).click()

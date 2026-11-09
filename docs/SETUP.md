@@ -38,14 +38,14 @@ Saia e entre de novo: o link **Painel** aparece no cabeçalho.
 
 ## Variáveis do Mercado Pago (Vercel)
 
-| Variável | Tipo | O que é |
-| --- | --- | --- |
-| `DATABASE_URL` | Sensitive | Connection string do Neon **com `-pooler`** (a integração Neon + Vercel já cria) |
-| `NEXT_PUBLIC_MERCADOPAGO_PUBLIC_KEY` | comum | Public Key da aplicação |
-| `MERCADOPAGO_ACCESS_TOKEN` | Sensitive | Access Token da aplicação |
-| `MERCADOPAGO_WEBHOOK_SECRET` | Sensitive | Assinatura secreta dos webhooks |
-| `MERCADOPAGO_TEST_MODE` | comum | `true` enquanto usar a conta de teste: aprova o Pix sozinho |
-| `MERCADOPAGO_TEST_PAYER_EMAIL` | comum | E-mail da conta **compradora de teste** (o Mercado Pago exige um usuário de teste como assinante) |
+| Variável                             | Tipo      | O que é                                                                                           |
+| ------------------------------------ | --------- | ------------------------------------------------------------------------------------------------- |
+| `DATABASE_URL`                       | Sensitive | Connection string do Neon **com `-pooler`** (a integração Neon + Vercel já cria)                  |
+| `NEXT_PUBLIC_MERCADOPAGO_PUBLIC_KEY` | comum     | Public Key da aplicação                                                                           |
+| `MERCADOPAGO_ACCESS_TOKEN`           | Sensitive | Access Token da aplicação                                                                         |
+| `MERCADOPAGO_WEBHOOK_SECRET`         | Sensitive | Assinatura secreta dos webhooks                                                                   |
+| `MERCADOPAGO_TEST_MODE`              | comum     | `true` enquanto usar a conta de teste: aprova o Pix sozinho                                       |
+| `MERCADOPAGO_TEST_PAYER_EMAIL`       | comum     | E-mail da conta **compradora de teste** (o Mercado Pago exige um usuário de teste como assinante) |
 
 ## E-mails automáticos
 
@@ -54,11 +54,11 @@ pedido recebido (com o Pix copia e cola), pagamento aprovado, pedido enviado (co
 e boas-vindas ao clube. Cada aviso sai uma vez só (tabela `email_log`). Sem
 `RESEND_API_KEY`, o site funciona igual e não manda e-mail.
 
-| Variável | Tipo | O que é |
-| --- | --- | --- |
-| `RESEND_API_KEY` | Sensitive | Chave da API do Resend (permissão de envio) |
-| `EMAIL_FROM` | comum, opcional | Remetente. Padrão: `Kaê Chocolates <pedidos@dominio-do-site>`. Não precisa ter caixa de entrada |
-| `EMAIL_REPLY_TO` | comum, opcional | Para onde vão as respostas dos clientes. Padrão: o e-mail de contato em `brand.ts` |
+| Variável         | Tipo            | O que é                                                                                         |
+| ---------------- | --------------- | ----------------------------------------------------------------------------------------------- |
+| `RESEND_API_KEY` | Sensitive       | Chave da API do Resend (permissão de envio)                                                     |
+| `EMAIL_FROM`     | comum, opcional | Remetente. Padrão: `Kaê Chocolates <pedidos@dominio-do-site>`. Não precisa ter caixa de entrada |
+| `EMAIL_REPLY_TO` | comum, opcional | Para onde vão as respostas dos clientes. Padrão: o e-mail de contato em `brand.ts`              |
 
 O domínio do remetente precisa estar verificado no Resend (Domains), com os registros de
 DNS que ele indicar.

@@ -35,8 +35,11 @@ async function loadCatalog(): Promise<Catalog> {
 
   try {
     const token = await anonymousToken(authUrl)
-    const get = async <T,>(path: string): Promise<T[]> => {
-      const response = await fetch(`${dataApiUrl}/${path}`, { headers: { Authorization: `Bearer ${token}` }, cache: 'no-store' })
+    const get = async <T>(path: string): Promise<T[]> => {
+      const response = await fetch(`${dataApiUrl}/${path}`, {
+        headers: { Authorization: `Bearer ${token}` },
+        cache: 'no-store',
+      })
       if (!response.ok) throw new Error(`${path}: HTTP ${response.status} ${await response.text()}`)
       return response.json()
     }
@@ -44,14 +47,22 @@ async function loadCatalog(): Promise<Catalog> {
     const [products, boxes, plans, periods] = await Promise.all([
       get<ProductRow>(`products?select=*&active=is.true&${order},id.asc`),
       get<Box & { discount: number | string }>(`kit_boxes?select=id,name,size,discount,note&active=is.true&${order}`),
-      get<Plan & { price: number | string }>(`club_plans?select=id,name,bars,price,color,pitch,perks,featured&active=is.true&${order}`),
-      get<Period & { discount: number | string }>(`club_periods?select=id,label,months,discount,note&active=is.true&${order}`),
+      get<Plan & { price: number | string }>(
+        `club_plans?select=id,name,bars,price,color,pitch,perks,featured&active=is.true&${order}`,
+      ),
+      get<Period & { discount: number | string }>(
+        `club_periods?select=id,label,months,discount,note&active=is.true&${order}`,
+      ),
     ])
     return {
       products: products.map(productFromRow),
       boxes: boxes.map((box) => ({ ...box, discount: Number(box.discount), note: box.note ?? undefined })),
       plans: plans.map((plan) => ({ ...plan, price: Number(plan.price) })),
-      periods: periods.map((period) => ({ ...period, discount: Number(period.discount), note: period.note ?? undefined })),
+      periods: periods.map((period) => ({
+        ...period,
+        discount: Number(period.discount),
+        note: period.note ?? undefined,
+      })),
       source: 'db',
     }
   } catch (error) {

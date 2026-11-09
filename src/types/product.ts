@@ -29,14 +29,33 @@ export type Product = {
 
 // Linhas como vêm da Data API (snake_case, numeric chega como número ou texto)
 export type ProductRow = {
-  id: number; slug: string; name: string; cacao: number; line: Line
-  label_color: string; tile_color: string; label_text: 'dark' | 'light'
-  price: number | string; compare_at_price: number | string | null; weight: string
-  short: string; description: string | null; ingredients: string | null
-  badge: Product['badge'] | null; sold_out: boolean; image: string | null; stock?: number | null
+  id: number
+  slug: string
+  name: string
+  cacao: number
+  line: Line
+  label_color: string
+  tile_color: string
+  label_text: 'dark' | 'light'
+  price: number | string
+  compare_at_price: number | string | null
+  weight: string
+  short: string
+  description: string | null
+  ingredients: string | null
+  badge: Product['badge'] | null
+  sold_out: boolean
+  image: string | null
+  stock?: number | null
 }
 
 // soldOut = marcada como esgotada OU estoque zerado; soldOutFlag = só a marcação manual
-export type AdminProduct = Product & { id: number; active: boolean; sortOrder: number; updatedAt: string; soldOutFlag: boolean }
+export type AdminProduct = Product & {
+  id: number
+  active: boolean
+  sortOrder: number
+  updatedAt: string
+  soldOutFlag: boolean
+}
 
 export type ProductInput = Omit<AdminProduct, 'id' | 'updatedAt' | 'soldOutFlag'> & { id?: number }

@@ -4,7 +4,17 @@ import { motion, useReducedMotion } from 'motion/react'
 import type { ReactNode } from 'react'
 
 // Entrada suave ao rolar a página (some para quem pede menos movimento)
-export function Reveal({ children, delay = 0, y = 28, className }: { children: ReactNode; delay?: number; y?: number; className?: string }) {
+export function Reveal({
+  children,
+  delay = 0,
+  y = 28,
+  className,
+}: {
+  children: ReactNode
+  delay?: number
+  y?: number
+  className?: string
+}) {
   const reduce = useReducedMotion()
   return (
     <motion.div

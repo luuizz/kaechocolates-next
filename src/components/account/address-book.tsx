@@ -9,9 +9,41 @@ import { getNeon, unwrap } from '@/lib/neon'
 import type { Address, AddressDraft } from '@/types/account'
 import { PageLoader } from '@/components/ui/page-loader'
 
-export const STATES = ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO']
+export const STATES = [
+  'AC',
+  'AL',
+  'AP',
+  'AM',
+  'BA',
+  'CE',
+  'DF',
+  'ES',
+  'GO',
+  'MA',
+  'MT',
+  'MS',
+  'MG',
+  'PA',
+  'PB',
+  'PR',
+  'PE',
+  'PI',
+  'RJ',
+  'RN',
+  'RS',
+  'RO',
+  'RR',
+  'SC',
+  'SP',
+  'SE',
+  'TO',
+]
 
-export const formatCep = (cep: string) => cep.replace(/\D/g, '').replace(/^(\d{5})(\d)/, '$1-$2').slice(0, 9)
+export const formatCep = (cep: string) =>
+  cep
+    .replace(/\D/g, '')
+    .replace(/^(\d{5})(\d)/, '$1-$2')
+    .slice(0, 9)
 
 // Preenche rua, bairro, cidade e estado pelo CEP (ViaCEP, chamado do navegador)
 async function lookupCep(cep: string) {
@@ -19,10 +51,26 @@ async function lookupCep(cep: string) {
   if (!response.ok) return null
   const data = await response.json()
   if (data.erro) return null
-  return { street: data.logradouro as string, district: data.bairro as string, city: data.localidade as string, state: data.uf as string }
+  return {
+    street: data.logradouro as string,
+    district: data.bairro as string,
+    city: data.localidade as string,
+    state: data.uf as string,
+  }
 }
 
-export const emptyAddress = (recipient: string): AddressDraft => ({ label: '', recipient, cep: '', street: '', number: '', complement: '', district: '', city: '', state: 'MG', is_default: false })
+export const emptyAddress = (recipient: string): AddressDraft => ({
+  label: '',
+  recipient,
+  cep: '',
+  street: '',
+  number: '',
+  complement: '',
+  district: '',
+  city: '',
+  state: 'MG',
+  is_default: false,
+})
 
 export function AddressBook() {
   const auth = useAuth()
@@ -32,7 +80,9 @@ export function AddressBook() {
 
   const load = useCallback(async () => {
     try {
-      const rows = unwrap(await getNeon().from('addresses').select('*').order('is_default', { ascending: false }).order('id')) as Address[]
+      const rows = unwrap(
+        await getNeon().from('addresses').select('*').order('is_default', { ascending: false }).order('id'),
+      ) as Address[]
       setList(rows)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Não foi possível carregar os endereços.')
@@ -66,7 +116,17 @@ export function AddressBook() {
     }
   }
 
-  if (draft) return <AddressForm draft={draft} onCancel={() => setDraft(null)} onSaved={async () => { setDraft(null); await load() }} />
+  if (draft)
+    return (
+      <AddressForm
+        draft={draft}
+        onCancel={() => setDraft(null)}
+        onSaved={async () => {
+          setDraft(null)
+          await load()
+        }}
+      />
+    )
 
   return (
     <div className="flex flex-col gap-4">
@@ -78,21 +138,50 @@ export function AddressBook() {
           {list.map((address) => (
             <li key={address.id} className="flex flex-col rounded-tile border p-5">
               <div className="flex items-start justify-between gap-2">
-                <p className="flex items-center gap-2 font-display font-bold"><MapPin size={18} weight="duotone" /> {address.label || 'Endereço'}</p>
-                {address.is_default && <span className="rounded-full bg-flavor-yellow px-2.5 py-0.5 text-xs font-bold">Padrão</span>}
+                <p className="flex items-center gap-2 font-display font-bold">
+                  <MapPin size={18} weight="duotone" /> {address.label || 'Endereço'}
+                </p>
+                {address.is_default && (
+                  <span className="rounded-full bg-flavor-yellow px-2.5 py-0.5 text-xs font-bold">Padrão</span>
+                )}
               </div>
               <p className="mt-2 text-sm">{address.recipient}</p>
-              <p className="text-sm text-muted-foreground">{address.street}, {address.number}{address.complement ? ` · ${address.complement}` : ''}</p>
-              <p className="text-sm text-muted-foreground">{address.district} · {address.city}/{address.state} · {formatCep(address.cep)}</p>
+              <p className="text-sm text-muted-foreground">
+                {address.street}, {address.number}
+                {address.complement ? ` · ${address.complement}` : ''}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                {address.district} · {address.city}/{address.state} · {formatCep(address.cep)}
+              </p>
               <div className="mt-4 flex flex-wrap gap-2">
-                <Button size="sm" variant="outline" onClick={() => setDraft({ ...address, label: address.label ?? '', complement: address.complement ?? '' })}><PencilSimple /> Editar</Button>
-                {!address.is_default && <Button size="sm" variant="ghost" onClick={() => makeDefault(address)}><Star /> Tornar padrão</Button>}
-                <Button size="sm" variant="ghost" className="text-destructive" onClick={() => remove(address)}><Trash /> Remover</Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() =>
+                    setDraft({ ...address, label: address.label ?? '', complement: address.complement ?? '' })
+                  }
+                >
+                  <PencilSimple /> Editar
+                </Button>
+                {!address.is_default && (
+                  <Button size="sm" variant="ghost" onClick={() => makeDefault(address)}>
+                    <Star /> Tornar padrão
+                  </Button>
+                )}
+                <Button size="sm" variant="ghost" className="text-destructive" onClick={() => remove(address)}>
+                  <Trash /> Remover
+                </Button>
               </div>
             </li>
           ))}
           <li>
-            <button type="button" onClick={() => setDraft({ ...emptyAddress(auth.profile?.full_name ?? ''), is_default: list.length === 0 })} className="flex h-full min-h-40 w-full flex-col items-center justify-center gap-2 rounded-tile border-2 border-dashed text-sm font-semibold transition-colors hover:border-foreground hover:bg-secondary">
+            <button
+              type="button"
+              onClick={() =>
+                setDraft({ ...emptyAddress(auth.profile?.full_name ?? ''), is_default: list.length === 0 })
+              }
+              className="flex h-full min-h-40 w-full flex-col items-center justify-center gap-2 rounded-tile border-2 border-dashed text-sm font-semibold transition-colors hover:border-foreground hover:bg-secondary"
+            >
               <Plus size={22} weight="bold" /> Novo endereço
             </button>
           </li>
@@ -102,13 +191,22 @@ export function AddressBook() {
   )
 }
 
-export function AddressForm({ draft, onCancel, onSaved }: { draft: AddressDraft; onCancel: () => void; onSaved: (id: number) => void }) {
+export function AddressForm({
+  draft,
+  onCancel,
+  onSaved,
+}: {
+  draft: AddressDraft
+  onCancel: () => void
+  onSaved: (id: number) => void
+}) {
   const [form, setForm] = useState<AddressDraft>(draft)
   const [tried, setTried] = useState(false)
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
   const [looking, setLooking] = useState(false)
-  const set = (key: keyof AddressDraft) => (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => setForm((current) => ({ ...current, [key]: event.target.value }))
+  const set = (key: keyof AddressDraft) => (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) =>
+    setForm((current) => ({ ...current, [key]: event.target.value }))
 
   const cep = form.cep.replace(/\D/g, '')
   const errors = {
@@ -127,7 +225,14 @@ export function AddressForm({ draft, onCancel, onSaved }: { draft: AddressDraft;
     setLooking(true)
     const found = await lookupCep(digits).catch(() => null)
     setLooking(false)
-    if (found) setForm((current) => ({ ...current, street: found.street || current.street, district: found.district || current.district, city: found.city || current.city, state: found.state || current.state }))
+    if (found)
+      setForm((current) => ({
+        ...current,
+        street: found.street || current.street,
+        district: found.district || current.district,
+        city: found.city || current.city,
+        state: found.state || current.state,
+      }))
   }
 
   const submit = async (event: React.FormEvent) => {
@@ -151,8 +256,22 @@ export function AddressForm({ draft, onCancel, onSaved }: { draft: AddressDraft;
       }
       if (form.is_default) unwrap(await neon.from('addresses').update({ is_default: false }).eq('is_default', true))
       let id = form.id
-      if (id) unwrap(await neon.from('addresses').update({ ...row, is_default: form.is_default }).eq('id', id))
-      else id = (unwrap(await neon.from('addresses').insert({ ...row, is_default: form.is_default }).select('id')) as { id: number }[])[0]?.id
+      if (id)
+        unwrap(
+          await neon
+            .from('addresses')
+            .update({ ...row, is_default: form.is_default })
+            .eq('id', id),
+        )
+      else
+        id = (
+          unwrap(
+            await neon
+              .from('addresses')
+              .insert({ ...row, is_default: form.is_default })
+              .select('id'),
+          ) as { id: number }[]
+        )[0]?.id
       onSaved(id ?? 0)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Não foi possível salvar.')
@@ -164,31 +283,66 @@ export function AddressForm({ draft, onCancel, onSaved }: { draft: AddressDraft;
     <form onSubmit={submit} noValidate className="flex max-w-2xl flex-col gap-4">
       <FormMessage>{error}</FormMessage>
       <div className="grid gap-4 sm:grid-cols-2">
-        <Field label="Apelido" hint="Casa, trabalho…"><Input value={form.label} onChange={set('label')} maxLength={40} /></Field>
-        <Field label="Quem recebe" error={tried ? errors.recipient : null}><Input value={form.recipient} onChange={set('recipient')} autoComplete="name" /></Field>
+        <Field label="Apelido" hint="Casa, trabalho…">
+          <Input value={form.label} onChange={set('label')} maxLength={40} />
+        </Field>
+        <Field label="Quem recebe" error={tried ? errors.recipient : null}>
+          <Input value={form.recipient} onChange={set('recipient')} autoComplete="name" />
+        </Field>
       </div>
       <div className="grid gap-4 sm:grid-cols-[12rem_1fr]">
         <Field label="CEP" error={tried ? errors.cep : null} hint={looking ? 'Buscando endereço…' : undefined}>
-          <Input value={formatCep(form.cep)} onChange={(event) => onCep(event.target.value)} inputMode="numeric" autoComplete="postal-code" placeholder="00000-000" />
+          <Input
+            value={formatCep(form.cep)}
+            onChange={(event) => onCep(event.target.value)}
+            inputMode="numeric"
+            autoComplete="postal-code"
+            placeholder="00000-000"
+          />
         </Field>
-        <Field label="Rua" error={tried ? errors.street : null}><Input value={form.street} onChange={set('street')} autoComplete="address-line1" /></Field>
+        <Field label="Rua" error={tried ? errors.street : null}>
+          <Input value={form.street} onChange={set('street')} autoComplete="address-line1" />
+        </Field>
       </div>
       <div className="grid gap-4 sm:grid-cols-[8rem_1fr]">
-        <Field label="Número" error={tried ? errors.number : null}><Input value={form.number} onChange={set('number')} /></Field>
-        <Field label="Complemento"><Input value={form.complement} onChange={set('complement')} autoComplete="address-line2" /></Field>
+        <Field label="Número" error={tried ? errors.number : null}>
+          <Input value={form.number} onChange={set('number')} />
+        </Field>
+        <Field label="Complemento">
+          <Input value={form.complement} onChange={set('complement')} autoComplete="address-line2" />
+        </Field>
       </div>
       <div className="grid gap-4 sm:grid-cols-[1fr_1fr_7rem]">
-        <Field label="Bairro" error={tried ? errors.district : null}><Input value={form.district} onChange={set('district')} /></Field>
-        <Field label="Cidade" error={tried ? errors.city : null}><Input value={form.city} onChange={set('city')} autoComplete="address-level2" /></Field>
-        <Field label="UF"><Select value={form.state} onChange={set('state')}>{STATES.map((uf) => <option key={uf}>{uf}</option>)}</Select></Field>
+        <Field label="Bairro" error={tried ? errors.district : null}>
+          <Input value={form.district} onChange={set('district')} />
+        </Field>
+        <Field label="Cidade" error={tried ? errors.city : null}>
+          <Input value={form.city} onChange={set('city')} autoComplete="address-level2" />
+        </Field>
+        <Field label="UF">
+          <Select value={form.state} onChange={set('state')}>
+            {STATES.map((uf) => (
+              <option key={uf}>{uf}</option>
+            ))}
+          </Select>
+        </Field>
       </div>
       <label className="flex items-center gap-2 text-sm font-semibold">
-        <input type="checkbox" checked={form.is_default} onChange={(event) => setForm({ ...form, is_default: event.target.checked })} className="size-4 accent-foreground" />
+        <input
+          type="checkbox"
+          checked={form.is_default}
+          onChange={(event) => setForm({ ...form, is_default: event.target.checked })}
+          className="size-4 accent-foreground"
+        />
         Usar como endereço padrão
       </label>
       <div className="flex gap-2">
-        <Button type="submit" size="lg" disabled={busy}>{busy && <CircleNotch className="animate-spin" />} Salvar endereço</Button>
-        <Button type="button" size="lg" variant="ghost" onClick={onCancel}>Cancelar</Button>
+        <Button type="submit" size="lg" disabled={busy}>
+          {busy && <CircleNotch className="animate-spin" />} Salvar endereço
+        </Button>
+        <Button type="button" size="lg" variant="ghost" onClick={onCancel}>
+          Cancelar
+        </Button>
       </div>
     </form>
   )

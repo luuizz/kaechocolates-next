@@ -5,10 +5,13 @@ import { rmSync } from 'node:fs'
 import { e2eEnv } from './env.mjs'
 
 const env = { ...process.env, ...e2eEnv }
-const run = (command, args) => new Promise((resolve, reject) => {
-  const child = spawn(command, args, { stdio: 'inherit', env })
-  child.on('exit', (code) => (code === 0 ? resolve() : reject(new Error(`${command} ${args.join(' ')} falhou (${code})`))))
-})
+const run = (command, args) =>
+  new Promise((resolve, reject) => {
+    const child = spawn(command, args, { stdio: 'inherit', env })
+    child.on('exit', (code) =>
+      code === 0 ? resolve() : reject(new Error(`${command} ${args.join(' ')} falhou (${code})`)),
+    )
+  })
 
 const stack = spawn('node', ['e2e/stack/up.mjs'], { stdio: 'inherit', env })
 const stop = () => stack.kill()
@@ -16,7 +19,11 @@ process.on('exit', stop)
 
 try {
   for (let i = 0; ; i++) {
-    try { if ((await fetch('http://localhost:54321/health')).ok) break } catch { /* subindo */ }
+    try {
+      if ((await fetch('http://localhost:54321/health')).ok) break
+    } catch {
+      /* subindo */
+    }
     if (i > 120) throw new Error('O ambiente simulado não subiu.')
     await new Promise((resolve) => setTimeout(resolve, 1000))
   }

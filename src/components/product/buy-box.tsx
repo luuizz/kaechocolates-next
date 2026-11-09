@@ -14,7 +14,11 @@ export function BuyBox({ product }: { product: Product }) {
   const [quantity, setQuantity] = useState(1)
 
   if (product.soldOut) {
-    return <p className="rounded-2xl bg-secondary px-5 py-4 font-semibold">Esgotado no momento. Edições limitadas voltam só de vez em quando.</p>
+    return (
+      <p className="rounded-2xl bg-secondary px-5 py-4 font-semibold">
+        Esgotado no momento. Edições limitadas voltam só de vez em quando.
+      </p>
+    )
   }
 
   return (

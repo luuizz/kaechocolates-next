@@ -11,7 +11,12 @@ import { isAdminRequest } from '@/lib/server/admin-guard'
 
 // Limite de corpo das funções da Vercel é 4,5 MB; deixamos uma folga
 const MAX_SIZE = 4 * 1024 * 1024
-const TYPES: Record<string, string> = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp', 'image/avif': 'avif' }
+const TYPES: Record<string, string> = {
+  'image/jpeg': 'jpg',
+  'image/png': 'png',
+  'image/webp': 'webp',
+  'image/avif': 'avif',
+}
 const FOLDER = 'produtos'
 
 const json = (status: number, body: unknown) => Response.json(body, { status })
@@ -26,7 +31,11 @@ function configError() {
 function isOwnBlob(url: string) {
   try {
     const { protocol, hostname, pathname } = new URL(url)
-    return protocol === 'https:' && hostname.endsWith('.public.blob.vercel-storage.com') && pathname.startsWith(`/${FOLDER}/`)
+    return (
+      protocol === 'https:' &&
+      hostname.endsWith('.public.blob.vercel-storage.com') &&
+      pathname.startsWith(`/${FOLDER}/`)
+    )
   } catch {
     return false
   }
@@ -56,7 +65,9 @@ export async function POST(request: Request) {
   const check = await fetch(blob.url, { method: 'HEAD' }).catch(() => null)
   if (!check?.ok) {
     await del(blob.url).catch(() => {})
-    return json(503, { error: 'A imagem foi enviada, mas não ficou pública. O Blob Store da Vercel precisa ser do tipo Public.' })
+    return json(503, {
+      error: 'A imagem foi enviada, mas não ficou pública. O Blob Store da Vercel precisa ser do tipo Public.',
+    })
   }
   return json(201, { url: blob.url })
 }
@@ -67,7 +78,8 @@ export async function DELETE(request: Request) {
   if (!(await isAdminRequest(request))) return json(403, { error: 'Acesso restrito a administradores.' })
 
   const { url } = (await request.json().catch(() => ({}))) as { url?: unknown }
-  if (typeof url !== 'string' || !isOwnBlob(url)) return json(400, { error: 'A imagem não pertence ao armazenamento da loja.' })
+  if (typeof url !== 'string' || !isOwnBlob(url))
+    return json(400, { error: 'A imagem não pertence ao armazenamento da loja.' })
 
   await del(url)
   return json(200, { ok: true })

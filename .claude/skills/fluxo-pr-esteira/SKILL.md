@@ -1,6 +1,6 @@
 ---
-name: "fluxo-pr-esteira"
-description: "Use ao versionar e entregar mudanças em projetos com esteira feat → dev → main: branches, commits, PRs, release para a main e conferência do CI."
+name: 'fluxo-pr-esteira'
+description: 'Use ao versionar e entregar mudanças em projetos com esteira feat → dev → main: branches, commits, PRs, release para a main e conferência do CI.'
 ---
 
 # Fluxo de PRs e esteira
@@ -25,11 +25,12 @@ O usuário faz os merges. Não faça merge, force push nem push direto em `dev` 
 
 Título em português, curto, dizendo o resultado ("Checkout com Pix e cartão, pedidos e frete").
 Corpo com:
+
 - **O que entra**, agrupado por área.
 - **Antes do merge na main**: variáveis, secrets ou configurações que o usuário precisa criar, com nome exato e tipo (comum ou Sensitive).
 - **Migrations novas**, se houver.
 - **Testado**: o que foi verificado e como. Diga com franqueza o que não deu para testar.
-Sem marcas de IA no corpo.
+  Sem marcas de IA no corpo.
 
 ## Conferir o CI
 
@@ -38,6 +39,7 @@ Depois do push, acompanhe os checks até terminarem. Se algum falhar, leia o log
 ## Release para a main
 
 Só depois que o usuário mergear o PR na `dev` (antes disso não há diferença entre as branches):
+
 - PR `dev` → `main`, título `Release: <resumo>`.
 - Corpo listando os PRs que entram (`#N título` + uma linha), as migrations novas (rodam sozinhas no deploy) e as variáveis que precisam existir antes do merge.
 - Confira o CI da release e avise que pode mergear.

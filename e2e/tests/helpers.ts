@@ -26,9 +26,13 @@ export async function sqlOne<T = Record<string, unknown>>(query: string, params:
 export const uniqueEmail = (name: string) => `${name}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}@kae.test`
 
 // Texto com espaço comum no lugar do espaço fixo do Intl (R$ 32,70)
-export const text = async (page: Page, selector = 'main') => (await page.locator(selector).first().innerText()).replace(/ /g, ' ')
+export const text = async (page: Page, selector = 'main') =>
+  (await page.locator(selector).first().innerText()).replace(/ /g, ' ')
 
-export async function signUp(page: Page, { name, email, password = 'segredo123', next }: { name: string; email: string; password?: string; next?: string }) {
+export async function signUp(
+  page: Page,
+  { name, email, password = 'segredo123', next }: { name: string; email: string; password?: string; next?: string },
+) {
   await page.goto(`/cadastro${next ? `?volta=${encodeURIComponent(next)}` : ''}`)
   await page.getByLabel('Nome').fill(name)
   await page.getByLabel('E-mail').fill(email)
@@ -41,7 +45,17 @@ export async function makeAdmin(email: string) {
   await sql("update public.profiles set role = 'admin' where email = $1", [email])
 }
 
-export async function fillAddress(page: Page, { cep = '37014230', street = 'Praça Marechal Deodoro', number = '130', district = 'Centro', city = 'Varginha', state = 'MG' } = {}) {
+export async function fillAddress(
+  page: Page,
+  {
+    cep = '37014230',
+    street = 'Praça Marechal Deodoro',
+    number = '130',
+    district = 'Centro',
+    city = 'Varginha',
+    state = 'MG',
+  } = {},
+) {
   await page.locator('input[autocomplete="postal-code"]').fill(cep)
   await page.locator('input[autocomplete="address-line1"]').fill(street)
   await page.getByLabel('Número').fill(number)
@@ -53,22 +67,33 @@ export async function fillAddress(page: Page, { cep = '37014230', street = 'Pra�
 
 // Chama uma rota do site com o token do usuário logado nesta página
 export async function api(page: Page, path: string, body?: unknown) {
-  return page.evaluate(async ({ path, body }) => {
-    const auth = await fetch('http://localhost:54321/neondb/auth/token', { credentials: 'include' })
-    const { token } = await auth.json()
-    const response = await fetch(path, {
-      method: body === undefined ? 'GET' : 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-      body: body === undefined ? undefined : JSON.stringify(body),
-    })
-    return { status: response.status, body: await response.json().catch(() => ({})) }
-  }, { path, body })
+  return page.evaluate(
+    async ({ path, body }) => {
+      const auth = await fetch('http://localhost:54321/neondb/auth/token', { credentials: 'include' })
+      const { token } = await auth.json()
+      const response = await fetch(path, {
+        method: body === undefined ? 'GET' : 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: body === undefined ? undefined : JSON.stringify(body),
+      })
+      return { status: response.status, body: await response.json().catch(() => ({})) }
+    },
+    { path, body },
+  )
 }
 
 // O que o site mandou para o Mercado Pago simulado
 type MercadoPagoRequest = {
   type: 'order' | 'preapproval' | 'email'
-  body: { total_amount?: string; payer?: { first_name?: string }; payer_email?: string; auto_recurring?: Record<string, unknown>; to?: string[]; subject?: string; html?: string }
+  body: {
+    total_amount?: string
+    payer?: { first_name?: string }
+    payer_email?: string
+    auto_recurring?: Record<string, unknown>
+    to?: string[]
+    subject?: string
+    html?: string
+  }
 }
 
 export async function mercadoPagoLog() {
@@ -77,5 +102,7 @@ export async function mercadoPagoLog() {
 
 // E-mails que o site mandou (Resend simulado)
 export async function emailsTo(address: string) {
-  return (await mercadoPagoLog()).filter((entry) => entry.type === 'email' && entry.body.to?.includes(address)).map((entry) => entry.body)
+  return (await mercadoPagoLog())
+    .filter((entry) => entry.type === 'email' && entry.body.to?.includes(address))
+    .map((entry) => entry.body)
 }

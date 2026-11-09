@@ -10,7 +10,9 @@ export default async function ResetPasswordPage() {
   const { products } = await getCatalog()
   return (
     <AuthShell title="Nova senha" products={products}>
-      <Suspense><ResetPasswordForm /></Suspense>
+      <Suspense>
+        <ResetPasswordForm />
+      </Suspense>
     </AuthShell>
   )
 }

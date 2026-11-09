@@ -11,12 +11,22 @@ if (typeof window !== 'undefined' && publicKey) initMercadoPago(publicKey, { loc
 
 // Formulário de cartão do próprio Mercado Pago (Card Payment Brick): os dados do
 // cartão vão direto para eles e voltam como um token de uso único.
-export function CardForm({ amount, email, onPay, onError, maxInstallments = brand.commerce.maxInstallments, submitLabel = 'Pagar com cartão' }: {
+export function CardForm({
+  amount,
+  email,
+  onPay,
+  onError,
+  maxInstallments = brand.commerce.maxInstallments,
+  submitLabel = 'Pagar com cartão',
+}: {
   amount: number
   email: string
   maxInstallments?: number
   submitLabel?: string
-  onPay: (card: { token: string; paymentMethodId: string; paymentTypeId?: string; installments: number; issuerId?: string }, cpf: string) => Promise<void>
+  onPay: (
+    card: { token: string; paymentMethodId: string; paymentTypeId?: string; installments: number; issuerId?: string },
+    cpf: string,
+  ) => Promise<void>
   onError: (message: string) => void
 }) {
   const [ready, setReady] = useState(false)
@@ -24,30 +34,57 @@ export function CardForm({ amount, email, onPay, onError, maxInstallments = bran
   if (!publicKey) {
     return (
       <p className="flex items-start gap-3 rounded-2xl bg-secondary p-4 text-sm">
-        <Plugs size={22} weight="duotone" className="shrink-0" /> Pagamento com cartão indisponível neste ambiente: falta NEXT_PUBLIC_MERCADOPAGO_PUBLIC_KEY.
+        <Plugs size={22} weight="duotone" className="shrink-0" /> Pagamento com cartão indisponível neste ambiente:
+        falta NEXT_PUBLIC_MERCADOPAGO_PUBLIC_KEY.
       </p>
     )
   }
   return (
     <div className="relative min-h-80">
-      {!ready && <div className="absolute inset-0 grid place-items-center"><CircleNotch size={28} className="animate-spin text-muted-foreground" aria-label="Carregando formulário do cartão" /></div>}
+      {!ready && (
+        <div className="absolute inset-0 grid place-items-center">
+          <CircleNotch
+            size={28}
+            className="animate-spin text-muted-foreground"
+            aria-label="Carregando formulário do cartão"
+          />
+        </div>
+      )}
       <CardPayment
         key={amount}
         locale="pt-BR"
         initialization={{ amount, payer: { email } }}
         customization={{
           paymentMethods: { maxInstallments, types: { excluded: ['debit_card', 'prepaid_card'] } },
-          visual: { style: { theme: 'default', customVariables: { baseColor: '#111111', borderRadiusMedium: '12px', borderRadiusLarge: '20px', fontWeightSemiBold: '600' } }, texts: { formSubmit: submitLabel } },
+          visual: {
+            style: {
+              theme: 'default',
+              customVariables: {
+                baseColor: '#111111',
+                borderRadiusMedium: '12px',
+                borderRadiusLarge: '20px',
+                fontWeightSemiBold: '600',
+              },
+            },
+            texts: { formSubmit: submitLabel },
+          },
         }}
         onReady={() => setReady(true)}
         onError={(error) => {
           console.error('[cartão]', error)
-          if (error.type === 'critical') onError('Não foi possível carregar o formulário do cartão. Recarregue a página.')
+          if (error.type === 'critical')
+            onError('Não foi possível carregar o formulário do cartão. Recarregue a página.')
         }}
         onSubmit={async (form, extra) => {
           try {
             await onPay(
-              { token: form.token, paymentMethodId: form.payment_method_id, paymentTypeId: extra?.paymentTypeId, installments: form.installments, issuerId: form.issuer_id },
+              {
+                token: form.token,
+                paymentMethodId: form.payment_method_id,
+                paymentTypeId: extra?.paymentTypeId,
+                installments: form.installments,
+                issuerId: form.issuer_id,
+              },
               form.payer.identification?.number ?? '',
             )
           } catch (error) {
