@@ -1,17 +1,10 @@
-import type { Line, Product, ProductBadge } from '@/types/product'
+import type { Product } from '@/types/product'
+import { LINES } from '@/constants/catalog'
 
 // Regras do catálogo de barras.
 // O catálogo de verdade vem do banco (tabela products, editável em /admin).
 // A lista abaixo é a reserva: usada quando o site roda sem banco configurado
 // (CI, primeiro `yarn dev`) ou se a Data API estiver fora do ar.
-
-export const LINE_SINGULAR: Record<Line, string> = { intensos: 'intenso', 'ao-leite': 'ao leite', brancos: 'branco' }
-
-export const LINES: Record<Line, string> = {
-  intensos: 'Intensos',
-  'ao-leite': 'Ao leite',
-  brancos: 'Brancos',
-}
 
 const base = { price: 32.7, compareAt: 35, weight: '70 g' }
 
@@ -173,22 +166,11 @@ export const FALLBACK_PRODUCTS: Product[] = [
   },
 ]
 
-export const BADGES = ['Edição limitada', 'Zero açúcar', 'Novo'] as const satisfies readonly ProductBadge[]
-
 export const findProduct = (list: Product[], slug: string) => list.find((product) => product.slug === slug)
 
 export const formatBRL = (value: number) => value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })
 
 export const installment = (value: number, times = 7) => formatBRL(value / times)
-
-export const SORTS = {
-  relevancia: 'Mais relevantes',
-  'menor-preco': 'Menor preço',
-  'maior-preco': 'Maior preço',
-  'mais-cacau': 'Mais cacau',
-  'menos-cacau': 'Menos cacau',
-} as const
-export type Sort = keyof typeof SORTS
 
 const normalize = (text: string) => text.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
 

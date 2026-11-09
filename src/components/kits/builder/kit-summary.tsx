@@ -5,8 +5,7 @@ import { Button } from '@/components/ui/button'
 import { formatBRL } from '@/data/products'
 import { cn } from '@/lib/utils'
 import type { useKitBuilder } from './use-kit-builder'
-
-const MESSAGE_MAX = 200
+import { KIT_MESSAGE_MAX } from '@/constants/limits'
 
 type KitSummaryProps = Pick<
   ReturnType<typeof useKitBuilder>,
@@ -88,14 +87,14 @@ export function KitSummary({
         <textarea
           id="kit-message"
           value={message}
-          maxLength={MESSAGE_MAX}
+          maxLength={KIT_MESSAGE_MAX}
           onChange={(event) => setMessage(event.target.value)}
           rows={3}
           placeholder="Escrevemos à mão para você."
           className="mt-2 w-full resize-none rounded-xl border border-background/20 bg-background/5 p-3 text-sm outline-none placeholder:text-background/40 focus:border-flavor-yellow focus:ring-4 focus:ring-flavor-yellow/20"
         />
         <p className="text-right text-xs text-background/50">
-          {message.length}/{MESSAGE_MAX}
+          {message.length}/{KIT_MESSAGE_MAX}
         </p>
 
         <dl className="mt-4 flex flex-col gap-1.5 border-t border-background/15 pt-4 text-sm">

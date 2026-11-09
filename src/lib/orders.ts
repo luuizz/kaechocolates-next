@@ -1,26 +1,5 @@
-// Rótulos e normalização de pedidos (usados na loja, na conta e no painel)
-import type { OrderItemRow, OrderRow, OrderStatus, OrderView } from '@/types/order'
-
-export const ORDER_STATUS: Record<OrderStatus, { label: string; tone: string; text: string }> = {
-  pending_payment: {
-    label: 'Aguardando pagamento',
-    tone: 'bg-flavor-yellow text-foreground',
-    text: 'Assim que o pagamento for aprovado, a gente começa a separar.',
-  },
-  paid: {
-    label: 'Pagamento aprovado',
-    tone: 'bg-success text-white',
-    text: 'Pagamento confirmado! Já já começamos a separar seu pedido.',
-  },
-  preparing: {
-    label: 'Em separação',
-    tone: 'bg-flavor-blue text-white',
-    text: 'Estamos embalando seu pedido com todo o cuidado.',
-  },
-  shipped: { label: 'Enviado', tone: 'bg-flavor-orange text-white', text: 'Seu pedido está a caminho.' },
-  delivered: { label: 'Entregue', tone: 'bg-foreground text-background', text: 'Pedido entregue. Bom proveito!' },
-  canceled: { label: 'Cancelado', tone: 'bg-destructive text-white', text: 'Este pedido foi cancelado.' },
-}
+// Normalização e textos de pedidos (usados na loja, na conta e no painel)
+import type { OrderItemRow, OrderRow, OrderView } from '@/types/order'
 
 // numeric do Postgres chega como texto: converte os campos de valor
 export function normalizeOrder(row: OrderRow, items: OrderItemRow[]): OrderView {

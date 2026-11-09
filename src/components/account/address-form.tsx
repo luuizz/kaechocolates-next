@@ -3,9 +3,10 @@
 import { CircleNotch } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { Field, FormMessage, Input, Select } from '@/components/ui/field'
-import { formatCep, STATES } from '@/lib/address'
+import { formatCep } from '@/lib/address'
 import { useAddressForm } from './use-address-form'
 import type { AddressDraft } from '@/types/account'
+import { STATES } from '@/constants/address'
 
 type AddressFormProps = { draft: AddressDraft; onCancel: () => void; onSaved: (id: number) => void }
 

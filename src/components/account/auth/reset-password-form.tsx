@@ -6,7 +6,8 @@ import { useState } from 'react'
 import { FormMessage } from '@/components/ui/field'
 import { useAuth } from '@/components/auth/auth-provider'
 import { AuthUnavailable } from '../auth-unavailable'
-import { MIN_PASSWORD, PasswordField, Submit } from './form-parts'
+import { PasswordField, Submit } from './form-parts'
+import { PASSWORD_MIN } from '@/constants/limits'
 
 export function ResetPasswordForm() {
   const auth = useAuth()
@@ -33,7 +34,7 @@ export function ResetPasswordForm() {
   const submit = async (event: React.FormEvent) => {
     event.preventDefault()
     setError('')
-    if (password.length < MIN_PASSWORD) return setError(`A senha precisa ter pelo menos ${MIN_PASSWORD} caracteres.`)
+    if (password.length < PASSWORD_MIN) return setError(`A senha precisa ter pelo menos ${PASSWORD_MIN} caracteres.`)
     if (password !== confirm) return setError('As senhas não conferem.')
     setBusy(true)
     try {
@@ -53,7 +54,7 @@ export function ResetPasswordForm() {
       <FormMessage>{error}</FormMessage>
       <PasswordField
         label="Nova senha"
-        hint={`Pelo menos ${MIN_PASSWORD} caracteres.`}
+        hint={`Pelo menos ${PASSWORD_MIN} caracteres.`}
         value={password}
         onChange={setPassword}
         autoComplete="new-password"

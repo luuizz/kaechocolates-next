@@ -5,10 +5,11 @@ import { MagnifyingGlass } from '@phosphor-icons/react/dist/ssr'
 import { ProductCard } from '@/components/product/product-card'
 import { SortSelect } from '@/components/catalog/sort-select'
 import { Button } from '@/components/ui/button'
-import { LINES, filterProducts } from '@/data/products'
+import { filterProducts } from '@/data/products'
 import { getCatalog } from '@/lib/server/catalog'
 import { cn } from '@/lib/utils'
 import type { Line } from '@/types/product'
+import { LINES } from '@/constants/catalog'
 
 type Search = { linha?: string; busca?: string; ordem?: string }
 

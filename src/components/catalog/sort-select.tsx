@@ -1,7 +1,7 @@
 'use client'
 
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { SORTS } from '@/data/products'
+import { SORTS } from '@/constants/catalog'
 
 export function SortSelect() {
   const router = useRouter()

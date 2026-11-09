@@ -1,7 +1,7 @@
 import type { MetadataRoute } from 'next'
 import { brand } from '@/config/brand'
-import { LINES } from '@/data/products'
 import { getCatalog } from '@/lib/server/catalog'
+import { LINES } from '@/constants/catalog'
 
 // Páginas públicas + uma entrada por barra do catálogo (atualiza junto com o painel)
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

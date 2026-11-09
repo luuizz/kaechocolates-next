@@ -4,7 +4,8 @@ import { useState } from 'react'
 import { Field, FormMessage, Input } from '@/components/ui/field'
 import { useAuth } from '@/components/auth/auth-provider'
 import { AuthUnavailable } from '../auth-unavailable'
-import { EMAIL, Submit } from './form-parts'
+import { Submit } from './form-parts'
+import { EMAIL_PATTERN } from '@/constants/patterns'
 
 export function ForgotPasswordForm() {
   const auth = useAuth()
@@ -18,7 +19,7 @@ export function ForgotPasswordForm() {
   const submit = async (event: React.FormEvent) => {
     event.preventDefault()
     setError('')
-    if (!EMAIL.test(email.trim())) return setError('Informe um e-mail válido.')
+    if (!EMAIL_PATTERN.test(email.trim())) return setError('Informe um e-mail válido.')
     setBusy(true)
     try {
       await auth.requestPasswordReset(email.trim())

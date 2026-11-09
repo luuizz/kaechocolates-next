@@ -1,6 +1,7 @@
 'use client'
 
 import { createClient } from '@neon/neon-js/supabase'
+import { PASSWORD_MIN } from '@/constants/limits'
 import { neonEnv } from '@/lib/env'
 
 // Cliente do Neon no navegador: `neon.auth` (login, no estilo Supabase) e
@@ -47,13 +48,13 @@ export function friendlyError(error: unknown): string {
     user_already_exists: 'Já existe uma conta com este e-mail.',
     email_exists: 'Já existe uma conta com este e-mail.',
     email_not_confirmed: 'Confirme seu e-mail antes de entrar. Veja sua caixa de entrada.',
-    weak_password: 'A senha precisa ter pelo menos 8 caracteres.',
+    weak_password: `A senha precisa ter pelo menos ${PASSWORD_MIN} caracteres.`,
     email_address_invalid: 'E-mail inválido.',
     over_request_rate_limit: 'Muitas tentativas. Aguarde um pouco e tente de novo.',
     INVALID_ORIGIN: 'Este endereço não está autorizado a fazer login. Adicione-o aos domínios confiáveis do Neon Auth.',
     INVALID_PASSWORD: 'Senha atual incorreta.',
     INVALID_TOKEN: 'O link expirou ou já foi usado. Peça um novo.',
-    PASSWORD_TOO_SHORT: 'A senha precisa ter pelo menos 8 caracteres.',
+    PASSWORD_TOO_SHORT: `A senha precisa ter pelo menos ${PASSWORD_MIN} caracteres.`,
     '23505': 'Já existe um registro com esse identificador.',
     '23503': 'Este registro está em uso e não pode ser removido.',
     '23514': 'Algum campo está com um valor inválido. Confira e tente de novo.',

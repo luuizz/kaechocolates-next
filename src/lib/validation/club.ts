@@ -1,7 +1,8 @@
 import { z } from 'zod'
 import { addressIdSchema, cpfSchema } from './checkout'
+import { SLUG_PATTERN } from '@/constants/patterns'
 
-const id = z.string().regex(/^[a-z0-9]+(-[a-z0-9]+)*$/)
+const id = z.string().regex(SLUG_PATTERN)
 
 export const subscribeSchema = z.object({
   plan: id,

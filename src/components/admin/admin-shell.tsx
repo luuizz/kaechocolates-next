@@ -3,37 +3,14 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
-import {
-  ArrowSquareOut,
-  Barcode,
-  Gauge,
-  List,
-  Package,
-  Receipt,
-  SignOut,
-  Sparkle,
-  Truck,
-  UserCircleCheck,
-  Users,
-  X,
-} from '@phosphor-icons/react'
+import { ArrowSquareOut, List, SignOut, X } from '@phosphor-icons/react'
 import { Toaster } from 'sonner'
 import { Logo } from '@/components/brand/logo'
 import { useAuth } from '@/components/auth/auth-provider'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { PageLoader } from '@/components/ui/page-loader'
-
-const NAV = [
-  { href: '/admin', label: 'Visão geral', icon: Gauge, exact: true },
-  { href: '/admin/pedidos', label: 'Pedidos', icon: Receipt },
-  { href: '/admin/produtos', label: 'Produtos', icon: Barcode },
-  { href: '/admin/kits', label: 'Caixas de kit', icon: Package },
-  { href: '/admin/assinantes', label: 'Assinantes', icon: UserCircleCheck },
-  { href: '/admin/clube', label: 'Planos do clube', icon: Sparkle },
-  { href: '/admin/frete', label: 'Frete', icon: Truck },
-  { href: '/admin/clientes', label: 'Clientes', icon: Users },
-]
+import { ADMIN_NAV } from '@/constants/navigation'
 
 // Moldura do painel: só abre para admin (o banco confere de novo em cada gravação)
 export function AdminShell({ children }: { children: React.ReactNode }) {
@@ -63,12 +40,12 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
       />
     )
 
-  const isActive = (item: (typeof NAV)[number]) =>
+  const isActive = (item: (typeof ADMIN_NAV)[number]) =>
     item.exact ? pathname === item.href : pathname.startsWith(item.href)
 
   const nav = (
     <nav aria-label="Painel" className="flex flex-col gap-1">
-      {NAV.map((item) => {
+      {ADMIN_NAV.map((item) => {
         const Icon = item.icon
         const active = isActive(item)
         return (

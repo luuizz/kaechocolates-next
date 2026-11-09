@@ -6,11 +6,12 @@ import { CalendarBlank, CircleNotch, CreditCard, MapPin, Pause, Play, Sparkle, X
 import { Button } from '@/components/ui/button'
 import { FormMessage } from '@/components/ui/field'
 import { formatBRL } from '@/data/products'
-import { SUBSCRIPTION_STATUS, formatDate, normalizeSubscription } from '@/lib/club'
+import { formatDate, normalizeSubscription } from '@/lib/club'
 import { getAccessToken, getNeon, unwrap } from '@/lib/neon'
 import { cn } from '@/lib/utils'
 import type { Subscription } from '@/types/club'
 import { EmptyState } from '@/components/ui/empty-state'
+import { SUBSCRIPTION_STATUS } from '@/constants/club'
 
 async function callClub(method: 'GET' | 'POST', body?: unknown) {
   const token = await getAccessToken()

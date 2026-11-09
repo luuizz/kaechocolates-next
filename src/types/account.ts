@@ -1,3 +1,5 @@
+import type { ACCOUNT_TABS } from '@/constants/navigation'
+
 export type Profile = {
   id: string
   email: string | null
@@ -36,3 +38,5 @@ export type ShippingAddress = Pick<
 >
 
 export type OrderCustomer = { name: string; email: string; phone: string | null; cpf: string }
+
+export type AccountTabId = (typeof ACCOUNT_TABS)[number]['id']
