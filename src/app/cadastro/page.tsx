@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Suspense } from 'react'
 import { AuthShell } from '@/components/account/auth-shell'
-import { SignUpForm } from '@/components/account/auth-forms'
+import { SignUpForm } from '@/components/account/auth/sign-up-form'
 import { getCatalog } from '@/lib/server/catalog'
 
 export const metadata: Metadata = { title: 'Criar conta', robots: { index: false } }

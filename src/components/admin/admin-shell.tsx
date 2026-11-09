@@ -3,12 +3,13 @@
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
-import { ArrowSquareOut, Barcode, CircleNotch, Gauge, List, Package, Receipt, SignOut, Sparkle, Truck, UserCircleCheck, Users, X } from '@phosphor-icons/react'
+import { ArrowSquareOut, Barcode, Gauge, List, Package, Receipt, SignOut, Sparkle, Truck, UserCircleCheck, Users, X } from '@phosphor-icons/react'
 import { Toaster } from 'sonner'
 import { Logo } from '@/components/brand/logo'
 import { useAuth } from '@/components/auth/auth-provider'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import { PageLoader } from '@/components/ui/page-loader'
 
 const NAV = [
   { href: '/admin', label: 'Visão geral', icon: Gauge, exact: true },
@@ -36,7 +37,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
   }, [auth.configured, auth.loading, auth.user, pathname, router])
 
   if (!auth.configured) return <Blocked title="Painel indisponível" text="Configure as variáveis do Neon para usar o painel (veja o README)." />
-  if (auth.loading || !auth.user) return <div className="grid min-h-dvh place-items-center"><CircleNotch size={32} className="animate-spin text-muted-foreground" aria-label="Carregando" /></div>
+  if (auth.loading || !auth.user) return <PageLoader height="screen" />
   if (!auth.isAdmin) return <Blocked title="Acesso restrito" text="Esta área é só para a equipe da loja. Se você deveria ter acesso, peça para um admin liberar sua conta." />
 
   const isActive = (item: (typeof NAV)[number]) => (item.exact ? pathname === item.href : pathname.startsWith(item.href))

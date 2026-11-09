@@ -10,6 +10,7 @@ import { SUBSCRIPTION_STATUS, formatDate, normalizeSubscription } from '@/lib/cl
 import { getAccessToken, getNeon, unwrap } from '@/lib/neon'
 import { cn } from '@/lib/utils'
 import type { Subscription } from '@/types/club'
+import { EmptyState } from '@/components/ui/empty-state'
 
 async function callClub(method: 'GET' | 'POST', body?: unknown) {
   const token = await getAccessToken()
@@ -69,12 +70,14 @@ export function MySubscription({ justSubscribed }: { justSubscribed?: boolean })
 
   if (!sub) {
     return (
-      <div className="flex flex-col items-center rounded-[1.75rem] border border-dashed px-6 py-14 text-center">
-        <span className="grid size-14 place-items-center rounded-full bg-secondary"><Sparkle size={26} weight="duotone" /></span>
-        <p className="mt-4 font-display text-xl font-bold">Você ainda não assina o clube</p>
-        <p className="mt-1 max-w-sm text-sm text-muted-foreground">Todo mês uma caixa com barras da casa e edições limitadas, com frete grátis.</p>
-        <Button asChild className="mt-6"><Link href="/clube">Conhecer planos</Link></Button>
-      </div>
+      <EmptyState
+        size="panel"
+        titleAs="p"
+        icon={<Sparkle size={26} weight="duotone" />}
+        title="Você ainda não assina o clube"
+        description="Todo mês uma caixa com barras da casa e edições limitadas, com frete grátis."
+        action={<Button asChild><Link href="/clube">Conhecer planos</Link></Button>}
+      />
     )
   }
 

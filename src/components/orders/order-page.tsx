@@ -10,6 +10,7 @@ import { getAccessToken } from '@/lib/neon'
 import { ORDER_STATUS, formatDateTime, paymentProblem } from '@/lib/orders'
 import { OrderItems, OrderProgress, OrderShipping, StatusBadge } from './order-parts'
 import type { OrderView } from '@/types/order'
+import { PageLoader } from '@/components/ui/page-loader'
 
 // Página do pedido: Pix para pagar (com atualização automática) ou o andamento
 export function OrderPage({ code }: { code: string }) {
@@ -46,7 +47,7 @@ export function OrderPage({ code }: { code: string }) {
   }, [pending, load])
 
   if (error) return <Centered><WarningCircle size={40} className="text-destructive" /><p className="mt-3">{error}</p><Button asChild className="mt-5"><Link href="/conta">Ir para minha conta</Link></Button></Centered>
-  if (!order) return <Centered><CircleNotch size={32} className="animate-spin text-muted-foreground" aria-label="Carregando" /></Centered>
+  if (!order) return <PageLoader height="page" />
 
   return (
     <div className="mx-auto max-w-5xl px-5 pb-24 pt-8 md:px-8 md:pt-12">

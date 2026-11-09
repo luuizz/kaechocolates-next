@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { CalendarCheck, Check, CircleNotch, CreditCard, MapPin, Sparkle } from '@phosphor-icons/react'
+import { CalendarCheck, Check, CreditCard, MapPin, Sparkle } from '@phosphor-icons/react'
 import { useAuth } from '@/components/auth/auth-provider'
 import { useCatalog } from '@/components/catalog/catalog-provider'
 import { AddressPicker } from '@/components/checkout/address-picker'
@@ -14,6 +14,7 @@ import { formatBRL } from '@/data/products'
 import { getAccessToken } from '@/lib/neon'
 import { cn } from '@/lib/utils'
 import type { Address } from '@/types/account'
+import { PageLoader } from '@/components/ui/page-loader'
 
 // Assinatura do clube: plano + período, endereço das caixas e cartão
 export function SubscribePage() {
@@ -36,7 +37,7 @@ export function SubscribePage() {
   const period = periods.find((item) => item.id === periodId) ?? periods[0]
 
   if (!auth.user || !plan || !period) {
-    return <div className="grid min-h-[60vh] place-items-center"><CircleNotch size={32} className="animate-spin text-muted-foreground" aria-label="Carregando" /></div>
+    return <PageLoader height="page" />
   }
 
   const price = planPrice(plan, period)

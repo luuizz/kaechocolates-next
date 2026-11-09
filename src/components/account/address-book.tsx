@@ -7,6 +7,7 @@ import { Field, FormMessage, Input, Select } from '@/components/ui/field'
 import { useAuth } from '@/components/auth/auth-provider'
 import { getNeon, unwrap } from '@/lib/neon'
 import type { Address, AddressDraft } from '@/types/account'
+import { PageLoader } from '@/components/ui/page-loader'
 
 export const STATES = ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO']
 
@@ -71,7 +72,7 @@ export function AddressBook() {
     <div className="flex flex-col gap-4">
       <FormMessage>{error}</FormMessage>
       {list === null ? (
-        <div className="grid min-h-40 place-items-center"><CircleNotch size={28} className="animate-spin text-muted-foreground" aria-label="Carregando" /></div>
+        <PageLoader height="section" />
       ) : (
         <ul className="grid gap-4 md:grid-cols-2">
           {list.map((address) => (

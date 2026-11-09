@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Suspense } from 'react'
 import { AuthShell } from '@/components/account/auth-shell'
-import { SignInForm } from '@/components/account/auth-forms'
+import { SignInForm } from '@/components/account/auth/sign-in-form'
 import { getCatalog } from '@/lib/server/catalog'
 
 export const metadata: Metadata = { title: 'Entrar', robots: { index: false } }

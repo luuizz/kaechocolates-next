@@ -8,18 +8,19 @@ import { formatBRL, installment } from '@/data/products'
 import { useCart } from './cart-provider'
 import { CartLine } from './cart-line'
 import { FreeShipping } from './free-shipping'
+import { EmptyState } from '@/components/ui/empty-state'
 
 export function CartPage() {
   const { items, count, subtotal } = useCart()
 
   if (items.length === 0) {
     return (
-      <div className="mx-auto flex max-w-xl flex-col items-center gap-4 px-5 py-28 text-center">
-        <span className="grid size-24 place-items-center rounded-full bg-secondary"><ShoppingBagOpen size={44} weight="duotone" /></span>
-        <h1 className="font-display text-4xl font-extrabold">Sua sacola está vazia</h1>
-        <p className="text-muted-foreground">Escolha seus sabores de Brasil e volte aqui para finalizar.</p>
-        <Button asChild size="lg"><Link href="/produtos">Ver chocolates</Link></Button>
-      </div>
+      <EmptyState
+        icon={<ShoppingBagOpen size={44} weight="duotone" />}
+        title="Sua sacola está vazia"
+        description="Escolha seus sabores de Brasil e volte aqui para finalizar."
+        action={<Button asChild size="lg"><Link href="/produtos">Ver chocolates</Link></Button>}
+      />
     )
   }
 

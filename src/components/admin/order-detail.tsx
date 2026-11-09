@@ -14,6 +14,7 @@ import { ORDER_STATUS, formatDateTime } from '@/lib/orders'
 import { formatPhone } from '@/lib/utils'
 import { AdminHeader, Panel } from './admin-shell'
 import type { OrderStatus, OrderView } from '@/types/order'
+import { PageLoader } from '@/components/ui/page-loader'
 
 // Próximo passo sugerido para cada status (botão principal)
 const NEXT: Partial<Record<OrderStatus, OrderStatus>> = { paid: 'preparing', preparing: 'shipped', shipped: 'delivered' }
@@ -38,7 +39,7 @@ export function OrderDetail({ code }: { code: string }) {
     load().catch((err) => toast.error(err.message))
   }, [load])
 
-  if (!order) return <div className="grid min-h-80 place-items-center"><CircleNotch size={32} className="animate-spin text-muted-foreground" aria-label="Carregando" /></div>
+  if (!order) return <PageLoader />
 
   const save = async (nextStatus = status, nextTracking = tracking) => {
     if (nextStatus === 'shipped' && !nextTracking.trim() && !window.confirm('Marcar como enviado sem código de rastreio?')) return
