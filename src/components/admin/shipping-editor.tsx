@@ -3,7 +3,7 @@
 import { ArrowDown, ArrowUp, CircleNotch, Plus, Trash } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { Field, Input } from '@/components/ui/field'
-import { STATES } from '@/components/account/address-book'
+import { STATES } from '@/lib/address'
 import { brand } from '@/config/brand'
 import { formatBRL } from '@/data/products'
 import { listZones } from '@/lib/admin-api'

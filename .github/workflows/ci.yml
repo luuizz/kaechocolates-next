@@ -43,6 +43,7 @@ jobs:
           cache: yarn
       - run: yarn install --frozen-lockfile
       - run: yarn lint
+      - run: yarn format:check
       - run: yarn typecheck
       - run: yarn build
         # Sem endereços do Neon: o build usa o catálogo local (src/data)
