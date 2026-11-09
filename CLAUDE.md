@@ -39,6 +39,7 @@ src/
   lib/            utilitários e regras puras que rodam nos dois lados
     server/       código só de servidor (cada arquivo começa com import 'server-only'): banco, auth, catálogo, pedidos, Mercado Pago, e-mail
     seo/          JSON-LD e imagens OG
+    validation/   schemas Zod da entrada das rotas (reaproveitáveis nos formulários)
   config/         configuração estática (brand.ts concentra a identidade)
   data/           conteúdo estático (FAQ, textos, seeds de catálogo)
   types/          tipos compartilhados (ver "Tipagem")
@@ -71,6 +72,8 @@ Para dúvidas de estrutura, consultar as skills `nextjs-arquitetura` e `nextjs-q
 - Props de componente ficam no próprio componente (`type XProps = {...}`).
 - Não duplicar tipos: hoje há tipos espalhados em `lib/`, `data/` e componentes; ao mexer neles, consolidar em `src/types/`.
 - Sem `any`; preferir `unknown` + validação nas bordas (requests, webhooks, respostas de API).
+- Corpo de requisição sempre validado com Zod (`src/lib/validation/`), com `parseWith` para devolver a mensagem do primeiro campo inválido. Tipo da entrada derivado do schema (`z.output`), não escrito à mão.
+- Linhas do banco têm tipo próprio (`OrderRow`, `ProductRow`...) e são convertidas na borda; sem `as unknown as`.
 
 ## Variáveis de ambiente
 

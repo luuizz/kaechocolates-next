@@ -1,14 +1,14 @@
 import { after } from 'next/server'
 import { brand } from '@/config/brand'
 import { notifySubscription } from '@/lib/server/email'
-import { validCpf } from '@/lib/cpf'
+import { SUBSCRIBE_ERRORS, subscribeSchema } from '@/lib/validation/club'
+import { parseWith } from '@/lib/validation/parse'
 import { userFromRequest } from '@/lib/server/auth'
 import { applyPreapproval } from '@/lib/server/club'
 import { db, dbMessage } from '@/lib/server/db'
 import { createPreapproval, MpError, payerEmailFor, preapprovalSnapshot } from '@/lib/server/mercadopago'
 
 const json = (status: number, body: unknown) => Response.json(body, { status })
-const ID = /^[a-z0-9]+(-[a-z0-9]+)*$/
 
 // Assina o clube: o banco calcula o valor e cria a assinatura; o Mercado Pago
 // autoriza o cartão e passa a cobrar a cada período.
@@ -16,20 +16,13 @@ export async function POST(request: Request) {
   const user = await userFromRequest(request)
   if (!user) return json(401, { error: 'Entre na sua conta para assinar.' })
 
-  const body = await request.json().catch(() => null)
-  const plan = String(body?.plan ?? '')
-  const period = String(body?.period ?? '')
-  const addressId = Number(body?.addressId)
-  const cpf = String(body?.cpf ?? '').replace(/\D/g, '')
-  const token = body?.card?.token
-  if (!ID.test(plan) || !ID.test(period)) return json(400, { error: 'Escolha o plano e o período.' })
-  if (!Number.isInteger(addressId) || addressId <= 0) return json(400, { error: 'Escolha o endereço de entrega das caixas.' })
-  if (!validCpf(cpf)) return json(400, { error: 'Informe um CPF válido.' })
-  if (typeof token !== 'string' || !token) return json(400, { error: 'Preencha os dados do cartão.' })
+  const input = parseWith(subscribeSchema, await request.json().catch(() => null), SUBSCRIBE_ERRORS)
+  if (!input.ok) return json(400, { error: input.error })
+  const { plan, period, addressId, cpf, card, notes } = input.data
 
   let sub: { id: string; amount: string; plan: { name: string }; period: { label: string; months: number } }
   try {
-    const { rows } = await db().query('select * from public.start_subscription($1, $2, $3, $4, $5, $6)', [user.id, plan, period, addressId, cpf, String(body?.notes ?? '')])
+    const { rows } = await db().query('select * from public.start_subscription($1, $2, $3, $4, $5, $6)', [user.id, plan, period, addressId, cpf, notes])
     sub = rows[0]
   } catch (error) {
     // Recusas de regra (estoque, CPF, endereço…) são esperadas; só registra o que é falha
@@ -44,7 +37,7 @@ export async function POST(request: Request) {
       amount: Number(sub.amount),
       months: sub.period.months,
       payerEmail: payerEmailFor(user.email ?? ''),
-      cardToken: token,
+      cardToken: card.token,
       backUrl: `${brand.url}/conta?aba=clube`,
     })
     const saved = await applyPreapproval(sub.id, preapprovalSnapshot(pre))

@@ -43,3 +43,8 @@ export type AdminOrderRow = {
   payment_method: 'pix' | 'card'; customer: { name: string; email: string }; shipping_address: { city: string; state: string }
   order_items: { quantity: number }[]
 }
+
+// Como vêm do banco: numeric do Postgres chega como texto
+type Numeric = number | string
+export type OrderItemRow = Omit<OrderItem, 'unit_price' | 'total'> & { unit_price: Numeric; total: Numeric }
+export type OrderRow = Omit<OrderView, 'subtotal' | 'discount' | 'shipping' | 'total' | 'items'> & { subtotal: Numeric; discount: Numeric; shipping: Numeric; total: Numeric }

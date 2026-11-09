@@ -5,10 +5,10 @@ import { getAccessToken, getNeon, unwrap } from '@/lib/neon'
 import { normalizeOrder } from '@/lib/orders'
 import { normalizeSubscription } from '@/lib/club'
 import type { Customer } from '@/types/account'
-import type { AdminPeriod, AdminPlan, Period, Plan, Subscription } from '@/types/club'
-import type { AdminBox, Box } from '@/types/kit'
-import type { AdminOrderRow, OrderStatus } from '@/types/order'
-import type { AdminProduct, Product, ProductInput } from '@/types/product'
+import type { AdminPeriod, AdminPlan, Subscription } from '@/types/club'
+import type { AdminBox } from '@/types/kit'
+import type { AdminOrderRow, OrderItemRow, OrderRow } from '@/types/order'
+import type { AdminProduct, ProductInput } from '@/types/product'
 import type { AdminZone } from '@/types/shipping'
 
 // Acesso do painel ao banco. Todas as chamadas vão com o token do admin;
@@ -137,7 +137,7 @@ export async function listOrders() {
 }
 
 export async function getOrder(code: string) {
-  const rows = unwrap(await neon().from('orders').select('*, order_items(kind,product_id,name,quantity,unit_price,total,kit)').eq('code', code).limit(1)) as (Record<string, unknown> & { order_items: Record<string, unknown>[] })[]
+  const rows = unwrap(await neon().from('orders').select('*, order_items(kind,product_id,name,quantity,unit_price,total,kit)').eq('code', code).limit(1)) as (OrderRow & { order_items: OrderItemRow[] })[]
   if (!rows[0]) return null
   const { order_items: items, ...order } = rows[0]
   return normalizeOrder(order, items)

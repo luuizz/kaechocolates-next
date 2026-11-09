@@ -1,5 +1,5 @@
 // Rótulos e normalização de pedidos (usados na loja, na conta e no painel)
-import type { OrderItem, OrderStatus, OrderView } from '@/types/order'
+import type { OrderItemRow, OrderRow, OrderStatus, OrderView } from '@/types/order'
 
 export const ORDER_STATUS: Record<OrderStatus, { label: string; tone: string; text: string }> = {
   pending_payment: { label: 'Aguardando pagamento', tone: 'bg-flavor-yellow text-foreground', text: 'Assim que o pagamento for aprovado, a gente começa a separar.' },
@@ -11,15 +11,15 @@ export const ORDER_STATUS: Record<OrderStatus, { label: string; tone: string; te
 }
 
 // numeric do Postgres chega como texto: converte os campos de valor
-export function normalizeOrder(row: Record<string, unknown>, items: Record<string, unknown>[]): OrderView {
+export function normalizeOrder(row: OrderRow, items: OrderItemRow[]): OrderView {
   const num = (value: unknown) => Number(value ?? 0)
   return {
-    ...(row as unknown as OrderView),
+    ...row,
     subtotal: num(row.subtotal),
     discount: num(row.discount),
     shipping: num(row.shipping),
     total: num(row.total),
-    items: items.map((item) => ({ ...(item as unknown as OrderItem), unit_price: num(item.unit_price), total: num(item.total) })),
+    items: items.map((item) => ({ ...item, unit_price: num(item.unit_price), total: num(item.total) })),
   }
 }
 

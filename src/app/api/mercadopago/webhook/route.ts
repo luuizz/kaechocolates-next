@@ -1,4 +1,5 @@
 import { after } from 'next/server'
+import { z } from 'zod'
 import { db } from '@/lib/server/db'
 import { notifyOrder, notifySubscription } from '@/lib/server/email'
 import { applyPayment } from '@/lib/server/orders'
@@ -9,10 +10,15 @@ import { MpError, getAuthorizedPayment, getMpOrder, getPreapproval, paymentSnaps
 // Configure em Suas integrações → Webhooks: https://<site>/api/mercadopago/webhook
 // com os eventos "Order", "Planos e assinaturas" (subscription_preapproval)
 // e "Pagamentos recorrentes" (subscription_authorized_payment).
+const webhookBody = z.object({
+  type: z.string().optional(),
+  data: z.object({ id: z.coerce.string() }).optional(),
+})
+
 export async function POST(request: Request) {
   const url = new URL(request.url)
-  const body = await request.json().catch(() => ({}))
-  const dataId: string | undefined = url.searchParams.get('data.id') ?? body?.data?.id
+  const body = webhookBody.safeParse(await request.json().catch(() => null)).data
+  const dataId = url.searchParams.get('data.id') ?? body?.data?.id
   if (!dataId) return Response.json({ ok: true }) // aviso de outro tipo: só confirma
 
   if (!validWebhookSignature(request, dataId)) return Response.json({ error: 'Assinatura inválida.' }, { status: 401 })

@@ -1,4 +1,4 @@
-import type { Line, Product, ProductRow } from '@/types/product'
+import type { Product, ProductRow } from '@/types/product'
 
 export const productFromRow = (row: ProductRow): Product => ({
   id: row.id,

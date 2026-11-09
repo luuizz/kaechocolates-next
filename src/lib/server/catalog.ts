@@ -8,7 +8,7 @@ import { productFromRow } from '@/lib/catalog-rows'
 import type { Catalog } from '@/types/catalog'
 import type { Period, Plan } from '@/types/club'
 import type { Box } from '@/types/kit'
-import type { Product, ProductRow } from '@/types/product'
+import type { ProductRow } from '@/types/product'
 
 export const CATALOG_TAG = 'catalog'
 

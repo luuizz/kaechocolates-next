@@ -1,6 +1,7 @@
 import { userFromRequest } from '@/lib/server/auth'
 import { applyPreapproval, openSubscription, syncSubscription } from '@/lib/server/club'
 import { db } from '@/lib/server/db'
+import { subscriptionActionSchema } from '@/lib/validation/club'
 import { MpError, setPreapprovalStatus, preapprovalSnapshot } from '@/lib/server/mercadopago'
 
 const json = (status: number, body: unknown) => Response.json(body, { status })
@@ -19,12 +20,12 @@ export async function GET(request: Request) {
 export async function POST(request: Request) {
   const user = await userFromRequest(request)
   if (!user) return json(401, { error: 'Entre na sua conta.' })
-  const body = await request.json().catch(() => null)
-  const action = body?.action as 'pause' | 'resume' | 'cancel'
-  if (!['pause', 'resume', 'cancel'].includes(action)) return json(400, { error: 'Ação inválida.' })
+  const input = subscriptionActionSchema.safeParse(await request.json().catch(() => null))
+  if (!input.success) return json(400, { error: 'Ação inválida.' })
+  const { action, id } = input.data
 
-  const sub = user.role === 'admin' && body?.id
-    ? ((await db().query("select * from public.subscriptions where id = $1 and status <> 'canceled'", [body.id])).rows[0] ?? null)
+  const sub = user.role === 'admin' && id
+    ? ((await db().query("select * from public.subscriptions where id = $1 and status <> 'canceled'", [id])).rows[0] ?? null)
     : await openSubscription(user.id)
   if (!sub) return json(404, { error: 'Assinatura não encontrada.' })
 
