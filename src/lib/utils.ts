@@ -1,7 +1,20 @@
 import { clsx, type ClassValue } from 'clsx'
-import { twMerge } from 'tailwind-merge'
+import { extendTailwindMerge } from 'tailwind-merge'
 
 // Junta classes do Tailwind resolvendo conflitos (padrão do shadcn/ui)
+// Tokens próprios de globals.css: sem isso o merge confunde text-2xs com cor de texto
+const twMerge = extendTailwindMerge({
+  extend: {
+    theme: {
+      text: ['2xs'],
+      radius: ['tile', 'card', 'feature', 'hero'],
+      tracking: ['display', 'heading', 'eyebrow'],
+      leading: ['display'],
+      aspect: ['package'],
+    },
+  },
+})
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }

@@ -110,7 +110,7 @@ export function SiteHeader() {
             </Link>
             <button type="button" onClick={() => cart.setOpen(true)} aria-label={`Abrir sacola, ${cart.count} ${cart.count === 1 ? 'item' : 'itens'}`} className="relative grid size-11 place-items-center rounded-full bg-foreground text-background transition-transform hover:scale-105">
               <ShoppingBagOpen size={22} weight="bold" />
-              <span className="absolute -right-1 -top-1 grid min-w-5 place-items-center rounded-full bg-flavor-yellow px-1 text-[0.68rem] font-bold tabular-nums text-foreground ring-2 ring-background">{cart.count}</span>
+              <span className="absolute -right-1 -top-1 grid min-w-5 place-items-center rounded-full bg-flavor-yellow px-1 text-2xs font-bold tabular-nums text-foreground ring-2 ring-background">{cart.count}</span>
             </button>
           </div>
         </div>

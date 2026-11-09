@@ -24,7 +24,7 @@ export function ContactForm() {
   }
 
   return (
-    <form onSubmit={submit} noValidate className="flex flex-col gap-4 rounded-[1.75rem] border p-6 md:p-8">
+    <form onSubmit={submit} noValidate className="flex flex-col gap-4 rounded-card border p-6 md:p-8">
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="flex flex-col gap-1.5 text-sm font-semibold">Seu nome
           <input value={form.name} onChange={set('name')} autoComplete="name" aria-invalid={invalid.name} className={field} />

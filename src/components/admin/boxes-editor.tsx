@@ -27,7 +27,7 @@ export function BoxesEditor() {
       />
       <Panel className="p-0 md:p-0">
         {!list.rows ? (
-          <div className="h-48 animate-pulse rounded-[1.5rem] bg-background" />
+          <div className="h-48 animate-pulse rounded-tile bg-background" />
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full min-w-[48rem] text-sm">

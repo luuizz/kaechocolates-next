@@ -27,7 +27,7 @@ export default function FaqPage() {
         <div className="flex flex-col gap-12">
           {FAQ.map((group) => (
             <section key={group.topic} id={slug(group.topic)} className="scroll-mt-36">
-              <h2 className="font-display text-3xl font-extrabold tracking-[-0.02em]">{group.topic}</h2>
+              <h2 className="font-display text-3xl font-extrabold tracking-heading">{group.topic}</h2>
               <div className="mt-5 divide-y rounded-2xl border">
                 {group.items.map((item) => (
                   <details key={item.q} className="group px-5 py-4">
@@ -41,7 +41,7 @@ export default function FaqPage() {
               </div>
             </section>
           ))}
-          <div className="flex flex-col items-start gap-4 rounded-[1.75rem] bg-secondary p-6 md:flex-row md:items-center md:justify-between md:p-8">
+          <div className="flex flex-col items-start gap-4 rounded-card bg-secondary p-6 md:flex-row md:items-center md:justify-between md:p-8">
             <div>
               <h2 className="font-display text-2xl font-extrabold">Ainda com dúvida?</h2>
               <p className="text-muted-foreground">A gente responde rapidinho, em horário comercial.</p>

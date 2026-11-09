@@ -13,7 +13,7 @@ type OrderSummaryProps = { items: CartItem[]; quote: Quote | null; quoting: bool
 export function OrderSummary({ items, quote, quoting, problems }: OrderSummaryProps) {
   return (
     <aside className="lg:sticky lg:top-36 lg:self-start">
-      <div className="rounded-[1.75rem] bg-secondary p-6">
+      <div className="rounded-card bg-secondary p-6">
         <h2 className="font-display text-2xl font-extrabold">Resumo</h2>
         <ul className="mt-5 flex flex-col gap-3">
           {items.map((item) => (

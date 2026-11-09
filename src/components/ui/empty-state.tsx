@@ -6,7 +6,7 @@ const emptyVariants = cva('flex flex-col items-center text-center', {
     size: {
       page: 'mx-auto max-w-xl gap-4 px-5 py-28',
       compact: 'flex-1 justify-center gap-4 px-8',
-      panel: 'gap-2 rounded-[1.75rem] border border-dashed px-6 py-14',
+      panel: 'gap-2 rounded-card border border-dashed px-6 py-14',
     },
   },
   defaultVariants: { size: 'page' },

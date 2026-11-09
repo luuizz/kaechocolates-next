@@ -58,11 +58,11 @@ export function OrderPage({ code }: { code: string }) {
       <Hero order={order} />
 
       <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_20rem]">
-        <section className="rounded-[1.75rem] border p-5 md:p-7">
+        <section className="rounded-card border p-5 md:p-7">
           <h2 className="font-display text-xl font-extrabold">Itens</h2>
           <div className="mt-2"><OrderItems order={order} /></div>
         </section>
-        <section className="rounded-[1.75rem] border p-5 md:p-7 lg:self-start">
+        <section className="rounded-card border p-5 md:p-7 lg:self-start">
           <h2 className="mb-4 font-display text-xl font-extrabold">Entrega</h2>
           <OrderShipping order={order} />
         </section>
@@ -76,9 +76,9 @@ function Hero({ order }: { order: OrderView }) {
 
   const canceled = order.status === 'canceled'
   return (
-    <header className={`mt-6 rounded-[2rem] p-6 md:p-10 ${canceled ? 'bg-secondary' : 'bg-flavor-yellow'}`}>
+    <header className={`mt-6 rounded-feature p-6 md:p-10 ${canceled ? 'bg-secondary' : 'bg-flavor-yellow'}`}>
       {canceled ? <XCircle size={44} weight="fill" className="text-destructive" /> : <CheckCircle size={44} weight="fill" />}
-      <h1 className="mt-4 font-display text-4xl font-extrabold leading-[0.95] tracking-[-0.03em] md:text-5xl">
+      <h1 className="mt-4 font-display text-4xl font-extrabold leading-display tracking-display md:text-5xl">
         {canceled ? 'Pedido cancelado' : order.status === 'pending_payment' ? 'Pedido recebido' : 'Obrigado pela compra!'}
       </h1>
       <p className="mt-3 max-w-xl text-foreground/80">
@@ -111,10 +111,10 @@ function PixBox({ order }: { order: OrderView }) {
   }
 
   return (
-    <header className="mt-6 grid items-center gap-8 rounded-[2rem] bg-secondary p-6 md:grid-cols-[1fr_auto] md:p-10">
+    <header className="mt-6 grid items-center gap-8 rounded-feature bg-secondary p-6 md:grid-cols-[1fr_auto] md:p-10">
       <div>
-        <PixLogo size={44} weight="fill" className="text-[#32bcad]" />
-        <h1 className="mt-4 font-display text-4xl font-extrabold leading-[0.95] tracking-[-0.03em] md:text-5xl">Falta só pagar o Pix</h1>
+        <PixLogo size={44} weight="fill" className="text-pix" />
+        <h1 className="mt-4 font-display text-4xl font-extrabold leading-display tracking-display md:text-5xl">Falta só pagar o Pix</h1>
         <p className="mt-3 max-w-md text-foreground/80">Abra o app do seu banco, escolha pagar com Pix e escaneie o QR Code ou use o código copia e cola. Esta página atualiza sozinha quando o pagamento cair.</p>
         <p className="mt-4 text-sm">Pedido <strong>{order.code}</strong>{minutes && <> · expira em <strong className="tabular-nums">{minutes}</strong></>}</p>
         <div className="mt-5 flex flex-wrap gap-2">

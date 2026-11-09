@@ -72,7 +72,7 @@ export function KitBuilder() {
                 <span className="mt-1 block font-display text-xl font-extrabold">{option.name}</span>
                 <span className="block text-sm">{option.size} barras · <strong className="text-success">{Math.round(option.discount * 100)}% off</strong></span>
                 <span className="mt-3 grid grid-cols-9 gap-0.5" aria-hidden="true">
-                  {Array.from({ length: option.size }, (_, index) => <span key={index} className="aspect-[3/4] rounded-[2px] bg-foreground/80" />)}
+                  {Array.from({ length: option.size }, (_, index) => <span key={index} className="aspect-3/4 rounded-[2px] bg-foreground/80" />)}
                 </span>
               </button>
             )
@@ -111,7 +111,7 @@ export function KitBuilder() {
 
       {/* 3. Resumo */}
       <aside className="lg:sticky lg:top-36 lg:self-start">
-        <div className="rounded-[1.75rem] bg-foreground p-6 text-background">
+        <div className="rounded-card bg-foreground p-6 text-background">
           <div className="flex items-baseline justify-between">
             <h3 className="font-display text-2xl font-extrabold">Sua caixa</h3>
             <span className="text-sm text-background/70" aria-live="polite">{picked.length} de {box.size}</span>
@@ -120,7 +120,7 @@ export function KitBuilder() {
             {Array.from({ length: box.size }, (_, index) => {
               const product = totals.products[index]
               return (
-                <li key={index} className={cn('grid aspect-[3/4] place-items-center rounded-lg border border-dashed border-background/25 p-1 text-center transition-all duration-300', product && 'scale-100 border-solid border-transparent')} style={product ? { background: product.label, color: product.labelText === 'light' ? '#fff' : '#111' } : undefined}>
+                <li key={index} className={cn('grid aspect-3/4 place-items-center rounded-lg border border-dashed border-background/25 p-1 text-center transition-all duration-300', product && 'scale-100 border-solid border-transparent')} style={product ? { background: product.label, color: product.labelText === 'light' ? '#fff' : '#111' } : undefined}>
                   {product ? (
                     <span className="flex flex-col leading-none"><span className="font-display text-2xl font-extrabold">{product.cacao}</span><span className="mt-1 text-[0.6rem] font-bold uppercase">{product.name}</span></span>
                   ) : (

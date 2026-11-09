@@ -60,7 +60,7 @@ export function SubscribePage() {
       <nav aria-label="Navegação estrutural" className="text-sm text-muted-foreground">
         <Link href="/clube" className="hover:text-foreground">Clube</Link> <span aria-hidden="true">/</span> <span className="text-foreground">Assinar</span>
       </nav>
-      <h1 className="mt-4 font-display text-5xl font-extrabold leading-[0.95] tracking-[-0.03em] md:text-6xl">Assinar o clube</h1>
+      <h1 className="mt-4 font-display text-5xl font-extrabold leading-display tracking-display md:text-6xl">Assinar o clube</h1>
 
       <div className="mt-10 grid gap-8 lg:grid-cols-[1fr_24rem] lg:gap-12">
         <div className="flex flex-col gap-6">
@@ -81,7 +81,7 @@ export function SubscribePage() {
             <div role="radiogroup" aria-label="Período" className="mt-4 flex flex-wrap gap-2">
               {periods.map((item) => (
                 <button key={item.id} type="button" role="radio" aria-checked={item.id === period.id} onClick={() => setPeriodId(item.id)} className={cn('flex h-10 items-center gap-2 rounded-full border px-4 text-sm font-semibold transition-colors', item.id === period.id ? 'border-foreground bg-foreground text-background' : 'hover:border-foreground')}>
-                  {item.label} {item.discount > 0 && <span className={cn('rounded-full px-1.5 text-[0.7rem]', item.id === period.id ? 'bg-flavor-yellow text-foreground' : 'bg-success/15 text-success')}>{item.note}</span>}
+                  {item.label} {item.discount > 0 && <span className={cn('rounded-full px-1.5 text-2xs', item.id === period.id ? 'bg-flavor-yellow text-foreground' : 'bg-success/15 text-success')}>{item.note}</span>}
                 </button>
               ))}
             </div>
@@ -109,9 +109,9 @@ export function SubscribePage() {
         </div>
 
         <aside className="lg:sticky lg:top-36 lg:self-start">
-          <div className="rounded-[1.75rem] p-6" style={{ background: plan.color }}>
-            <p className="text-xs font-bold uppercase tracking-[0.18em]">Sua assinatura</p>
-            <p className="mt-2 font-display text-4xl font-extrabold leading-none tracking-[-0.02em]">{plan.name}</p>
+          <div className="rounded-card p-6" style={{ background: plan.color }}>
+            <p className="text-xs font-bold uppercase tracking-eyebrow">Sua assinatura</p>
+            <p className="mt-2 font-display text-4xl font-extrabold leading-none tracking-heading">{plan.name}</p>
             <p className="mt-1 font-semibold">{period.label} · {plan.bars} barras por mês</p>
             <div className="mt-6 rounded-2xl bg-background p-5">
               <p className="flex items-baseline gap-1"><span className="font-display text-3xl font-extrabold">{formatBRL(price.monthly)}</span><span className="text-muted-foreground">/mês</span></p>
@@ -130,7 +130,7 @@ export function SubscribePage() {
 
 function Section({ number, title, icon: Icon, muted, children }: { number: number; title: string; icon: typeof MapPin; muted?: boolean; children: React.ReactNode }) {
   return (
-    <section aria-labelledby={`clube-passo-${number}`} className={cn('rounded-[1.75rem] border p-5 transition-opacity md:p-7', muted && 'opacity-60')}>
+    <section aria-labelledby={`clube-passo-${number}`} className={cn('rounded-card border p-5 transition-opacity md:p-7', muted && 'opacity-60')}>
       <h2 id={`clube-passo-${number}`} className="mb-5 flex items-center gap-3 font-display text-xl font-extrabold">
         <span className="grid size-8 place-items-center rounded-full bg-foreground text-sm text-background">{number}</span>
         {title}

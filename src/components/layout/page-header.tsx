@@ -7,7 +7,7 @@ export function PageHeader({ title, description, crumb }: { title: string; descr
       <nav aria-label="Navegação estrutural" className="text-sm text-muted-foreground">
         <Link href="/" className="hover:text-foreground">Início</Link> <span aria-hidden="true">/</span> <span className="text-foreground">{crumb ?? title}</span>
       </nav>
-      <h1 className="mt-4 max-w-3xl font-display text-5xl font-extrabold leading-[0.95] tracking-[-0.03em] md:text-6xl">{title}</h1>
+      <h1 className="mt-4 max-w-3xl font-display text-5xl font-extrabold leading-display tracking-display md:text-6xl">{title}</h1>
       {description && <p className="mt-4 max-w-2xl text-lg text-muted-foreground">{description}</p>}
     </header>
   )

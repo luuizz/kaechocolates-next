@@ -96,7 +96,7 @@ export function ProductList() {
                     <td className="px-3 py-3">{LINES[product.line]}</td>
                     <td className="px-3 py-3 text-right tabular-nums">{formatBRL(product.price)}</td>
                     <td className="px-3 py-3 text-center"><Switch checked={product.active} onChange={(value) => toggle(product, 'active', value)} label={`${product.name} visível na loja`} /></td>
-                    <td className="px-3 py-3 text-center"><Switch checked={product.soldOutFlag} onChange={(value) => toggle(product, 'sold_out', value)} label={`${product.name} esgotada`} tone="danger" />{product.stock !== undefined && <span className={cn('mt-1 block text-[0.7rem]', product.stock === 0 ? 'font-semibold text-destructive' : 'text-muted-foreground')}>{product.stock} em estoque</span>}</td>
+                    <td className="px-3 py-3 text-center"><Switch checked={product.soldOutFlag} onChange={(value) => toggle(product, 'sold_out', value)} label={`${product.name} esgotada`} tone="danger" />{product.stock !== undefined && <span className={cn('mt-1 block text-2xs', product.stock === 0 ? 'font-semibold text-destructive' : 'text-muted-foreground')}>{product.stock} em estoque</span>}</td>
                     <td className="px-5 py-3 text-right"><Button asChild variant="ghost" size="sm"><Link href={`/admin/produtos/${product.id}`}><PencilSimple /> Editar</Link></Button></td>
                   </tr>
                 ))}

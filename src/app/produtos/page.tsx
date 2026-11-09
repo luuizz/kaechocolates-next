@@ -48,7 +48,7 @@ export default async function ProductsPage({ searchParams }: { searchParams: Pro
         <span className="text-foreground">{line === 'todos' ? 'Chocolates' : LINES[line]}</span>
       </nav>
       <header className="mt-4 flex flex-col gap-3">
-        <h1 className="font-display text-5xl font-extrabold tracking-[-0.03em] md:text-6xl">
+        <h1 className="font-display text-5xl font-extrabold tracking-display md:text-6xl">
           {busca ? <>Busca: “{busca}”</> : line === 'todos' ? 'Chocolates' : LINES[line]}
         </h1>
         <p className="max-w-xl text-muted-foreground">{intro[line]}</p>

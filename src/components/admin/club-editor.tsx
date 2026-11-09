@@ -39,7 +39,7 @@ export function ClubEditor() {
 
       <h2 className="mb-3 font-display text-xl font-bold">Planos</h2>
       {!plans.rows ? (
-        <div className="h-72 animate-pulse rounded-[1.5rem] bg-background" />
+        <div className="h-72 animate-pulse rounded-tile bg-background" />
       ) : (
         <div className="grid gap-4 lg:grid-cols-3">
           {plans.rows.map((plan, index) => (
@@ -73,7 +73,7 @@ export function ClubEditor() {
               </div>
             </Panel>
           ))}
-          <button type="button" onClick={() => plans.add({ id: `plano-${(plans.rows?.length ?? 0) + 1}`, name: 'Novo plano', bars: 3, price: 89.9, color: '#5fc2b0', pitch: '', perks: ['Frete grátis'], featured: false, active: false, sort_order: 0 })} className="flex min-h-48 flex-col items-center justify-center gap-2 rounded-[1.5rem] border-2 border-dashed text-sm font-semibold transition-colors hover:border-foreground hover:bg-background">
+          <button type="button" onClick={() => plans.add({ id: `plano-${(plans.rows?.length ?? 0) + 1}`, name: 'Novo plano', bars: 3, price: 89.9, color: '#5fc2b0', pitch: '', perks: ['Frete grátis'], featured: false, active: false, sort_order: 0 })} className="flex min-h-48 flex-col items-center justify-center gap-2 rounded-tile border-2 border-dashed text-sm font-semibold transition-colors hover:border-foreground hover:bg-background">
             <Plus size={22} weight="bold" /> Novo plano
           </button>
         </div>
@@ -82,7 +82,7 @@ export function ClubEditor() {
       <h2 className="mb-3 mt-10 font-display text-xl font-bold">Períodos</h2>
       <Panel className="p-0 md:p-0">
         {!periods.rows ? (
-          <div className="h-40 animate-pulse rounded-[1.5rem]" />
+          <div className="h-40 animate-pulse rounded-tile" />
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full min-w-[44rem] text-sm">

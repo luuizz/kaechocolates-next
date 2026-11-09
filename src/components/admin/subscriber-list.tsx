@@ -81,7 +81,7 @@ export function SubscriberList() {
           { label: 'Receita mensal recorrente', value: subs ? formatBRL(mrr) : null },
           { label: 'Barras para separar no mês', value: subs ? String(bars) : null },
         ].map((card) => (
-          <div key={card.label} className="rounded-[1.5rem] bg-background p-5">
+          <div key={card.label} className="rounded-tile bg-background p-5">
             <p className="text-sm text-muted-foreground">{card.label}</p>
             {card.value === null ? <span className="mt-1 block h-9 w-20 animate-pulse rounded-lg bg-secondary" /> : <p className="font-display text-3xl font-extrabold tabular-nums">{card.value}</p>}
           </div>

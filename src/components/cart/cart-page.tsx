@@ -26,7 +26,7 @@ export function CartPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-5 pb-20 pt-8 md:px-8 md:pt-12">
-      <h1 className="font-display text-5xl font-extrabold tracking-[-0.03em]">Sacola <span className="text-muted-foreground">({count})</span></h1>
+      <h1 className="font-display text-5xl font-extrabold tracking-display">Sacola <span className="text-muted-foreground">({count})</span></h1>
       <div className="mt-8 grid gap-10 lg:grid-cols-[1fr_24rem]">
         <ul className="divide-y border-y">{items.map((item) => <CartLine key={item.id} item={item} />)}</ul>
         <aside className="flex flex-col gap-4 lg:sticky lg:top-36 lg:self-start">

@@ -43,7 +43,7 @@ export function ShippingEditor() {
         <p role="status" className="mb-6 rounded-xl bg-flavor-yellow/30 px-4 py-3 text-sm">Sem entrega para: <strong>{missing.join(', ')}</strong>. Clientes desses estados não conseguem finalizar a compra.</p>
       )}
       {!list.rows ? (
-        <div className="h-72 animate-pulse rounded-[1.5rem] bg-background" />
+        <div className="h-72 animate-pulse rounded-tile bg-background" />
       ) : (
         <div className="flex flex-col gap-4">
           {list.rows.map((zone, index) => (

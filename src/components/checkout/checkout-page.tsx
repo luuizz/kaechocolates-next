@@ -34,7 +34,7 @@ export function CheckoutPage() {
       <nav aria-label="Navegação estrutural" className="text-sm text-muted-foreground">
         <Link href="/carrinho" className="hover:text-foreground">Sacola</Link> <span aria-hidden="true">/</span> <span className="text-foreground">Finalizar compra</span>
       </nav>
-      <h1 className="mt-4 font-display text-5xl font-extrabold leading-[0.95] tracking-[-0.03em] md:text-6xl">Finalizar compra</h1>
+      <h1 className="mt-4 font-display text-5xl font-extrabold leading-display tracking-display md:text-6xl">Finalizar compra</h1>
 
       <div className="mt-10 grid gap-8 lg:grid-cols-[1fr_24rem] lg:gap-12">
         <div className="flex flex-col gap-6">

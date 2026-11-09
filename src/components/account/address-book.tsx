@@ -76,7 +76,7 @@ export function AddressBook() {
       ) : (
         <ul className="grid gap-4 md:grid-cols-2">
           {list.map((address) => (
-            <li key={address.id} className="flex flex-col rounded-[1.5rem] border p-5">
+            <li key={address.id} className="flex flex-col rounded-tile border p-5">
               <div className="flex items-start justify-between gap-2">
                 <p className="flex items-center gap-2 font-display font-bold"><MapPin size={18} weight="duotone" /> {address.label || 'Endereço'}</p>
                 {address.is_default && <span className="rounded-full bg-flavor-yellow px-2.5 py-0.5 text-xs font-bold">Padrão</span>}
@@ -92,7 +92,7 @@ export function AddressBook() {
             </li>
           ))}
           <li>
-            <button type="button" onClick={() => setDraft({ ...emptyAddress(auth.profile?.full_name ?? ''), is_default: list.length === 0 })} className="flex h-full min-h-40 w-full flex-col items-center justify-center gap-2 rounded-[1.5rem] border-2 border-dashed text-sm font-semibold transition-colors hover:border-foreground hover:bg-secondary">
+            <button type="button" onClick={() => setDraft({ ...emptyAddress(auth.profile?.full_name ?? ''), is_default: list.length === 0 })} className="flex h-full min-h-40 w-full flex-col items-center justify-center gap-2 rounded-tile border-2 border-dashed text-sm font-semibold transition-colors hover:border-foreground hover:bg-secondary">
               <Plus size={22} weight="bold" /> Novo endereço
             </button>
           </li>

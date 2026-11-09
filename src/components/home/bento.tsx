@@ -35,10 +35,10 @@ export function Bento({ products }: { products: Product[] }) {
     <section aria-label="Destaques" className="mx-auto max-w-7xl px-5 pt-6 md:px-8 md:pt-8">
       <div className="grid auto-rows-[11rem] grid-cols-2 gap-3 sm:auto-rows-[13rem] md:grid-cols-4 md:gap-4 lg:auto-rows-[14.5rem] xl:grid-cols-5">
         {/* Clube */}
-        <Link href="/clube" className="group relative col-span-2 overflow-hidden rounded-2xl bg-[#5fc2b0] p-5 sm:p-6 md:p-8">
+        <Link href="/clube" className="group relative col-span-2 overflow-hidden rounded-2xl bg-mint p-5 sm:p-6 md:p-8">
           <Sparkle size={140} weight="fill" className="absolute -right-6 -top-6 text-white/20 transition-transform duration-700 group-hover:rotate-90" />
-          <span className="relative hidden items-center gap-1.5 rounded-full bg-foreground px-3 py-1 sm:inline-flex text-[0.7rem] font-bold uppercase tracking-wider text-background">Novidade todo mês</span>
-          <h2 className="relative max-w-[58%] font-display text-[1.75rem] sm:mt-4 sm:text-4xl font-extrabold leading-[0.95] tracking-[-0.03em] text-white lg:text-5xl">Clube de assinaturas</h2>
+          <span className="relative hidden items-center gap-1.5 rounded-full bg-foreground px-3 py-1 sm:inline-flex text-2xs font-bold uppercase tracking-wider text-background">Novidade todo mês</span>
+          <h2 className="relative max-w-[58%] font-display text-[1.75rem] sm:mt-4 sm:text-4xl font-extrabold leading-display tracking-display text-white lg:text-5xl">Clube de assinaturas</h2>
           <span className="absolute bottom-5 left-5 inline-flex sm:bottom-6 sm:left-6 items-center gap-1 rounded-full bg-white px-4 py-2 text-sm font-bold md:bottom-8 md:left-8">
             Conhecer planos <ArrowUpRight weight="bold" className="transition-transform group-hover:rotate-45" />
           </span>
@@ -56,7 +56,7 @@ export function Bento({ products }: { products: Product[] }) {
         {/* Monte seu kit */}
         <Link href="/kits#monte-seu-kit" className="group relative row-span-2 overflow-hidden rounded-2xl bg-foreground p-6 text-background">
           <Package size={36} weight="duotone" className="text-flavor-yellow" />
-          <h2 className="mt-4 font-display text-4xl font-extrabold leading-[0.95] tracking-[-0.03em]">Monte seu kit</h2>
+          <h2 className="mt-4 font-display text-4xl font-extrabold leading-display tracking-display">Monte seu kit</h2>
           <p className="mt-3 text-sm text-background/70">Escolha as barras, a caixa e o cartão. A gente embrulha com axé.</p>
           <div className="absolute -bottom-6 left-1/2 flex w-[110%] -translate-x-1/2 justify-center">
             {pool.length > 2 && [deco(0), deco(2), deco(3)].map((product, index) => (
@@ -82,9 +82,9 @@ export function Bento({ products }: { products: Product[] }) {
         <ProductTile product={n} className="hidden md:block" />
 
         {/* Premiações */}
-        <Link href="/quem-somos#premios" className="group relative col-span-2 overflow-hidden rounded-2xl bg-[#a9d8ef] p-6 md:p-8 xl:col-span-2">
+        <Link href="/quem-somos#premios" className="group relative col-span-2 overflow-hidden rounded-2xl bg-sky p-6 md:p-8 xl:col-span-2">
           <Medal size={48} weight="duotone" />
-          <h2 className="mt-3 font-display text-4xl font-extrabold leading-[0.95] tracking-[-0.03em] md:text-5xl">13 prêmios internacionais</h2>
+          <h2 className="mt-3 font-display text-4xl font-extrabold leading-display tracking-display md:text-5xl">13 prêmios internacionais</h2>
           <p className="mt-3 max-w-sm text-sm font-medium text-foreground/75">Academy of Chocolate (Londres), International Chocolate Awards (Nova York) e AVPA (Paris).</p>
           <span className="absolute right-5 top-5 grid size-10 place-items-center rounded-full bg-foreground text-background transition-transform group-hover:rotate-45">
             <ArrowUpRight weight="bold" />
