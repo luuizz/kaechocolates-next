@@ -1,6 +1,5 @@
-// Tipos e rótulos de pedidos (usados na loja, na conta e no painel)
-
-export type OrderStatus = 'pending_payment' | 'paid' | 'preparing' | 'shipped' | 'delivered' | 'canceled'
+// Rótulos e normalização de pedidos (usados na loja, na conta e no painel)
+import type { OrderItem, OrderStatus, OrderView } from '@/types/order'
 
 export const ORDER_STATUS: Record<OrderStatus, { label: string; tone: string; text: string }> = {
   pending_payment: { label: 'Aguardando pagamento', tone: 'bg-flavor-yellow text-foreground', text: 'Assim que o pagamento for aprovado, a gente começa a separar.' },
@@ -9,42 +8,6 @@ export const ORDER_STATUS: Record<OrderStatus, { label: string; tone: string; te
   shipped: { label: 'Enviado', tone: 'bg-flavor-orange text-white', text: 'Seu pedido está a caminho.' },
   delivered: { label: 'Entregue', tone: 'bg-foreground text-background', text: 'Pedido entregue. Bom proveito!' },
   canceled: { label: 'Cancelado', tone: 'bg-destructive text-white', text: 'Este pedido foi cancelado.' },
-}
-
-export type OrderItem = {
-  kind: 'product' | 'kit'
-  product_id: number | null
-  name: string
-  quantity: number
-  unit_price: number
-  total: number
-  kit: { box: string; box_name: string; slugs: string[]; names: string[]; message: string | null; full_price: number } | null
-}
-
-export type OrderView = {
-  id: number
-  code: string
-  status: OrderStatus
-  payment_method: 'pix' | 'card'
-  payment_status: string | null
-  payment_detail: string | null
-  pix_qr_code: string | null
-  pix_qr_base64: string | null
-  pix_ticket_url: string | null
-  pix_expires_at: string | null
-  installments: number | null
-  subtotal: number
-  discount: number
-  shipping: number
-  total: number
-  shipping_zone: { id: string; name: string; days_min: number; days_max: number } | null
-  shipping_address: { recipient: string; cep: string; street: string; number: string; complement: string | null; district: string; city: string; state: string }
-  customer: { name: string; email: string; phone: string | null; cpf: string }
-  tracking_code: string | null
-  paid_at: string | null
-  shipped_at: string | null
-  created_at: string
-  items: OrderItem[]
 }
 
 // numeric do Postgres chega como texto: converte os campos de valor

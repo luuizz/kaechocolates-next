@@ -4,9 +4,10 @@ import { useEffect, useMemo, useState } from 'react'
 import { MagnifyingGlass, WhatsappLogo } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 import { Input } from '@/components/ui/field'
-import { listCustomers, type Customer } from '@/lib/admin-api'
+import { listCustomers } from '@/lib/admin-api'
 import { formatPhone } from '@/lib/utils'
 import { AdminHeader, Panel } from './admin-shell'
+import type { Customer } from '@/types/account'
 
 const date = new Intl.DateTimeFormat('pt-BR', { day: '2-digit', month: 'short', year: 'numeric' })
 

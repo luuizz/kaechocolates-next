@@ -6,7 +6,6 @@ import { useEffect, useMemo, useState } from 'react'
 import { CircleNotch, CreditCard, LockSimple, MapPin, Package, PixLogo, ShoppingBagOpen, Truck, WarningCircle } from '@phosphor-icons/react'
 import { useAuth } from '@/components/auth/auth-provider'
 import { toCheckoutItems, useCart } from '@/components/cart/cart-provider'
-import type { Address } from '@/components/account/address-book'
 import { AddressPicker } from './address-picker'
 import { BarPackage } from '@/components/product/bar-package'
 import { Button } from '@/components/ui/button'
@@ -17,17 +16,8 @@ import { formatCpf, validCpf } from '@/lib/cpf'
 import { getAccessToken } from '@/lib/neon'
 import { cn } from '@/lib/utils'
 import { CardForm } from './card-form'
-
-export type Quote = {
-  items: { kind: 'product' | 'kit'; name: string; quantity: number; unit_price: number; total: number }[]
-  subtotal: number
-  discount: number
-  shipping: number
-  total: number
-  zone: { id: string; name: string; price: number; days_min: number; days_max: number } | null
-  free_from: number
-  problems: string[]
-}
+import type { Address } from '@/types/account'
+import type { Quote } from '@/types/shipping'
 
 type Method = 'pix' | 'card'
 

@@ -13,7 +13,8 @@ import { AddressBook } from './address-book'
 import { MySubscription } from '@/components/club/my-subscription'
 import { StatusBadge } from '@/components/orders/order-parts'
 import { formatBRL } from '@/data/products'
-import { formatDateTime, type OrderStatus } from '@/lib/orders'
+import { formatDateTime } from '@/lib/orders'
+import type { OrderStatus } from '@/types/order'
 
 const TABS = [
   { id: 'pedidos', label: 'Pedidos', icon: Package },

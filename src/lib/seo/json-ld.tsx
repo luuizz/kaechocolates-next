@@ -1,6 +1,6 @@
 import { brand } from '@/config/brand'
-import type { Product } from '@/data/products'
 import { LINES } from '@/data/products'
+import type { Product } from '@/types/product'
 
 // Dados estruturados (schema.org) para o Google entender loja, produtos e perguntas
 

@@ -8,11 +8,12 @@ import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
 import { Field, Input, Select, Textarea } from '@/components/ui/field'
 import { BarPackage } from '@/components/product/bar-package'
-import { BADGES, LINES, formatBRL, type Line } from '@/data/products'
-import { deleteImage, deleteProduct, getProduct, refreshStore, saveProduct, uploadImage, type ProductInput } from '@/lib/admin-api'
+import { BADGES, LINES, formatBRL } from '@/data/products'
+import { deleteImage, deleteProduct, getProduct, refreshStore, saveProduct, uploadImage } from '@/lib/admin-api'
 import { cn, slugify } from '@/lib/utils'
 import { AdminHeader, Panel } from './admin-shell'
 import { Switch } from './switch'
+import type { Line, ProductInput } from '@/types/product'
 
 type Draft = {
   id?: number

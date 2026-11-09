@@ -4,11 +4,12 @@ import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, CircleNotch, Plus, Star, Tra
 import { Button } from '@/components/ui/button'
 import { Field, Input, Textarea } from '@/components/ui/field'
 import { formatBRL } from '@/data/products'
-import { listPeriods, listPlans, type AdminPeriod, type AdminPlan } from '@/lib/admin-api'
+import { listPeriods, listPlans } from '@/lib/admin-api'
 import { cn, slugify } from '@/lib/utils'
 import { AdminHeader, Panel } from './admin-shell'
 import { fromPercent, percent, useListEditor } from './list-editor'
 import { Switch } from './switch'
+import type { AdminPeriod, AdminPlan } from '@/types/club'
 
 const money = (value: string) => Number(value.replace(/\./g, '').replace(',', '.')) || 0
 

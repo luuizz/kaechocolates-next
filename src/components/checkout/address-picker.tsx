@@ -3,10 +3,11 @@
 import { useCallback, useEffect, useState } from 'react'
 import { CheckCircle, Plus } from '@phosphor-icons/react'
 import { useAuth } from '@/components/auth/auth-provider'
-import { AddressForm, emptyAddress, formatCep, type Address } from '@/components/account/address-book'
+import { AddressForm, emptyAddress, formatCep } from '@/components/account/address-book'
 import { FormMessage } from '@/components/ui/field'
 import { getNeon, unwrap } from '@/lib/neon'
 import { cn } from '@/lib/utils'
+import type { Address } from '@/types/account'
 
 // Escolha do endereço de entrega (checkout e clube), com cadastro na hora
 export function AddressPicker({ value, onChange, label = 'Endereço de entrega' }: { value: Address | null; onChange: (address: Address | null) => void; label?: string }) {

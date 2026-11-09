@@ -1,19 +1,14 @@
 import 'server-only'
 import { unstable_cache } from 'next/cache'
-import { FALLBACK_PRODUCTS, type Product } from '@/data/products'
-import { FALLBACK_BOXES, type Box } from '@/data/kits'
-import { FALLBACK_PERIODS, FALLBACK_PLANS, type Period, type Plan } from '@/data/club'
+import { FALLBACK_PRODUCTS } from '@/data/products'
+import { FALLBACK_BOXES } from '@/data/kits'
+import { FALLBACK_PERIODS, FALLBACK_PLANS } from '@/data/club'
 import { neonEnv } from '@/lib/env'
-import { productFromRow, type ProductRow } from '@/lib/catalog-rows'
-
-export type Catalog = {
-  products: Product[]
-  boxes: Box[]
-  plans: Plan[]
-  periods: Period[]
-  /** de onde veio: banco ou lista reserva do código */
-  source: 'db' | 'fallback'
-}
+import { productFromRow } from '@/lib/catalog-rows'
+import type { Catalog } from '@/types/catalog'
+import type { Period, Plan } from '@/types/club'
+import type { Box } from '@/types/kit'
+import type { Product, ProductRow } from '@/types/product'
 
 export const CATALOG_TAG = 'catalog'
 

@@ -1,9 +1,9 @@
 'use client'
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react'
-import type { Product } from '@/data/products'
-import type { KitSpec } from '@/data/kits'
 import { useCatalog } from '@/components/catalog/catalog-provider'
+import type { KitSpec } from '@/types/kit'
+import type { Product } from '@/types/product'
 
 type ProductLine = { kind: 'product'; id: string; slug: string; quantity: number }
 type KitLine = { kind: 'kit'; id: string; quantity: number; kit: KitSpec }

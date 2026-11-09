@@ -7,9 +7,10 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/field'
 import { formatBRL } from '@/data/products'
 import { listSubscriptions, manageSubscription } from '@/lib/admin-api'
-import { SUBSCRIPTION_STATUS, formatDate, receivesBox, type Subscription } from '@/lib/club'
+import { SUBSCRIPTION_STATUS, formatDate, receivesBox } from '@/lib/club'
 import { cn, formatPhone } from '@/lib/utils'
 import { AdminHeader, Panel } from './admin-shell'
+import type { Subscription } from '@/types/club'
 
 type Filter = 'caixa' | 'active' | 'paused' | 'canceled' | 'todos'
 const FILTERS: Array<{ value: Filter; label: string }> = [

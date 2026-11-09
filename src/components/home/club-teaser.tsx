@@ -2,8 +2,8 @@ import Link from 'next/link'
 import { ArrowRight, CalendarCheck, Gift, Truck } from '@phosphor-icons/react/dist/ssr'
 import { Button } from '@/components/ui/button'
 import { Reveal } from '@/components/motion/reveal'
-import type { Product } from '@/data/products'
 import { BarPackage } from '@/components/product/bar-package'
+import type { Product } from '@/types/product'
 
 const perks = [
   { icon: Gift, title: 'Caixa surpresa todo mês', text: 'Barras da casa e edições limitadas que não vão para a loja.' },

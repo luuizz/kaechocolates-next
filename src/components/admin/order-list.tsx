@@ -7,10 +7,11 @@ import { toast } from 'sonner'
 import { Input } from '@/components/ui/field'
 import { StatusBadge } from '@/components/orders/order-parts'
 import { formatBRL } from '@/data/products'
-import { listOrders, type AdminOrderRow } from '@/lib/admin-api'
-import { formatDateTime, type OrderStatus } from '@/lib/orders'
+import { listOrders } from '@/lib/admin-api'
+import { formatDateTime } from '@/lib/orders'
 import { cn } from '@/lib/utils'
 import { AdminHeader, Panel } from './admin-shell'
+import type { AdminOrderRow, OrderStatus } from '@/types/order'
 
 // Abas na ordem do trabalho do dia: o que precisa de ação primeiro
 const FILTERS: Array<{ value: OrderStatus | 'todos' | 'abertos'; label: string }> = [

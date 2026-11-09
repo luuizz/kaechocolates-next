@@ -6,22 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Field, FormMessage, Input, Select } from '@/components/ui/field'
 import { useAuth } from '@/components/auth/auth-provider'
 import { getNeon, unwrap } from '@/lib/neon'
-
-export type Address = {
-  id: number
-  label: string | null
-  recipient: string
-  cep: string
-  street: string
-  number: string
-  complement: string | null
-  district: string
-  city: string
-  state: string
-  is_default: boolean
-}
-
-export type AddressDraft = Omit<Address, 'id' | 'is_default' | 'label' | 'complement'> & { id?: number; label: string; complement: string; is_default: boolean }
+import type { Address, AddressDraft } from '@/types/account'
 
 export const STATES = ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO']
 

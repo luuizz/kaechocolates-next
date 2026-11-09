@@ -1,8 +1,9 @@
 import Link from 'next/link'
 import { ArrowUpRight, Medal, Package, Sparkle } from '@phosphor-icons/react/dist/ssr'
 import { BarPackage } from '@/components/product/bar-package'
-import { formatBRL, type Product } from '@/data/products'
+import { formatBRL } from '@/data/products'
 import { cn } from '@/lib/utils'
+import type { Product } from '@/types/product'
 
 // Mosaico do topo (mesma ideia do site atual), com preço e compra no bloco
 function ProductTile({ product, className, priority }: { product?: Product; className?: string; priority?: boolean }) {

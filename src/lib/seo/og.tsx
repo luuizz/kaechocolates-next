@@ -1,6 +1,6 @@
 import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
-import type { Product } from '@/data/products'
+import type { Product } from '@/types/product'
 
 // Peças comuns das imagens de compartilhamento (Open Graph), geradas com next/og
 export const OG_SIZE = { width: 1200, height: 630 }

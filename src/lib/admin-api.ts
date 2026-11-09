@@ -2,21 +2,17 @@
 
 import { productFromRow } from '@/lib/catalog-rows'
 import { getAccessToken, getNeon, unwrap } from '@/lib/neon'
-import type { Product } from '@/data/products'
-import type { Box } from '@/data/kits'
-import type { Period, Plan } from '@/data/club'
-import { normalizeOrder, type OrderStatus } from '@/lib/orders'
-import { normalizeSubscription, type Subscription } from '@/lib/club'
+import { normalizeOrder } from '@/lib/orders'
+import { normalizeSubscription } from '@/lib/club'
+import type { Customer } from '@/types/account'
+import type { AdminPeriod, AdminPlan, Period, Plan, Subscription } from '@/types/club'
+import type { AdminBox, Box } from '@/types/kit'
+import type { AdminOrderRow, OrderStatus } from '@/types/order'
+import type { AdminProduct, Product, ProductInput } from '@/types/product'
+import type { AdminZone } from '@/types/shipping'
 
 // Acesso do painel ao banco. Todas as chamadas vão com o token do admin;
 // quem barra quem não é admin são as políticas (RLS) do banco.
-
-// soldOut = marcada como esgotada OU estoque zerado; soldOutFlag = só a marcação manual
-export type AdminProduct = Product & { id: number; active: boolean; sortOrder: number; updatedAt: string; soldOutFlag: boolean }
-export type AdminBox = Box & { active: boolean; sort_order: number }
-export type AdminPlan = Plan & { active: boolean; sort_order: number }
-export type AdminPeriod = Period & { active: boolean; sort_order: number }
-export type Customer = { id: string; email: string | null; full_name: string | null; phone: string | null; role: 'customer' | 'admin'; created_at: string }
 
 const neon = () => getNeon()
 
@@ -34,8 +30,6 @@ export async function getProduct(id: number) {
   const rows = unwrap(await neon().from('products').select('*').eq('id', id).limit(1)) as Row[]
   return rows[0] ? adminProduct(rows[0]) : null
 }
-
-export type ProductInput = Omit<AdminProduct, 'id' | 'updatedAt' | 'soldOutFlag'> & { id?: number }
 
 const toRow = (product: ProductInput) => ({
   slug: product.slug,
@@ -137,12 +131,6 @@ export async function refreshStore() {
 
 // ---- pedidos e frete -----------------------------------------------------
 
-export type AdminOrderRow = {
-  id: number; code: string; status: OrderStatus; total: number; created_at: string
-  payment_method: 'pix' | 'card'; customer: { name: string; email: string }; shipping_address: { city: string; state: string }
-  order_items: { quantity: number }[]
-}
-
 export async function listOrders() {
   const rows = unwrap(await neon().from('orders').select('id,code,status,total,created_at,payment_method,customer,shipping_address,order_items(quantity)').order('created_at', { ascending: false }).limit(300)) as AdminOrderRow[]
   return rows.map((row) => ({ ...row, total: Number(row.total) }))
@@ -164,7 +152,6 @@ export async function notifyOrderChange(code: string) {
   await callSite(`/api/admin/orders/${encodeURIComponent(code)}/notify`, { method: 'POST' })
 }
 
-export type AdminZone = { id: string; name: string; states: string[]; price: number; days_min: number; days_max: number; active: boolean; sort_order: number }
 export async function listZones() {
   return (unwrap(await neon().from('shipping_zones').select('*').order('sort_order')) as AdminZone[]).map((zone) => ({ ...zone, price: Number(zone.price) }))
 }

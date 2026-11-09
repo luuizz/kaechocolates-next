@@ -1,6 +1,6 @@
 import Image from 'next/image'
-import type { Product } from '@/data/products'
 import { cn } from '@/lib/utils'
+import type { Product } from '@/types/product'
 
 // Embalagem da barra desenhada em código (nítida em qualquer tamanho).
 // Quando o produto tem foto, a foto é usada no lugar.

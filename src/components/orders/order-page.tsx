@@ -7,8 +7,9 @@ import { CheckCircle, CircleNotch, Copy, PixLogo, WarningCircle, XCircle } from 
 import { useAuth } from '@/components/auth/auth-provider'
 import { Button } from '@/components/ui/button'
 import { getAccessToken } from '@/lib/neon'
-import { ORDER_STATUS, formatDateTime, paymentProblem, type OrderView } from '@/lib/orders'
+import { ORDER_STATUS, formatDateTime, paymentProblem } from '@/lib/orders'
 import { OrderItems, OrderProgress, OrderShipping, StatusBadge } from './order-parts'
+import type { OrderView } from '@/types/order'
 
 // Página do pedido: Pix para pagar (com atualização automática) ou o andamento
 export function OrderPage({ code }: { code: string }) {

@@ -1,13 +1,4 @@
-import type { Line, Product } from '@/data/products'
-
-// Linhas como vêm da Data API (snake_case, numeric chega como número ou texto)
-export type ProductRow = {
-  id: number; slug: string; name: string; cacao: number; line: Line
-  label_color: string; tile_color: string; label_text: 'dark' | 'light'
-  price: number | string; compare_at_price: number | string | null; weight: string
-  short: string; description: string | null; ingredients: string | null
-  badge: Product['badge'] | null; sold_out: boolean; image: string | null; stock?: number | null
-}
+import type { Line, Product, ProductRow } from '@/types/product'
 
 export const productFromRow = (row: ProductRow): Product => ({
   id: row.id,

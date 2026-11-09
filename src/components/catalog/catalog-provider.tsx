@@ -1,9 +1,10 @@
 'use client'
 
 import { createContext, useContext, useMemo } from 'react'
-import type { Catalog } from '@/lib/server/catalog'
 import { findProduct } from '@/data/products'
-import { findBox, kitTotals, type KitSpec } from '@/data/kits'
+import { findBox, kitTotals } from '@/data/kits'
+import type { Catalog } from '@/types/catalog'
+import type { KitSpec } from '@/types/kit'
 
 type CatalogValue = Catalog & {
   findProduct: (slug: string) => ReturnType<typeof findProduct>

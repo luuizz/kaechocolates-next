@@ -10,9 +10,10 @@ import { OrderItems, OrderProgress, OrderShipping, StatusBadge } from '@/compone
 import { getOrder, notifyOrderChange, refreshStore, updateOrder } from '@/lib/admin-api'
 import { formatCpf } from '@/lib/cpf'
 import { getAccessToken } from '@/lib/neon'
-import { ORDER_STATUS, formatDateTime, type OrderStatus, type OrderView } from '@/lib/orders'
+import { ORDER_STATUS, formatDateTime } from '@/lib/orders'
 import { formatPhone } from '@/lib/utils'
 import { AdminHeader, Panel } from './admin-shell'
+import type { OrderStatus, OrderView } from '@/types/order'
 
 // Próximo passo sugerido para cada status (botão principal)
 const NEXT: Partial<Record<OrderStatus, OrderStatus>> = { paid: 'preparing', preparing: 'shipped', shipped: 'delivered' }
