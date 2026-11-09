@@ -37,7 +37,7 @@ src/
     ui/           primitivos genéricos e sem regra de negócio (padrão shadcn/ui)
     <área>/       componentes de uma área: cart, checkout, admin, club...
   lib/            utilitários e regras puras que rodam nos dois lados
-    server/       código só de servidor: banco, auth, pedidos, Mercado Pago, e-mail
+    server/       código só de servidor (cada arquivo começa com import 'server-only'): banco, auth, catálogo, pedidos, Mercado Pago, e-mail
     seo/          JSON-LD e imagens OG
   config/         configuração estática (brand.ts concentra a identidade)
   data/           conteúdo estático (FAQ, textos, seeds de catálogo)

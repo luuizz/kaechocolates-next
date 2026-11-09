@@ -1,3 +1,4 @@
+import 'server-only'
 import { Pool } from 'pg'
 
 // Conexão direta com o banco, só no servidor (rotas /api). Usada para as funções

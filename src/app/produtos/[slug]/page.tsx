@@ -7,7 +7,7 @@ import { BuyBox } from '@/components/product/buy-box'
 import { ProductCard } from '@/components/product/product-card'
 import { brand } from '@/config/brand'
 import { LINES, LINE_SINGULAR, findProduct, formatBRL, installment } from '@/data/products'
-import { getCatalog } from '@/lib/catalog'
+import { getCatalog } from '@/lib/server/catalog'
 import { JsonLd, breadcrumbs, productLd } from '@/lib/seo/json-ld'
 
 type Params = { params: Promise<{ slug: string }> }

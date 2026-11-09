@@ -1,3 +1,4 @@
+import 'server-only'
 import { neonEnv } from '@/lib/env'
 
 // Quem decide se o pedido vem de um admin é o próprio banco: o token do

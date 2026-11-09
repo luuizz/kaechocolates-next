@@ -1,3 +1,4 @@
+import 'server-only'
 import { db } from './db'
 import { getMpOrder, paymentSnapshot } from './mercadopago'
 import { normalizeOrder, type OrderView } from '@/lib/orders'

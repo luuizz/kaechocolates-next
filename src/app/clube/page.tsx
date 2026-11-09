@@ -5,7 +5,7 @@ import { PlanPicker } from '@/components/club/plan-picker'
 import { BarPackage } from '@/components/product/bar-package'
 import { Reveal } from '@/components/motion/reveal'
 import { CLUB_FAQ } from '@/data/club'
-import { getCatalog } from '@/lib/catalog'
+import { getCatalog } from '@/lib/server/catalog'
 
 export const metadata: Metadata = { title: 'Clube de assinatura', description: 'Todo mês uma caixa com chocolates bean to bar brasileiros, edições limitadas e frete grátis.', alternates: { canonical: '/clube' } }
 

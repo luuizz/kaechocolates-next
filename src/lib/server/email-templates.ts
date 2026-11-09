@@ -1,3 +1,4 @@
+import 'server-only'
 import { brand } from '@/config/brand'
 import { formatBRL } from '@/data/products'
 import type { OrderView } from '@/lib/orders'

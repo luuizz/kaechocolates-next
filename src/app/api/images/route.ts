@@ -1,6 +1,6 @@
 import { del, put } from '@vercel/blob'
 import { neonEnv } from '@/lib/env'
-import { isAdminRequest } from '@/lib/admin-guard'
+import { isAdminRequest } from '@/lib/server/admin-guard'
 
 // Upload e remoção das fotos de produto no Vercel Blob (só admin).
 //

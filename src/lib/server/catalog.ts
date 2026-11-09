@@ -1,3 +1,4 @@
+import 'server-only'
 import { unstable_cache } from 'next/cache'
 import { FALLBACK_PRODUCTS, type Product } from '@/data/products'
 import { FALLBACK_BOXES, type Box } from '@/data/kits'

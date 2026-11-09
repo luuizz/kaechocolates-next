@@ -1,3 +1,4 @@
+import 'server-only'
 import { neonEnv } from '@/lib/env'
 
 export type SessionUser = { id: string; email: string | null; full_name: string | null; phone: string | null; role: 'customer' | 'admin' }
