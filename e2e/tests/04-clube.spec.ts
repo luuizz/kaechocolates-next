@@ -75,7 +75,7 @@ test.describe('Clube', () => {
     await expect(page.getByText('Caixas até')).toBeVisible()
 
     // Mensal: pausar e retomar
-    expect((await subscribe('degustacao', 'mensal')).status).toBe(201)
+    expect((await subscribe('degustacao', 'mensal')).result?.ok).toBe(true)
     await page.reload()
     await page.getByRole('button', { name: 'Pausar' }).click()
     await expect(page.getByText('Pausada').first()).toBeVisible()
