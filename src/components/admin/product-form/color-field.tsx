@@ -16,9 +16,17 @@ export function ColorField({ label, value, onChange }: ColorFieldProps) {
   const id = useId()
   return (
     <div className="flex flex-col gap-1.5">
-      <label htmlFor={id} className="text-sm font-semibold">{label}</label>
+      <label htmlFor={id} className="text-sm font-semibold">
+        {label}
+      </label>
       <div className="flex items-center gap-2">
-        <input type="color" value={value} onChange={(event) => onChange(event.target.value)} aria-label={`${label} (seletor)`} className="h-12 w-14 shrink-0 cursor-pointer rounded-xl border bg-background p-1" />
+        <input
+          type="color"
+          value={value}
+          onChange={(event) => onChange(event.target.value)}
+          aria-label={`${label} (seletor)`}
+          className="h-12 w-14 shrink-0 cursor-pointer rounded-xl border bg-background p-1"
+        />
         <Input
           id={id}
           value={textValue}

@@ -3,21 +3,32 @@
 import { useCallback, useEffect, useState } from 'react'
 import { CheckCircle, Plus } from '@phosphor-icons/react'
 import { useAuth } from '@/components/auth/auth-provider'
-import { AddressForm, emptyAddress, formatCep } from '@/components/account/address-book'
+import { AddressForm } from '@/components/account/address-form'
+import { emptyAddress, formatCep } from '@/lib/address'
 import { FormMessage } from '@/components/ui/field'
 import { getNeon, unwrap } from '@/lib/neon'
 import { cn } from '@/lib/utils'
 import type { Address } from '@/types/account'
 
 // Escolha do endereço de entrega (checkout e clube), com cadastro na hora
-export function AddressPicker({ value, onChange, label = 'Endereço de entrega' }: { value: Address | null; onChange: (address: Address | null) => void; label?: string }) {
+export function AddressPicker({
+  value,
+  onChange,
+  label = 'Endereço de entrega',
+}: {
+  value: Address | null
+  onChange: (address: Address | null) => void
+  label?: string
+}) {
   const auth = useAuth()
   const [addresses, setAddresses] = useState<Address[] | null>(null)
   const [adding, setAdding] = useState(false)
   const [error, setError] = useState('')
 
   const load = useCallback(async (select?: number) => {
-    const rows = unwrap(await getNeon().from('addresses').select('*').order('is_default', { ascending: false }).order('id')) as Address[]
+    const rows = unwrap(
+      await getNeon().from('addresses').select('*').order('is_default', { ascending: false }).order('id'),
+    ) as Address[]
     setAddresses(rows)
     if (!rows.length) setAdding(true)
     onChange(rows.find((item) => item.id === select) ?? rows[0] ?? null)
@@ -38,7 +49,10 @@ export function AddressPicker({ value, onChange, label = 'Endereço de entrega' 
       <AddressForm
         draft={{ ...emptyAddress(auth.profile?.full_name ?? ''), is_default: addresses.length === 0 }}
         onCancel={() => setAdding(false)}
-        onSaved={async (id) => { setAdding(false); await load(id || undefined) }}
+        onSaved={async (id) => {
+          setAdding(false)
+          await load(id || undefined)
+        }}
       />
     )
   }
@@ -48,15 +62,34 @@ export function AddressPicker({ value, onChange, label = 'Endereço de entrega' 
       {addresses.map((item) => {
         const active = item.id === value?.id
         return (
-          <button key={item.id} type="button" role="radio" aria-checked={active} onClick={() => onChange(item)} className={cn('relative rounded-2xl border-2 p-4 text-left text-sm transition-colors', active ? 'border-foreground bg-secondary' : 'hover:border-foreground/40')}>
-            {active && <CheckCircle size={20} weight="fill" className="absolute right-3 top-3" />}
+          <button
+            key={item.id}
+            type="button"
+            role="radio"
+            aria-checked={active}
+            onClick={() => onChange(item)}
+            className={cn(
+              'relative rounded-2xl border-2 p-4 text-left text-sm transition-colors',
+              active ? 'border-foreground bg-secondary' : 'hover:border-foreground/40',
+            )}
+          >
+            {active && <CheckCircle size={20} weight="fill" className="absolute top-3 right-3" />}
             <span className="block font-semibold">{item.label || item.recipient}</span>
-            <span className="mt-1 block text-muted-foreground">{item.street}, {item.number}{item.complement ? ` · ${item.complement}` : ''}</span>
-            <span className="block text-muted-foreground">{item.district} · {item.city}/{item.state} · {formatCep(item.cep)}</span>
+            <span className="mt-1 block text-muted-foreground">
+              {item.street}, {item.number}
+              {item.complement ? ` · ${item.complement}` : ''}
+            </span>
+            <span className="block text-muted-foreground">
+              {item.district} · {item.city}/{item.state} · {formatCep(item.cep)}
+            </span>
           </button>
         )
       })}
-      <button type="button" onClick={() => setAdding(true)} className="flex min-h-24 items-center justify-center gap-2 rounded-2xl border-2 border-dashed text-sm font-semibold hover:border-foreground hover:bg-secondary">
+      <button
+        type="button"
+        onClick={() => setAdding(true)}
+        className="flex min-h-24 items-center justify-center gap-2 rounded-2xl border-2 border-dashed text-sm font-semibold hover:border-foreground hover:bg-secondary"
+      >
         <Plus weight="bold" /> Novo endereço
       </button>
     </div>

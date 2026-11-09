@@ -8,7 +8,9 @@ test.describe('Segurança', () => {
     const rest = 'http://localhost:54321/neondb/rest/v1'
 
     expect((await request.get(`${rest}/products?select=slug&limit=1`, { headers })).status()).toBe(200)
-    expect([401, 403]).toContain((await request.patch(`${rest}/products?slug=eq.intenso-71`, { headers, data: { price: 1 } })).status())
+    expect([401, 403]).toContain(
+      (await request.patch(`${rest}/products?slug=eq.intenso-71`, { headers, data: { price: 1 } })).status(),
+    )
     for (const table of ['orders', 'profiles', 'addresses', 'subscriptions']) {
       expect([401, 403], table).toContain((await request.get(`${rest}/${table}`, { headers })).status())
     }

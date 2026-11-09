@@ -8,6 +8,7 @@ Postgres no Neon (Auth + Data API), Mercado Pago, Vercel Blob e Resend. Gerencia
 ```bash
 yarn dev          # servidor local (turbopack)
 yarn lint         # ESLint
+yarn format       # Prettier (format:check no CI)
 yarn typecheck    # tsc --noEmit
 yarn build        # build de produção
 yarn db:migrate   # aplica migrations de database/migrations
@@ -15,7 +16,7 @@ yarn db:status    # mostra migrations pendentes
 yarn e2e          # testes Playwright (ver e2e/README.md)
 ```
 
-Antes de entregar qualquer mudança: `yarn lint && yarn typecheck`. O CI roda os mesmos passos + build, migrations e e2e.
+Antes de entregar qualquer mudança: `yarn format && yarn lint && yarn typecheck`. O CI roda os mesmos passos (com `format:check`) + build, migrations e e2e.
 
 Pacotes sempre nas versões mais recentes, fixadas. TypeScript fica lado a lado: `typescript` é o alias para `@typescript/typescript6` (API usada pelo ESLint e pelo Next) e `@typescript/native` é o TS 7, usado no `yarn typecheck`. Quando o typescript-eslint suportar o TS 7, remover o alias. Se o typecheck acusar erro estranho depois de trocar pacotes, apagar o `tsconfig.tsbuildinfo`.
 
@@ -87,5 +88,5 @@ Para dúvidas de estrutura, consultar as skills `nextjs-arquitetura` e `nextjs-q
 ## Escrita de código e documentação
 
 - Comentários, commits, PRs e docs tratam só do que é relevante para o projeto. Não registrar decisões ou comentários de conversa, contexto pessoal ou justificativas que não ajudam quem vai ler o código.
-- Comentário explica o *porquê* quando não é óbvio; não narrar o que o código faz.
+- Comentário explica o _porquê_ quando não é óbvio; não narrar o que o código faz.
 - Textos da interface em português do Brasil.

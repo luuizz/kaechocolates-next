@@ -1,6 +1,6 @@
 ---
-name: "nextjs-qualidade"
-description: "Use ao configurar ou revisar ESLint, Prettier, TypeScript, scripts e padrões de código em projetos Next.js, ou ao corrigir erros de lint e formatação."
+name: 'nextjs-qualidade'
+description: 'Use ao configurar ou revisar ESLint, Prettier, TypeScript, scripts e padrões de código em projetos Next.js, ou ao corrigir erros de lint e formatação.'
 ---
 
 # Qualidade de código em projetos Next.js
@@ -26,6 +26,7 @@ export default defineConfig([
 ```
 
 Regras de convivência:
+
 - `eslint-disable` só na linha, com o motivo: `// eslint-disable-next-line regra -- motivo`.
 - Avisos de `react-hooks` são bugs em potencial: corrija em vez de desligar. Exemplo: estado derivado de prop se calcula no render, não em `useEffect`.
 

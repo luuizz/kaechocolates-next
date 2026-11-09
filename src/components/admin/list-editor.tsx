@@ -15,25 +15,38 @@ export function useListEditor<T extends { id: string; sort_order: number }>(
   const [snapshot, setSnapshot] = useState('')
   const [saving, setSaving] = useState(false)
 
-  const reload = useCallback(() => load().then((data) => {
-    setRows(data)
-    setSavedIds(data.map((row) => row.id))
-    setSnapshot(JSON.stringify(data))
-  }).catch((err) => toast.error(err.message)), [load])
+  const reload = useCallback(
+    () =>
+      load()
+        .then((data) => {
+          setRows(data)
+          setSavedIds(data.map((row) => row.id))
+          setSnapshot(JSON.stringify(data))
+        })
+        .catch((err) => toast.error(err.message)),
+    [load],
+  )
 
-  useEffect(() => { reload() }, [reload])
+  useEffect(() => {
+    reload()
+  }, [reload])
 
-  const update = (index: number, patch: Partial<T>) => setRows((current) => current?.map((row, position) => (position === index ? { ...row, ...patch } : row)) ?? null)
+  const update = (index: number, patch: Partial<T>) =>
+    setRows((current) => current?.map((row, position) => (position === index ? { ...row, ...patch } : row)) ?? null)
   const add = (row: T) => setRows((current) => [...(current ?? []), row])
   const remove = (index: number) => setRows((current) => current?.filter((_, position) => position !== index) ?? null)
-  const move = (index: number, delta: -1 | 1) => setRows((current) => {
-    if (!current) return current
-    const target = index + delta
-    if (target < 0 || target >= current.length) return current
-    const next = [...current]
-    ;[next[index], next[target]] = [next[target], next[index]]
-    return next
-  })
+  const move = (index: number, delta: -1 | 1) =>
+    setRows((current) => {
+      if (!current) return current
+      const target = index + delta
+      if (target < 0 || target >= current.length) return current
+      const next = [...current]
+      const [from, to] = [next[index], next[target]]
+      if (from === undefined || to === undefined) return current
+      next[index] = to
+      next[target] = from
+      return next
+    })
 
   const save = async (validate: (rows: T[]) => string | null, toRow: (row: T) => Record<string, unknown>) => {
     if (!rows) return
@@ -44,7 +57,11 @@ export function useListEditor<T extends { id: string; sort_order: number }>(
     setSaving(true)
     try {
       const ordered = rows.map((row, index) => ({ ...toRow(row), id: row.id, sort_order: (index + 1) * 10 }))
-      await saveRows(table, ordered as { id: string }[], savedIds.filter((id) => !ids.includes(id)))
+      await saveRows(
+        table,
+        ordered as { id: string }[],
+        savedIds.filter((id) => !ids.includes(id)),
+      )
       await refreshStore().catch(() => toast.warning('Salvo. A loja pode levar alguns minutos para mostrar a mudança.'))
       toast.success('Alterações salvas.')
       await reload()

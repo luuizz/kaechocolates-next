@@ -9,7 +9,10 @@ export const subscribeSchema = z.object({
   addressId: addressIdSchema,
   cpf: cpfSchema,
   card: z.object({ token: z.string().min(1) }),
-  notes: z.unknown().optional().transform((value) => String(value ?? '')),
+  notes: z
+    .unknown()
+    .optional()
+    .transform((value) => String(value ?? '')),
 })
 
 export const SUBSCRIBE_ERRORS = {

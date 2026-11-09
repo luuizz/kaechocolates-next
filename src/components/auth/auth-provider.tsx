@@ -43,11 +43,20 @@ async function refreshSessionJwt() {
 }
 
 // Métodos do Better Auth (motor do Neon Auth) que não existem na API estilo Supabase
-async function callBetterAuth(method: 'resetPassword' | 'changePassword', args: Record<string, unknown>, messages: Record<string, string>) {
+async function callBetterAuth(
+  method: 'resetPassword' | 'changePassword',
+  args: Record<string, unknown>,
+  messages: Record<string, string>,
+) {
   let result: { error?: { code?: string; error?: { code?: string } } | null } | undefined
   try {
-    const instance = getNeon().auth.getBetterAuthInstance() as unknown as Record<string, (input: unknown) => Promise<typeof result>>
-    result = await instance[method](args)
+    const instance = getNeon().auth.getBetterAuthInstance() as unknown as Record<
+      string,
+      (input: unknown) => Promise<typeof result>
+    >
+    const call = instance[method]
+    if (!call) throw new Error('Função de conta indisponível.')
+    result = await call(args)
   } catch (error) {
     result = { error: error as { code?: string } }
   }
@@ -69,11 +78,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!isNeonConfigured) return
     let active = true
     const auth = getNeon().auth
-    auth.getSession().then(({ data }: { data: { session: unknown } }) => {
-      if (!active) return
-      setSession(data.session as Session | null)
-      if (!data.session) setLoading(false)
-    }).catch(() => active && setLoading(false))
+    auth
+      .getSession()
+      .then(({ data }: { data: { session: unknown } }) => {
+        if (!active) return
+        setSession(data.session as Session | null)
+        if (!data.session) setLoading(false)
+      })
+      .catch(() => active && setLoading(false))
 
     // Mantém abas sincronizadas (login/logout em outra aba)
     const { data: listener } = auth.onAuthStateChange((_event: string, next: unknown) => {
@@ -104,54 +116,69 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       .then((data) => active && setProfile(data))
       .catch(() => active && setProfile(null))
       .finally(() => active && setLoading(false))
-    return () => { active = false }
+    return () => {
+      active = false
+    }
   }, [userId])
 
-  const value = useMemo<AuthValue>(() => ({
-    configured: isNeonConfigured,
-    loading,
-    user,
-    profile,
-    isAdmin: profile?.role === 'admin',
-    setProfile,
+  const value = useMemo<AuthValue>(
+    () => ({
+      configured: isNeonConfigured,
+      loading,
+      user,
+      profile,
+      isAdmin: profile?.role === 'admin',
+      setProfile,
 
-    signIn: async (email, password) => {
-      const data = unwrap(await getNeon().auth.signInWithPassword({ email, password })) as { session: unknown }
-      setSession((await refreshSessionJwt()) || (data.session as Session | null))
-    },
+      signIn: async (email, password) => {
+        const data = unwrap(await getNeon().auth.signInWithPassword({ email, password })) as { session: unknown }
+        setSession((await refreshSessionJwt()) || (data.session as Session | null))
+      },
 
-    signUp: async ({ name, email, password }) => {
-      const result = await getNeon().auth.signUp({
-        email,
-        password,
-        options: { data: { displayName: name }, emailRedirectTo: redirectTo('/entrar') },
-      })
-      if ((result.error as { code?: string } | null)?.code === 'session_not_found') return { needsConfirmation: true }
-      const data = unwrap(result) as { session: unknown }
-      setSession((await refreshSessionJwt()) || (data.session as Session | null))
-      return { needsConfirmation: false }
-    },
+      signUp: async ({ name, email, password }) => {
+        const result = await getNeon().auth.signUp({
+          email,
+          password,
+          options: { data: { displayName: name }, emailRedirectTo: redirectTo('/entrar') },
+        })
+        if ((result.error as { code?: string } | null)?.code === 'session_not_found') return { needsConfirmation: true }
+        const data = unwrap(result) as { session: unknown }
+        setSession((await refreshSessionJwt()) || (data.session as Session | null))
+        return { needsConfirmation: false }
+      },
 
-    signOut: async () => {
-      await getNeon().auth.signOut()
-      setSession(null)
-      setProfile(null)
-    },
+      signOut: async () => {
+        await getNeon().auth.signOut()
+        setSession(null)
+        setProfile(null)
+      },
 
-    requestPasswordReset: async (email) => {
-      unwrap(await getNeon().auth.resetPasswordForEmail(email, { redirectTo: redirectTo('/redefinir-senha') }))
-    },
+      requestPasswordReset: async (email) => {
+        unwrap(await getNeon().auth.resetPasswordForEmail(email, { redirectTo: redirectTo('/redefinir-senha') }))
+      },
 
-    resetPassword: (token, newPassword) => callBetterAuth('resetPassword', { token, newPassword }, {
-      INVALID_TOKEN: 'O link expirou ou já foi usado. Peça um novo.',
-      bad_jwt: 'O link expirou ou já foi usado. Peça um novo.',
+      resetPassword: (token, newPassword) =>
+        callBetterAuth(
+          'resetPassword',
+          { token, newPassword },
+          {
+            INVALID_TOKEN: 'O link expirou ou já foi usado. Peça um novo.',
+            bad_jwt: 'O link expirou ou já foi usado. Peça um novo.',
+          },
+        ),
+
+      changePassword: (currentPassword, newPassword) =>
+        callBetterAuth(
+          'changePassword',
+          { currentPassword, newPassword, revokeOtherSessions: false },
+          {
+            INVALID_PASSWORD: 'Senha atual incorreta.',
+            invalid_credentials: 'Senha atual incorreta.',
+          },
+        ),
     }),
-
-    changePassword: (currentPassword, newPassword) => callBetterAuth('changePassword', { currentPassword, newPassword, revokeOtherSessions: false }, {
-      INVALID_PASSWORD: 'Senha atual incorreta.',
-      invalid_credentials: 'Senha atual incorreta.',
-    }),
-  }), [loading, user, profile])
+    [loading, user, profile],
+  )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }

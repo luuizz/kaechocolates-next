@@ -2,7 +2,11 @@ import { CreditCard, Gift, ShieldCheck, Truck } from '@phosphor-icons/react/dist
 import { brand } from '@/config/brand'
 
 const items = [
-  { icon: Truck, title: `Frete grátis acima de R$ ${brand.commerce.freeShippingFrom}`, text: 'Enviamos para todo o Brasil' },
+  {
+    icon: Truck,
+    title: `Frete grátis acima de R$ ${brand.commerce.freeShippingFrom}`,
+    text: 'Enviamos para todo o Brasil',
+  },
   { icon: CreditCard, title: `Até ${brand.commerce.maxInstallments}x sem juros`, text: 'Pix, cartão ou boleto' },
   { icon: Gift, title: 'Embalagem para presente', text: 'Com cartão escrito à mão' },
   { icon: ShieldCheck, title: 'Compra segura', text: 'Pagamento pelo Mercado Pago' },
@@ -17,7 +21,7 @@ export function Benefits() {
           <li key={title} className="flex items-center gap-3 bg-background p-4 md:p-5">
             <Icon size={30} weight="duotone" className="shrink-0" />
             <div>
-              <p className="text-sm font-bold leading-tight">{title}</p>
+              <p className="text-sm leading-tight font-bold">{title}</p>
               <p className="text-xs text-muted-foreground">{text}</p>
             </div>
           </li>

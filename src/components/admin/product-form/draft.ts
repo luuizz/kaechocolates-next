@@ -26,7 +26,27 @@ export type Draft = {
 
 export type SetField = <K extends keyof Draft>(key: K, value: Draft[K]) => void
 
-export const EMPTY_DRAFT: Draft = { name: '', cacao: '', line: 'intensos', slug: '', price: '', compareAt: '', weight: '70 g', badge: '', short: '', description: '', ingredients: '', label: '#e8b630', tile: '#efb72d', labelText: 'dark', image: '', active: true, soldOut: false, sortOrder: '', stock: '' }
+export const EMPTY_DRAFT: Draft = {
+  name: '',
+  cacao: '',
+  line: 'intensos',
+  slug: '',
+  price: '',
+  compareAt: '',
+  weight: '70 g',
+  badge: '',
+  short: '',
+  description: '',
+  ingredients: '',
+  label: '#e8b630',
+  tile: '#efb72d',
+  labelText: 'dark',
+  image: '',
+  active: true,
+  soldOut: false,
+  sortOrder: '',
+  stock: '',
+}
 
 export const MAX_IMAGE = 4 * 1024 * 1024
 
@@ -34,11 +54,26 @@ const money = (value: string) => Number(value.replace(/\./g, '').replace(',', '.
 const toMoney = (value?: number) => (value === undefined ? '' : value.toFixed(2).replace('.', ','))
 
 export const draftFromProduct = (product: AdminProduct): Draft => ({
-  id: product.id, name: product.name, cacao: String(product.cacao), line: product.line, slug: product.slug,
-  price: toMoney(product.price), compareAt: toMoney(product.compareAt), weight: product.weight, badge: product.badge ?? '',
-  short: product.short, description: product.description ?? '', ingredients: product.ingredients ?? '',
-  label: product.label, tile: product.tile, labelText: product.labelText ?? 'dark', image: product.image ?? '',
-  active: product.active, soldOut: product.soldOutFlag, sortOrder: String(product.sortOrder), stock: product.stock === undefined ? '' : String(product.stock),
+  id: product.id,
+  name: product.name,
+  cacao: String(product.cacao),
+  line: product.line,
+  slug: product.slug,
+  price: toMoney(product.price),
+  compareAt: toMoney(product.compareAt),
+  weight: product.weight,
+  badge: product.badge ?? '',
+  short: product.short,
+  description: product.description ?? '',
+  ingredients: product.ingredients ?? '',
+  label: product.label,
+  tile: product.tile,
+  labelText: product.labelText ?? 'dark',
+  image: product.image ?? '',
+  active: product.active,
+  soldOut: product.soldOutFlag,
+  sortOrder: String(product.sortOrder),
+  stock: product.stock === undefined ? '' : String(product.stock),
 })
 
 export function validateDraft(draft: Draft) {
@@ -61,10 +96,20 @@ export type DraftErrors = ReturnType<typeof validateDraft>
 export function previewFromDraft(draft: Draft) {
   const cacao = Number(draft.cacao)
   return {
-    slug: draft.slug || 'nova-barra', name: draft.name || 'Nome da barra', cacao: Number.isFinite(cacao) ? cacao : 0, line: draft.line,
-    label: draft.label, tile: draft.tile, labelText: draft.labelText, price: money(draft.price) || 0,
-    compareAt: draft.compareAt.trim() ? money(draft.compareAt) : undefined, weight: draft.weight, short: draft.short,
-    badge: (draft.badge || undefined) as ProductInput['badge'], soldOut: draft.soldOut, image: draft.image || undefined,
+    slug: draft.slug || 'nova-barra',
+    name: draft.name || 'Nome da barra',
+    cacao: Number.isFinite(cacao) ? cacao : 0,
+    line: draft.line,
+    label: draft.label,
+    tile: draft.tile,
+    labelText: draft.labelText,
+    price: money(draft.price) || 0,
+    compareAt: draft.compareAt.trim() ? money(draft.compareAt) : undefined,
+    weight: draft.weight,
+    short: draft.short,
+    badge: (draft.badge || undefined) as ProductInput['badge'],
+    soldOut: draft.soldOut,
+    image: draft.image || undefined,
   }
 }
 

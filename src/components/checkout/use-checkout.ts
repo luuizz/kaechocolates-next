@@ -40,7 +40,11 @@ export function useCheckout() {
     let active = true
     // eslint-disable-next-line react-hooks/set-state-in-effect -- indicador de carregamento da prévia
     setQuoting(true)
-    fetch('/api/checkout/quote', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ items, state }) })
+    fetch('/api/checkout/quote', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ items, state }),
+    })
       .then(async (response) => {
         const body = await response.json()
         if (!response.ok) throw new Error(body.error || 'Não foi possível calcular o pedido.')
@@ -48,7 +52,9 @@ export function useCheckout() {
       })
       .catch((err) => active && setError(err.message))
       .finally(() => active && setQuoting(false))
-    return () => { active = false }
+    return () => {
+      active = false
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- itemsKey representa items
   }, [itemsKey, state])
 
@@ -94,7 +100,24 @@ export function useCheckout() {
   const empty = !cart.items.length && !done
 
   return {
-    email: auth.user?.email ?? '', cartItems: cart.items, loading, empty, ready, problems,
-    address, setAddress, quote, quoting, method, chooseMethod, cpf, setCpf, error, setError, paying, payPix, payCard,
+    email: auth.user?.email ?? '',
+    cartItems: cart.items,
+    loading,
+    empty,
+    ready,
+    problems,
+    address,
+    setAddress,
+    quote,
+    quoting,
+    method,
+    chooseMethod,
+    cpf,
+    setCpf,
+    error,
+    setError,
+    paying,
+    payPix,
+    payCard,
   }
 }

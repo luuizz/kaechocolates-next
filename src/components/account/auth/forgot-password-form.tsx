@@ -29,12 +29,25 @@ export function ForgotPasswordForm() {
     setBusy(false)
   }
 
-  if (sent) return <FormMessage tone="success">Se existir uma conta com {email.trim()}, você vai receber um link para criar uma nova senha em alguns minutos.</FormMessage>
+  if (sent)
+    return (
+      <FormMessage tone="success">
+        Se existir uma conta com {email.trim()}, você vai receber um link para criar uma nova senha em alguns minutos.
+      </FormMessage>
+    )
 
   return (
     <form onSubmit={submit} noValidate className="flex flex-col gap-4">
       <FormMessage>{error}</FormMessage>
-      <Field label="E-mail da conta"><Input type="email" value={email} onChange={(event) => setEmail(event.target.value)} autoComplete="email" required /></Field>
+      <Field label="E-mail da conta">
+        <Input
+          type="email"
+          value={email}
+          onChange={(event) => setEmail(event.target.value)}
+          autoComplete="email"
+          required
+        />
+      </Field>
       <Submit busy={busy}>Enviar link</Submit>
     </form>
   )

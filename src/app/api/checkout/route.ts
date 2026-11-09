@@ -28,7 +28,14 @@ export async function POST(request: Request) {
   let code: string
   let total: number
   try {
-    const { rows } = await db().query('select code, total from public.place_order($1, $2::jsonb, $3, $4, $5, $6)', [user.id, JSON.stringify(items), addressId, method, cpf, brand.commerce.freeShippingFrom])
+    const { rows } = await db().query('select code, total from public.place_order($1, $2::jsonb, $3, $4, $5, $6)', [
+      user.id,
+      JSON.stringify(items),
+      addressId,
+      method,
+      cpf,
+      brand.commerce.freeShippingFrom,
+    ])
     code = rows[0].code
     total = Number(rows[0].total)
   } catch (error) {
@@ -47,15 +54,28 @@ export async function POST(request: Request) {
       reference: code,
       amount: total,
       idempotencyKey: randomUUID(),
-      payer: { email: user.email ?? '', firstName: testMode && method === 'pix' ? 'APRO' : firstName, lastName: rest.join(' ') || undefined, cpf },
-      method: payment.method === 'pix'
-        ? { kind: 'pix' }
-        : { kind: 'card', ...payment.card, installments: Math.min(Math.max(payment.card.installments, 1), brand.commerce.maxInstallments) },
+      payer: {
+        email: user.email ?? '',
+        firstName: testMode && method === 'pix' ? 'APRO' : (firstName ?? 'Cliente'),
+        lastName: rest.join(' ') || undefined,
+        cpf,
+      },
+      method:
+        payment.method === 'pix'
+          ? { kind: 'pix' }
+          : {
+              kind: 'card',
+              ...payment.card,
+              installments: Math.min(Math.max(payment.card.installments, 1), brand.commerce.maxInstallments),
+            },
     })
   } catch (error) {
     // Cobrança não saiu: cancela o pedido e devolve o estoque
-    await applyPayment(code, { status: 'failed', status_detail: 'mp_error' }).catch((cancelError) => console.error('[checkout] cancelar pedido', code, cancelError))
-    const message = error instanceof MpError ? error.message : 'Não foi possível falar com o Mercado Pago. Tente de novo.'
+    await applyPayment(code, { status: 'failed', status_detail: 'mp_error' }).catch((cancelError) =>
+      console.error('[checkout] cancelar pedido', code, cancelError),
+    )
+    const message =
+      error instanceof MpError ? error.message : 'Não foi possível falar com o Mercado Pago. Tente de novo.'
     return json(502, { error: message })
   }
 

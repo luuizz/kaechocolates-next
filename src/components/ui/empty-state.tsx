@@ -28,12 +28,24 @@ type EmptyStateProps = VariantProps<typeof emptyVariants> & {
 }
 
 // Estado vazio de lista ou página: ícone, título, texto e uma ação
-export function EmptyState({ icon, title, description, titleAs: Title = 'h1', action, size, className }: EmptyStateProps) {
+export function EmptyState({
+  icon,
+  title,
+  description,
+  titleAs: Title = 'h1',
+  action,
+  size,
+  className,
+}: EmptyStateProps) {
   return (
     <div className={cn(emptyVariants({ size }), className)}>
       <span className={iconVariants({ size })}>{icon}</span>
-      <Title className={cn('font-display font-extrabold', size === 'page' || !size ? 'text-4xl' : 'text-xl font-bold')}>{title}</Title>
-      {description && <p className={cn('text-muted-foreground', size !== 'page' && size && 'max-w-sm text-sm')}>{description}</p>}
+      <Title className={cn('font-display font-extrabold', size === 'page' || !size ? 'text-4xl' : 'text-xl font-bold')}>
+        {title}
+      </Title>
+      {description && (
+        <p className={cn('text-muted-foreground', size !== 'page' && size && 'max-w-sm text-sm')}>{description}</p>
+      )}
       {action && (size === 'panel' ? <div className="mt-4">{action}</div> : action)}
     </div>
   )

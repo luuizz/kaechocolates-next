@@ -3,7 +3,15 @@ import { z } from 'zod'
 import { db } from '@/lib/server/db'
 import { notifyOrder, notifySubscription } from '@/lib/server/email'
 import { applyPayment } from '@/lib/server/orders'
-import { MpError, getAuthorizedPayment, getMpOrder, getPreapproval, paymentSnapshot, preapprovalSnapshot, validWebhookSignature } from '@/lib/server/mercadopago'
+import {
+  MpError,
+  getAuthorizedPayment,
+  getMpOrder,
+  getPreapproval,
+  paymentSnapshot,
+  preapprovalSnapshot,
+  validWebhookSignature,
+} from '@/lib/server/mercadopago'
 
 // Avisos do Mercado Pago. Não confiamos no corpo do aviso: buscamos o recurso
 // na API deles e gravamos o status que vier de lá.
@@ -30,24 +38,34 @@ export async function POST(request: Request) {
       const pre = await getPreapproval(dataId)
       const id = pre.external_reference?.match(/^KAE-CLUBE-(\d+)$/)?.[1]
       if (id) {
-        await db().query('select public.apply_subscription($1, $2::jsonb)', [id, JSON.stringify(preapprovalSnapshot(pre))])
+        await db().query('select public.apply_subscription($1, $2::jsonb)', [
+          id,
+          JSON.stringify(preapprovalSnapshot(pre)),
+        ])
         after(() => notifySubscription(id))
       }
       return Response.json({ ok: true })
     }
     if (topic === 'subscription_authorized_payment') {
       const charge = await getAuthorizedPayment(dataId)
-      await db().query('select public.record_subscription_payment($1, $2::jsonb)', [charge.preapproval_id, JSON.stringify({
-        id: String(charge.id),
-        amount: charge.transaction_amount,
-        status: charge.payment?.status ?? charge.status,
-        status_detail: charge.payment?.status_detail,
-        date: charge.debit_date,
-      })])
+      await db().query('select public.record_subscription_payment($1, $2::jsonb)', [
+        charge.preapproval_id,
+        JSON.stringify({
+          id: String(charge.id),
+          amount: charge.transaction_amount,
+          status: charge.payment?.status ?? charge.status,
+          status_detail: charge.payment?.status_detail,
+          date: charge.debit_date,
+        }),
+      ])
       // A próxima cobrança muda depois de cada pagamento
       const pre = await getPreapproval(charge.preapproval_id)
       const id = pre.external_reference?.match(/^KAE-CLUBE-(\d+)$/)?.[1]
-      if (id) await db().query('select public.apply_subscription($1, $2::jsonb)', [id, JSON.stringify(preapprovalSnapshot(pre))])
+      if (id)
+        await db().query('select public.apply_subscription($1, $2::jsonb)', [
+          id,
+          JSON.stringify(preapprovalSnapshot(pre)),
+        ])
       return Response.json({ ok: true })
     }
 

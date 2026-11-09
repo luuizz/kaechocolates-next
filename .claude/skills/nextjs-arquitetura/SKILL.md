@@ -1,6 +1,6 @@
 ---
-name: "nextjs-arquitetura"
-description: "Use ao criar ou refatorar código em projetos Next.js (App Router): estrutura de pastas, servidor x cliente, backend em camadas, Server Actions, dados, cache, hooks e tipagem."
+name: 'nextjs-arquitetura'
+description: 'Use ao criar ou refatorar código em projetos Next.js (App Router): estrutura de pastas, servidor x cliente, backend em camadas, Server Actions, dados, cache, hooks e tipagem.'
 ---
 
 # Arquitetura de projetos Next.js (App Router)
@@ -31,6 +31,7 @@ src/
 ```
 
 Regras:
+
 - Nome de arquivo em kebab-case; componentes exportados em PascalCase; hooks começam com `use`.
 - Componente usado só por uma página fica junto dela (colocation). Sobe para `components/` quando outra área usar.
 - Hook usado só por um componente fica no mesmo arquivo ou ao lado dele. Vai para `src/hooks` quando for reaproveitado.

@@ -20,7 +20,11 @@ type PageLoaderProps = VariantProps<typeof loaderVariants> & { className?: strin
 export function PageLoader({ height, className }: PageLoaderProps) {
   return (
     <div className={cn(loaderVariants({ height }), className)}>
-      <CircleNotch size={height === 'section' ? 28 : 32} className="animate-spin text-muted-foreground" aria-label="Carregando" />
+      <CircleNotch
+        size={height === 'section' ? 28 : 32}
+        className="animate-spin text-muted-foreground"
+        aria-label="Carregando"
+      />
     </div>
   )
 }

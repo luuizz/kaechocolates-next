@@ -23,7 +23,8 @@ export function AccountPage() {
   const tab: AccountTabId = ACCOUNT_TABS.some((item) => item.id === requested) ? (requested as AccountTabId) : 'pedidos'
 
   useEffect(() => {
-    if (!leaving.current && auth.configured && !auth.loading && !auth.user) router.replace(`/entrar?volta=${encodeURIComponent(pathname)}`)
+    if (!leaving.current && auth.configured && !auth.loading && !auth.user)
+      router.replace(`/entrar?volta=${encodeURIComponent(pathname)}`)
   }, [auth.configured, auth.loading, auth.user, pathname, router])
 
   if (!auth.configured) {
@@ -49,8 +50,18 @@ export function AccountPage() {
 
       <section aria-labelledby="titulo-aba" className="min-w-0">
         {tab === 'pedidos' && <OrdersTab />}
-        {tab === 'clube' && <><TabTitle>Clube</TabTitle><MySubscription justSubscribed={params.get('assinou') === '1'} /></>}
-        {tab === 'enderecos' && <><TabTitle>Endereços</TabTitle><AddressBook /></>}
+        {tab === 'clube' && (
+          <>
+            <TabTitle>Clube</TabTitle>
+            <MySubscription justSubscribed={params.get('assinou') === '1'} />
+          </>
+        )}
+        {tab === 'enderecos' && (
+          <>
+            <TabTitle>Endereços</TabTitle>
+            <AddressBook />
+          </>
+        )}
         {tab === 'dados' && <ProfileTab />}
         {tab === 'senha' && <PasswordTab />}
       </section>

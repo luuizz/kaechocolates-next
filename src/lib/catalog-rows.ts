@@ -20,4 +20,3 @@ export const productFromRow = (row: ProductRow): Product => ({
   stock: row.stock ?? undefined,
   image: row.image ?? undefined,
 })
-

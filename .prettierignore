@@ -1,0 +1,12 @@
+.next
+node_modules
+*.lock
+yarn.lock
+playwright-report
+test-results
+blob-report
+next-env.d.ts
+public
+database
+.vercel
+.idea

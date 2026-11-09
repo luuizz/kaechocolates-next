@@ -22,7 +22,14 @@ export async function POST(request: Request) {
 
   let sub: { id: string; amount: string; plan: { name: string }; period: { label: string; months: number } }
   try {
-    const { rows } = await db().query('select * from public.start_subscription($1, $2, $3, $4, $5, $6)', [user.id, plan, period, addressId, cpf, notes])
+    const { rows } = await db().query('select * from public.start_subscription($1, $2, $3, $4, $5, $6)', [
+      user.id,
+      plan,
+      period,
+      addressId,
+      cpf,
+      notes,
+    ])
     sub = rows[0]
   } catch (error) {
     // Recusas de regra (estoque, CPF, endereço…) são esperadas; só registra o que é falha
@@ -49,7 +56,9 @@ export async function POST(request: Request) {
     const details = error instanceof MpError ? JSON.stringify(error.details ?? '') : ''
     const message = /card|token|cvv|security_code/i.test(details)
       ? 'O cartão não foi autorizado. Confira os dados ou use outro cartão.'
-      : error instanceof MpError ? error.message : 'Não foi possível falar com o Mercado Pago. Tente de novo.'
+      : error instanceof MpError
+        ? error.message
+        : 'Não foi possível falar com o Mercado Pago. Tente de novo.'
     return json(502, { error: message })
   }
 }

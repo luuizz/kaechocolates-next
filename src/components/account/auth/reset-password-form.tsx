@@ -19,7 +19,16 @@ export function ResetPasswordForm() {
   const [busy, setBusy] = useState(false)
 
   if (!auth.configured) return <AuthUnavailable />
-  if (!token) return <FormMessage>Link inválido. <Link href="/recuperar-senha" className="font-semibold underline">Peça um novo</Link>.</FormMessage>
+  if (!token)
+    return (
+      <FormMessage>
+        Link inválido.{' '}
+        <Link href="/recuperar-senha" className="font-semibold underline">
+          Peça um novo
+        </Link>
+        .
+      </FormMessage>
+    )
 
   const submit = async (event: React.FormEvent) => {
     event.preventDefault()
@@ -42,7 +51,13 @@ export function ResetPasswordForm() {
   return (
     <form onSubmit={submit} noValidate className="flex flex-col gap-4">
       <FormMessage>{error}</FormMessage>
-      <PasswordField label="Nova senha" hint={`Pelo menos ${MIN_PASSWORD} caracteres.`} value={password} onChange={setPassword} autoComplete="new-password" />
+      <PasswordField
+        label="Nova senha"
+        hint={`Pelo menos ${MIN_PASSWORD} caracteres.`}
+        value={password}
+        onChange={setPassword}
+        autoComplete="new-password"
+      />
       <PasswordField label="Repita a nova senha" value={confirm} onChange={setConfirm} autoComplete="new-password" />
       <Submit busy={busy}>Salvar nova senha</Submit>
     </form>

@@ -9,4 +9,13 @@ export type Quote = {
   problems: string[]
 }
 
-export type AdminZone = { id: string; name: string; states: string[]; price: number; days_min: number; days_max: number; active: boolean; sort_order: number }
+export type AdminZone = {
+  id: string
+  name: string
+  states: string[]
+  price: number
+  days_min: number
+  days_max: number
+  active: boolean
+  sort_order: number
+}

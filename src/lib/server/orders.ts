@@ -4,10 +4,15 @@ import { getMpOrder, paymentSnapshot } from './mercadopago'
 import { normalizeOrder } from '@/lib/orders'
 import type { OrderView } from '@/types/order'
 
-export async function loadOrder(code: string): Promise<(OrderView & { user_id: string; mp_order_id: string | null }) | null> {
+export async function loadOrder(
+  code: string,
+): Promise<(OrderView & { user_id: string; mp_order_id: string | null }) | null> {
   const { rows } = await db().query('select * from public.orders where code = $1', [code])
   if (!rows[0]) return null
-  const items = await db().query('select kind, product_id, name, quantity, unit_price, total, kit from public.order_items where order_id = $1 order by id', [rows[0].id])
+  const items = await db().query(
+    'select kind, product_id, name, quantity, unit_price, total, kit from public.order_items where order_id = $1 order by id',
+    [rows[0].id],
+  )
   return { ...normalizeOrder(rows[0], items.rows), user_id: rows[0].user_id, mp_order_id: rows[0].mp_order_id }
 }
 

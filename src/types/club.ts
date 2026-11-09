@@ -1,6 +1,15 @@
 import type { OrderCustomer, ShippingAddress } from './account'
 
-export type Plan = { id: string; name: string; bars: number; price: number; color: string; pitch: string; perks: string[]; featured?: boolean }
+export type Plan = {
+  id: string
+  name: string
+  bars: number
+  price: number
+  color: string
+  pitch: string
+  perks: string[]
+  featured?: boolean
+}
 
 export type Period = { id: string; label: string; months: number; discount: number; note?: string }
 

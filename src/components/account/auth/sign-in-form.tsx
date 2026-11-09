@@ -40,9 +40,24 @@ export function SignInForm() {
   return (
     <form onSubmit={submit} noValidate className="flex flex-col gap-4">
       <FormMessage>{error}</FormMessage>
-      <Field label="E-mail"><Input type="email" value={form.email} onChange={(event) => setForm({ ...form, email: event.target.value })} autoComplete="email" required /></Field>
-      <PasswordField label="Senha" value={form.password} onChange={(password) => setForm({ ...form, password })} autoComplete="current-password" />
-      <Link href="/recuperar-senha" className="-mt-1 self-end text-sm font-semibold underline-offset-4 hover:underline">Esqueci minha senha</Link>
+      <Field label="E-mail">
+        <Input
+          type="email"
+          value={form.email}
+          onChange={(event) => setForm({ ...form, email: event.target.value })}
+          autoComplete="email"
+          required
+        />
+      </Field>
+      <PasswordField
+        label="Senha"
+        value={form.password}
+        onChange={(password) => setForm({ ...form, password })}
+        autoComplete="current-password"
+      />
+      <Link href="/recuperar-senha" className="-mt-1 self-end text-sm font-semibold underline-offset-4 hover:underline">
+        Esqueci minha senha
+      </Link>
       <Submit busy={busy}>Entrar</Submit>
     </form>
   )

@@ -3,13 +3,13 @@
 Playwright navegando no site de verdade (build de produção), contra um ambiente
 simulado que sobe junto. Não precisa de conta, chave ou variável de nenhum serviço.
 
-| Peça | O que simula |
-| --- | --- |
-| Postgres | o banco do Neon (banco `kae_e2e`, recriado a cada execução, com todas as migrations) |
-| `stack/auth.mjs` | o Neon Auth (é um Better Auth com JWT e token anônimo) |
-| PostgREST | a Data API do Neon |
-| `stack/proxy.mjs` | os endereços do Neon em `localhost:54321` |
-| `stack/mercadopago.mjs` | a API de Orders e de assinaturas do Mercado Pago, e o envio de e-mails do Resend |
+| Peça                    | O que simula                                                                         |
+| ----------------------- | ------------------------------------------------------------------------------------ |
+| Postgres                | o banco do Neon (banco `kae_e2e`, recriado a cada execução, com todas as migrations) |
+| `stack/auth.mjs`        | o Neon Auth (é um Better Auth com JWT e token anônimo)                               |
+| PostgREST               | a Data API do Neon                                                                   |
+| `stack/proxy.mjs`       | os endereços do Neon em `localhost:54321`                                            |
+| `stack/mercadopago.mjs` | a API de Orders e de assinaturas do Mercado Pago, e o envio de e-mails do Resend     |
 
 ## O que é testado
 

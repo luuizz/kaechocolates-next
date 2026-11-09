@@ -18,12 +18,15 @@ export function ClubTeaser({ products }: { products: Product[] }) {
     <section id="clube" className="px-5 py-20 md:px-8 md:py-28">
       <div className="relative mx-auto grid max-w-7xl gap-10 overflow-hidden rounded-hero bg-flavor-pink p-8 md:p-14 lg:grid-cols-[1.1fr_1fr]">
         <Reveal className="relative z-10">
-          <span className="inline-block rounded-full bg-foreground px-4 py-1.5 text-xs font-bold uppercase tracking-eyebrow text-background">Clube Kaê</span>
-          <h2 className="mt-5 font-display text-5xl font-extrabold leading-display tracking-display md:text-6xl">
+          <span className="inline-block rounded-full bg-foreground px-4 py-1.5 text-xs font-bold tracking-eyebrow text-background uppercase">
+            Clube Kaê
+          </span>
+          <h2 className="mt-5 font-display text-5xl leading-display font-extrabold tracking-display md:text-6xl">
             Um Brasil novo chegando todo mês
           </h2>
           <p className="mt-5 max-w-md text-lg leading-relaxed text-foreground/80">
-            Assine e receba uma seleção de barras escolhida por quem faz. Para dar de presente ou para guardar só pra você.
+            Assine e receba uma seleção de barras escolhida por quem faz. Para dar de presente ou para guardar só pra
+            você.
           </p>
           <ul className="mt-8 grid gap-4 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
             {perks.map(({ icon: Icon, title, text }) => (
@@ -35,17 +38,21 @@ export function ClubTeaser({ products }: { products: Product[] }) {
             ))}
           </ul>
           <Button asChild size="lg" className="mt-8">
-            <Link href="/clube">Ver planos <ArrowRight weight="bold" /></Link>
+            <Link href="/clube">
+              Ver planos <ArrowRight weight="bold" />
+            </Link>
           </Button>
         </Reveal>
 
         <div className="relative min-h-80" aria-hidden="true">
-          <div className="absolute left-1/2 top-1/2 size-[22rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-background/30" />
+          <div className="absolute top-1/2 left-1/2 size-[22rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-background/30" />
           {bars.map((product, index) => (
             <div
               key={product.slug}
-              className="absolute left-1/2 top-1/2 w-44 md:w-52"
-              style={{ transform: `translate(calc(-50% + ${(index - 1) * 80}px), calc(-50% + ${Math.abs(index - 1) * 18}px)) rotate(${(index - 1) * 12}deg)` }}
+              className="absolute top-1/2 left-1/2 w-44 md:w-52"
+              style={{
+                transform: `translate(calc(-50% + ${(index - 1) * 80}px), calc(-50% + ${Math.abs(index - 1) * 18}px)) rotate(${(index - 1) * 12}deg)`,
+              }}
             >
               <BarPackage product={product} />
             </div>

@@ -18,7 +18,13 @@ export function Select({ className, ...props }: React.ComponentProps<'select'>) 
 }
 
 // Rótulo + campo + ajuda/erro, já ligados por id para leitores de tela
-export function Field({ label, hint, error, className, children }: {
+export function Field({
+  label,
+  hint,
+  error,
+  className,
+  children,
+}: {
   label: React.ReactNode
   hint?: React.ReactNode
   error?: string | null
@@ -29,12 +35,22 @@ export function Field({ label, hint, error, className, children }: {
   const describedBy = error ? `${id}-erro` : hint ? `${id}-ajuda` : undefined
   return (
     <div className={cn('flex flex-col gap-1.5', className)}>
-      <label htmlFor={id} className="text-sm font-semibold">{label}</label>
-      {React.cloneElement(children, { id, 'aria-invalid': Boolean(error) || undefined, 'aria-describedby': describedBy })}
+      <label htmlFor={id} className="text-sm font-semibold">
+        {label}
+      </label>
+      {React.cloneElement(children, {
+        id,
+        'aria-invalid': Boolean(error) || undefined,
+        'aria-describedby': describedBy,
+      })}
       {error ? (
-        <span id={`${id}-erro`} className="text-xs text-destructive">{error}</span>
+        <span id={`${id}-erro`} className="text-xs text-destructive">
+          {error}
+        </span>
       ) : hint ? (
-        <span id={`${id}-ajuda`} className="text-xs text-muted-foreground">{hint}</span>
+        <span id={`${id}-ajuda`} className="text-xs text-muted-foreground">
+          {hint}
+        </span>
       ) : null}
     </div>
   )
@@ -44,7 +60,13 @@ export function Field({ label, hint, error, className, children }: {
 export function FormMessage({ tone = 'error', children }: { tone?: 'error' | 'success'; children: React.ReactNode }) {
   if (!children) return null
   return (
-    <p role={tone === 'error' ? 'alert' : 'status'} className={cn('rounded-xl px-4 py-3 text-sm', tone === 'error' ? 'bg-destructive/10 text-destructive' : 'bg-success/10 text-success')}>
+    <p
+      role={tone === 'error' ? 'alert' : 'status'}
+      className={cn(
+        'rounded-xl px-4 py-3 text-sm',
+        tone === 'error' ? 'bg-destructive/10 text-destructive' : 'bg-success/10 text-success',
+      )}
+    >
       {children}
     </p>
   )

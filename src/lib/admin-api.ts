@@ -19,7 +19,14 @@ const neon = () => getNeon()
 // ---- produtos -------------------------------------------------------------
 
 type Row = Parameters<typeof productFromRow>[0] & { active: boolean; sort_order: number; updated_at: string }
-const adminProduct = (row: Row): AdminProduct => ({ ...productFromRow(row), id: row.id, active: row.active, sortOrder: row.sort_order, updatedAt: row.updated_at, soldOutFlag: row.sold_out })
+const adminProduct = (row: Row): AdminProduct => ({
+  ...productFromRow(row),
+  id: row.id,
+  active: row.active,
+  sortOrder: row.sort_order,
+  updatedAt: row.updated_at,
+  soldOutFlag: row.sold_out,
+})
 
 export async function listProducts() {
   const rows = unwrap(await neon().from('products').select('*').order('sort_order').order('id')) as Row[]
@@ -62,7 +69,10 @@ export async function saveProduct(product: ProductInput) {
   return adminProduct(rows[0])
 }
 
-export async function updateProductFields(id: number, fields: Partial<Pick<Row, 'active' | 'sold_out' | 'sort_order'>>) {
+export async function updateProductFields(
+  id: number,
+  fields: Partial<Pick<Row, 'active' | 'sold_out' | 'sort_order'>>,
+) {
   unwrap(await neon().from('products').update(fields).eq('id', id))
 }
 
@@ -79,13 +89,19 @@ const numeric = <T extends { discount?: number | string; price?: number | string
 })
 
 export async function listBoxes() {
-  return (unwrap(await neon().from('kit_boxes').select('*').order('sort_order')) as AdminBox[]).map(numeric) as AdminBox[]
+  return (unwrap(await neon().from('kit_boxes').select('*').order('sort_order')) as AdminBox[]).map(
+    numeric,
+  ) as AdminBox[]
 }
 export async function listPlans() {
-  return (unwrap(await neon().from('club_plans').select('*').order('sort_order')) as AdminPlan[]).map(numeric) as AdminPlan[]
+  return (unwrap(await neon().from('club_plans').select('*').order('sort_order')) as AdminPlan[]).map(
+    numeric,
+  ) as AdminPlan[]
 }
 export async function listPeriods() {
-  return (unwrap(await neon().from('club_periods').select('*').order('sort_order')) as AdminPeriod[]).map(numeric) as AdminPeriod[]
+  return (unwrap(await neon().from('club_periods').select('*').order('sort_order')) as AdminPeriod[]).map(
+    numeric,
+  ) as AdminPeriod[]
 }
 
 type Table = 'kit_boxes' | 'club_plans' | 'club_periods' | 'shipping_zones'
@@ -99,7 +115,12 @@ export async function saveRows<T extends { id: string }>(table: Table, rows: T[]
 // ---- clientes ------------------------------------------------------------
 
 export async function listCustomers() {
-  return unwrap(await neon().from('profiles').select('id,email,full_name,phone,role,created_at').order('created_at', { ascending: false })) as Customer[]
+  return unwrap(
+    await neon()
+      .from('profiles')
+      .select('id,email,full_name,phone,role,created_at')
+      .order('created_at', { ascending: false }),
+  ) as Customer[]
 }
 
 // ---- rotas do site (fotos e cache da loja) -------------------------------
@@ -121,7 +142,11 @@ export async function uploadImage(file: File) {
 // Fotos que vieram com o site (/images/...) não são apagadas
 export async function deleteImage(url: string) {
   if (!url.startsWith('https://')) return
-  await callSite('/api/images', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url }) }).catch(() => {})
+  await callSite('/api/images', {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ url }),
+  }).catch(() => {})
 }
 
 // Avisa a loja para recarregar o catálogo (sem esperar o cache de 5 minutos)
@@ -132,12 +157,24 @@ export async function refreshStore() {
 // ---- pedidos e frete -----------------------------------------------------
 
 export async function listOrders() {
-  const rows = unwrap(await neon().from('orders').select('id,code,status,total,created_at,payment_method,customer,shipping_address,order_items(quantity)').order('created_at', { ascending: false }).limit(300)) as AdminOrderRow[]
+  const rows = unwrap(
+    await neon()
+      .from('orders')
+      .select('id,code,status,total,created_at,payment_method,customer,shipping_address,order_items(quantity)')
+      .order('created_at', { ascending: false })
+      .limit(300),
+  ) as AdminOrderRow[]
   return rows.map((row) => ({ ...row, total: Number(row.total) }))
 }
 
 export async function getOrder(code: string) {
-  const rows = unwrap(await neon().from('orders').select('*, order_items(kind,product_id,name,quantity,unit_price,total,kit)').eq('code', code).limit(1)) as (OrderRow & { order_items: OrderItemRow[] })[]
+  const rows = unwrap(
+    await neon()
+      .from('orders')
+      .select('*, order_items(kind,product_id,name,quantity,unit_price,total,kit)')
+      .eq('code', code)
+      .limit(1),
+  ) as (OrderRow & { order_items: OrderItemRow[] })[]
   if (!rows[0]) return null
   const { order_items: items, ...order } = rows[0]
   return normalizeOrder(order, items)
@@ -153,16 +190,25 @@ export async function notifyOrderChange(code: string) {
 }
 
 export async function listZones() {
-  return (unwrap(await neon().from('shipping_zones').select('*').order('sort_order')) as AdminZone[]).map((zone) => ({ ...zone, price: Number(zone.price) }))
+  return (unwrap(await neon().from('shipping_zones').select('*').order('sort_order')) as AdminZone[]).map((zone) => ({
+    ...zone,
+    price: Number(zone.price),
+  }))
 }
 
 // ---- clube: assinantes ----------------------------------------------------
 
 export async function listSubscriptions() {
-  const rows = unwrap(await neon().from('subscriptions').select('*').order('created_at', { ascending: false }).limit(1000)) as Subscription[]
+  const rows = unwrap(
+    await neon().from('subscriptions').select('*').order('created_at', { ascending: false }).limit(1000),
+  ) as Subscription[]
   return rows.map(normalizeSubscription)
 }
 
 export async function manageSubscription(id: number, action: 'pause' | 'resume' | 'cancel') {
-  await callSite('/api/club/subscription', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id, action }) })
+  await callSite('/api/club/subscription', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id, action }),
+  })
 }
