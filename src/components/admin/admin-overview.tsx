@@ -7,7 +7,7 @@ import { useAuth } from '@/components/auth/auth-provider'
 import { StatusBadge } from '@/components/orders/order-parts'
 import { formatBRL } from '@/data/products'
 import { listBoxes, listCustomers, listOrders, listPlans, listProducts } from '@/lib/admin-api'
-import { AdminHeader, Panel } from './admin-shell'
+import { AdminHeader, Panel } from './admin-page'
 import type { AdminOrderRow } from '@/types/order'
 import type { AdminProduct } from '@/types/product'
 
@@ -105,7 +105,7 @@ export function AdminOverview() {
           <Link
             key={href}
             href={href}
-            className="group rounded-tile bg-background p-5 transition-shadow hover:shadow-lg"
+            className="group rounded-tile bg-panel-surface p-5 transition-shadow hover:shadow-lg"
           >
             <span className={`grid size-11 place-items-center rounded-full ${color}`}>
               <Icon size={22} weight="duotone" />

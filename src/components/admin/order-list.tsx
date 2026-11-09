@@ -10,7 +10,7 @@ import { formatBRL } from '@/data/products'
 import { listOrders } from '@/lib/admin-api'
 import { formatDateTime } from '@/lib/orders'
 import { cn } from '@/lib/utils'
-import { AdminHeader, Panel } from './admin-shell'
+import { AdminHeader, Panel } from './admin-page'
 import type { AdminOrderRow, OrderStatus } from '@/types/order'
 
 // Abas na ordem do trabalho do dia: o que precisa de ação primeiro

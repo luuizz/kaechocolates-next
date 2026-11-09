@@ -33,7 +33,10 @@ Seguir o padrão já estabelecido no projeto (convenção do App Router, não MV
 ```
 src/
   app/            rotas e páginas (finas: buscam dados e compõem componentes)
+    (loja)/       layout raiz da loja: catálogo, sacola, cabeçalho e rodapé
+    (painel)/     layout raiz do painel (/admin), com tokens próprios em painel.css
     api/          só para chamadas externas: webhooks, integrações, rotas consumidas pelo cliente
+    global-not-found.tsx  404 de URL inexistente (há dois layouts raiz)
   components/
     ui/           primitivos genéricos e sem regra de negócio (padrão shadcn/ui)
     <área>/       componentes de uma área: cart, checkout, admin, club...
@@ -68,6 +71,8 @@ Para dúvidas de estrutura, consultar as skills `nextjs-arquitetura` e `nextjs-q
 - Server Components por padrão; `'use client'` só onde houver interatividade, e o mais baixo possível na árvore. Nunca importar `lib/server/**` de um arquivo cliente.
 
 ## Estilo (Tailwind)
+
+- Loja e painel têm layouts raiz separados (navegar entre eles recarrega a página). O painel usa as cores `panel-*` (`bg-panel-canvas`, `bg-panel-surface`, `bg-panel-sidebar`...), definidas em `src/app/(painel)/painel.css`; não use `panel-*` na loja.
 
 - **Evitar valores arbitrários** (`rounded-[1.75rem]`, `tracking-[-0.03em]`, `bg-[#a9d8ef]`, `text-[0.7rem]`...). Se o valor se repete ou faz parte da identidade, criar um token em `src/app/globals.css` (`:root` + `@theme inline`) com nome semântico e usar a classe gerada.
 - Cores sempre pelos tokens semânticos (`primary`, `muted`, `flavor-*`, `cocoa`, `sky`, `mint`, `ink`, `paper`, `pix`), nunca hex direto no componente.
