@@ -66,7 +66,7 @@ export function MySubscription({ justSubscribed }: { justSubscribed?: boolean })
     setBusy(null)
   }
 
-  if (sub === undefined) return <div className="h-64 animate-pulse rounded-[1.75rem] bg-secondary" />
+  if (sub === undefined) return <div className="h-64 animate-pulse rounded-card bg-secondary" />
 
   if (!sub) {
     return (
@@ -90,10 +90,10 @@ export function MySubscription({ justSubscribed }: { justSubscribed?: boolean })
       {justSubscribed && sub.status !== 'canceled' && <FormMessage tone="success">Boas-vindas ao clube! A primeira caixa sai na próxima quinzena de envios.</FormMessage>}
       <FormMessage>{error}</FormMessage>
 
-      <article className="overflow-hidden rounded-[1.75rem] border">
+      <article className="overflow-hidden rounded-card border">
         <div className="flex flex-wrap items-start justify-between gap-4 bg-flavor-pink p-6">
           <div>
-            <p className="text-xs font-bold uppercase tracking-[0.18em]">Clube Kaê</p>
+            <p className="text-xs font-bold uppercase tracking-eyebrow">Clube Kaê</p>
             <p className="mt-1 font-display text-3xl font-extrabold">{sub.plan.name}</p>
             <p className="font-semibold">{sub.period.label} · {sub.plan.bars} barras por mês</p>
           </div>

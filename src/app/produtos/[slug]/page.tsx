@@ -48,14 +48,14 @@ export default async function ProductPage({ params }: Params) {
       </nav>
 
       <div className="mt-6 grid gap-10 lg:grid-cols-2 lg:gap-16">
-        <div className="relative overflow-hidden rounded-[2rem] lg:sticky lg:top-36 lg:self-start" style={{ background: product.tile }}>
+        <div className="relative overflow-hidden rounded-feature lg:sticky lg:top-36 lg:self-start" style={{ background: product.tile }}>
           {product.badge && <span className="absolute left-5 top-5 z-10 rounded-full bg-white px-3 py-1.5 text-xs font-bold uppercase tracking-wider">{product.badge}</span>}
           <BarPackage product={product} priority className="mx-auto w-full max-w-lg" />
         </div>
 
         <div className="flex flex-col">
-          <p className="text-sm font-bold uppercase tracking-[0.18em] text-muted-foreground">Chocolate {LINE_SINGULAR[product.line]} · {product.cacao}% cacau</p>
-          <h1 className="mt-3 font-display text-5xl font-extrabold leading-[0.95] tracking-[-0.03em] md:text-6xl">{product.name}</h1>
+          <p className="text-sm font-bold uppercase tracking-eyebrow text-muted-foreground">Chocolate {LINE_SINGULAR[product.line]} · {product.cacao}% cacau</p>
+          <h1 className="mt-3 font-display text-5xl font-extrabold leading-display tracking-display md:text-6xl">{product.name}</h1>
           <p className="mt-4 text-lg text-muted-foreground">{product.short}</p>
 
           <div className="mt-8 border-y py-6">
@@ -98,7 +98,7 @@ export default async function ProductPage({ params }: Params) {
 
       {related.length > 0 && (
         <section className="mt-24">
-          <h2 className="font-display text-3xl font-extrabold tracking-[-0.03em] md:text-4xl">Você também pode gostar</h2>
+          <h2 className="font-display text-3xl font-extrabold tracking-display md:text-4xl">Você também pode gostar</h2>
           <div className="mt-8 grid grid-cols-2 gap-x-4 gap-y-10 md:grid-cols-4">
             {related.map((item) => <ProductCard key={item.slug} product={item} />)}
           </div>

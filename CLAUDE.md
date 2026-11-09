@@ -61,7 +61,10 @@ Para dúvidas de estrutura, consultar as skills `nextjs-arquitetura` e `nextjs-q
 ## Estilo (Tailwind)
 
 - **Evitar valores arbitrários** (`rounded-[1.75rem]`, `tracking-[-0.03em]`, `bg-[#a9d8ef]`, `text-[0.7rem]`...). Se o valor se repete ou faz parte da identidade, criar um token em `src/app/globals.css` (`:root` + `@theme inline`) com nome semântico e usar a classe gerada.
-- Cores sempre pelos tokens semânticos (`primary`, `muted`, `flavor-*`, `cocoa`...), nunca hex direto no componente.
+- Cores sempre pelos tokens semânticos (`primary`, `muted`, `flavor-*`, `cocoa`, `sky`, `mint`, `ink`, `paper`, `pix`), nunca hex direto no componente.
+- Tokens disponíveis: raios `rounded-tile` (1.5rem), `rounded-card` (1.75rem), `rounded-feature` (2rem), `rounded-hero` (2.5rem); `tracking-display`, `tracking-heading`, `tracking-eyebrow`; `leading-display`; `text-2xs`; `aspect-package`.
+- Token novo também entra em `extendTailwindMerge` (`src/lib/utils.ts`), senão o `cn()` pode descartar a classe.
+- Exceções aceitáveis além das abaixo: medidas de layout de um só lugar (`grid-cols-[1fr_24rem]`) e o desenho da embalagem em `cqw` (`bar-package.tsx`).
 - Variantes de componente com `class-variance-authority`; combinar classes com `cn()` de `@/lib/utils`.
 - Exceções aceitáveis: seletores de estado (`data-[state=open]:`) e casos realmente únicos. Ainda há valores arbitrários antigos no código; ao mexer nesses trechos, migrar para tokens.
 

@@ -18,7 +18,7 @@ export function CartLine({ item, onNavigate }: { item: CartItem; onNavigate?: ()
     </Link>
   ) : (
     <div className="grid w-20 shrink-0 grid-cols-3 content-start gap-0.5 rounded-xl bg-foreground p-1.5" aria-hidden="true">
-      {item.products.slice(0, 9).map((product, index) => <span key={index} className="aspect-[3/4] rounded-[3px]" style={{ background: product.label }} />)}
+      {item.products.slice(0, 9).map((product, index) => <span key={index} className="aspect-3/4 rounded-[3px]" style={{ background: product.label }} />)}
     </div>
   )
 

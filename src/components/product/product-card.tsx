@@ -10,10 +10,10 @@ export function ProductCard({ product }: { product: Product }) {
     <article className="group flex flex-col">
       <Link href={`/produtos/${product.slug}`} className="relative block overflow-hidden rounded-2xl" style={{ background: product.tile }}>
         {product.badge && (
-          <span className="absolute left-3 top-3 z-10 rounded-full bg-white px-2.5 py-1 text-[0.68rem] font-bold uppercase tracking-wider">{product.badge}</span>
+          <span className="absolute left-3 top-3 z-10 rounded-full bg-white px-2.5 py-1 text-2xs font-bold uppercase tracking-wider">{product.badge}</span>
         )}
         {product.compareAt && !product.soldOut && (
-          <span className="absolute right-3 top-3 z-10 rounded-full bg-foreground px-2.5 py-1 text-[0.68rem] font-bold text-background">
+          <span className="absolute right-3 top-3 z-10 rounded-full bg-foreground px-2.5 py-1 text-2xs font-bold text-background">
             -{Math.round((1 - product.price / product.compareAt) * 100)}%
           </span>
         )}

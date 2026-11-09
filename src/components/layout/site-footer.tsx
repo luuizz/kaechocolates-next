@@ -28,7 +28,7 @@ export function SiteFooter() {
         <div className="grid grid-cols-2 gap-8 sm:grid-cols-3">
           {columns.map((column) => (
             <div key={column.title}>
-              <h2 className="font-display text-sm font-bold uppercase tracking-[0.18em] text-flavor-yellow">{column.title}</h2>
+              <h2 className="font-display text-sm font-bold uppercase tracking-eyebrow text-flavor-yellow">{column.title}</h2>
               <ul className="mt-4 flex flex-col gap-3">
                 {column.links.map((link) => (
                   <li key={link.href}>

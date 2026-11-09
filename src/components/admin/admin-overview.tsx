@@ -43,9 +43,9 @@ export function AdminOverview() {
 
   const cards = [
     { href: '/admin/produtos', label: 'Barras à venda', value: stats ? active.length - soldOut.length : null, note: stats ? `${soldOut.length} esgotada(s) · ${stats.products.length - active.length} oculta(s)` : '', icon: Barcode, color: 'bg-flavor-yellow' },
-    { href: '/admin/pedidos', label: 'Pedidos para enviar', value: stats ? toShip.length : null, note: stats ? `${stats.orders.filter((order) => order.status === 'pending_payment').length} aguardando pagamento` : '', icon: Package, color: 'bg-[#a9d8ef]' },
+    { href: '/admin/pedidos', label: 'Pedidos para enviar', value: stats ? toShip.length : null, note: stats ? `${stats.orders.filter((order) => order.status === 'pending_payment').length} aguardando pagamento` : '', icon: Package, color: 'bg-sky' },
     { href: '/admin/pedidos', label: 'Vendas em 30 dias', value: stats ? formatBRL(revenue) : null, note: stats ? `${paid30.length} pedido(s) pagos` : '', icon: CurrencyCircleDollar, color: 'bg-flavor-pink' },
-    { href: '/admin/clientes', label: 'Contas criadas', value: stats?.customers ?? null, note: 'clientes e equipe', icon: Users, color: 'bg-[#5fc2b0]' },
+    { href: '/admin/clientes', label: 'Contas criadas', value: stats?.customers ?? null, note: 'clientes e equipe', icon: Users, color: 'bg-mint' },
   ]
 
   return (
@@ -55,7 +55,7 @@ export function AdminOverview() {
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {cards.map(({ href, label, value, note, icon: Icon, color }) => (
-          <Link key={href} href={href} className="group rounded-[1.5rem] bg-background p-5 transition-shadow hover:shadow-lg">
+          <Link key={href} href={href} className="group rounded-tile bg-background p-5 transition-shadow hover:shadow-lg">
             <span className={`grid size-11 place-items-center rounded-full ${color}`}><Icon size={22} weight="duotone" /></span>
             <p className="mt-4 text-sm text-muted-foreground">{label}</p>
             {value === null ? <span className="mt-1 block h-9 w-14 animate-pulse rounded-lg bg-secondary" /> : <p className="font-display text-4xl font-extrabold tracking-tight tabular-nums">{value}</p>}

@@ -8,7 +8,7 @@ export function Reviews({ reviews }: { reviews: Review[] }) {
   if (reviews.length === 0) return null
   return (
     <section className="mx-auto max-w-7xl px-5 py-16 md:px-8 md:py-24">
-      <h2 className="font-display text-4xl font-extrabold tracking-[-0.03em] md:text-5xl">Quem provou, conta</h2>
+      <h2 className="font-display text-4xl font-extrabold tracking-display md:text-5xl">Quem provou, conta</h2>
       <div className="mt-10 grid gap-4 md:grid-cols-3">
         {reviews.map((review) => (
           <figure key={`${review.author}-${review.date}`} className="flex flex-col rounded-2xl border p-6">

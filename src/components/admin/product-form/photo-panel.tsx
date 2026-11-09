@@ -27,7 +27,7 @@ export function PhotoPanel({ draft, set, uploading, onFile }: PhotoPanelProps) {
           onDragOver={(event) => { event.preventDefault(); setDragging(true) }}
           onDragLeave={() => setDragging(false)}
           onDrop={(event) => { event.preventDefault(); setDragging(false); onFile(event.dataTransfer.files[0]) }}
-          className={cn('relative grid aspect-[311/405] place-items-center overflow-hidden rounded-2xl border-2 border-dashed transition-colors', dragging && 'border-foreground bg-secondary')}
+          className={cn('relative grid aspect-package place-items-center overflow-hidden rounded-2xl border-2 border-dashed transition-colors', dragging && 'border-foreground bg-secondary')}
           style={draft.image ? { background: draft.tile } : undefined}
         >
           {draft.image ? (
@@ -54,7 +54,7 @@ export function PhotoPanel({ draft, set, uploading, onFile }: PhotoPanelProps) {
               {(['dark', 'light'] as const).map((tone) => (
                 <label key={tone} className="flex h-10 cursor-pointer items-center gap-2 rounded-full border px-4 text-sm font-semibold has-[:checked]:border-foreground has-[:checked]:bg-secondary has-[:focus-visible]:ring-4 has-[:focus-visible]:ring-foreground/10">
                   <input type="radio" name="labelText" value={tone} checked={draft.labelText === tone} onChange={() => set('labelText', tone)} className="sr-only" />
-                  <span className={cn('size-4 rounded-full border', tone === 'dark' ? 'bg-[#1d1d1b]' : 'bg-white')} /> {tone === 'dark' ? 'Escuro' : 'Claro'}
+                  <span className={cn('size-4 rounded-full border', tone === 'dark' ? 'bg-ink' : 'bg-white')} /> {tone === 'dark' ? 'Escuro' : 'Claro'}
                 </label>
               ))}
             </div>

@@ -16,10 +16,10 @@ export function ClubTeaser({ products }: { products: Product[] }) {
   const bars = products.filter((product) => !product.soldOut).slice(1, 4)
   return (
     <section id="clube" className="px-5 py-20 md:px-8 md:py-28">
-      <div className="relative mx-auto grid max-w-7xl gap-10 overflow-hidden rounded-[2.5rem] bg-flavor-pink p-8 md:p-14 lg:grid-cols-[1.1fr_1fr]">
+      <div className="relative mx-auto grid max-w-7xl gap-10 overflow-hidden rounded-hero bg-flavor-pink p-8 md:p-14 lg:grid-cols-[1.1fr_1fr]">
         <Reveal className="relative z-10">
-          <span className="inline-block rounded-full bg-foreground px-4 py-1.5 text-xs font-bold uppercase tracking-[0.18em] text-background">Clube Kaê</span>
-          <h2 className="mt-5 font-display text-5xl font-extrabold leading-[0.95] tracking-[-0.03em] md:text-6xl">
+          <span className="inline-block rounded-full bg-foreground px-4 py-1.5 text-xs font-bold uppercase tracking-eyebrow text-background">Clube Kaê</span>
+          <h2 className="mt-5 font-display text-5xl font-extrabold leading-display tracking-display md:text-6xl">
             Um Brasil novo chegando todo mês
           </h2>
           <p className="mt-5 max-w-md text-lg leading-relaxed text-foreground/80">

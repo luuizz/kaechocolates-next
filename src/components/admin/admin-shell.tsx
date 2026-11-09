@@ -74,7 +74,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
     <div className="flex min-h-dvh bg-secondary">
       <aside className="sticky top-0 hidden h-dvh w-64 shrink-0 flex-col gap-6 bg-foreground p-5 text-background lg:flex">
         <Link href="/admin" className="flex items-end gap-3 px-2 pt-1">
-          <Logo inverted className="h-10" /> <span className="pb-1 text-[0.65rem] font-bold uppercase tracking-[0.2em] text-background/55">Painel</span>
+          <Logo inverted className="h-10" /> <span className="pb-1 text-2xs font-bold uppercase tracking-[0.2em] text-background/55">Painel</span>
         </Link>
         {nav}
         {footer}
@@ -98,7 +98,7 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
 function Blocked({ title, text }: { title: string; text: string }) {
   return (
     <div className="grid min-h-dvh place-items-center bg-secondary px-5">
-      <div className="max-w-md rounded-[1.75rem] bg-background p-8 text-center">
+      <div className="max-w-md rounded-card bg-background p-8 text-center">
         <Logo className="mx-auto h-10" />
         <h1 className="mt-6 font-display text-3xl font-extrabold">{title}</h1>
         <p className="mt-2 text-muted-foreground">{text}</p>
@@ -113,7 +113,7 @@ export function AdminHeader({ title, description, actions }: { title: string; de
   return (
     <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
       <div>
-        <h1 className="font-display text-3xl font-extrabold tracking-[-0.02em] md:text-4xl">{title}</h1>
+        <h1 className="font-display text-3xl font-extrabold tracking-heading md:text-4xl">{title}</h1>
         {description && <p className="mt-1 text-muted-foreground">{description}</p>}
       </div>
       {actions && <div className="flex flex-wrap gap-2">{actions}</div>}
@@ -122,5 +122,5 @@ export function AdminHeader({ title, description, actions }: { title: string; de
 }
 
 export function Panel({ className, children }: { className?: string; children: React.ReactNode }) {
-  return <section className={cn('rounded-[1.5rem] bg-background p-5 md:p-6', className)}>{children}</section>
+  return <section className={cn('rounded-tile bg-background p-5 md:p-6', className)}>{children}</section>
 }

@@ -25,7 +25,7 @@ export function PreviewPanel({ preview }: { preview: DraftPreview }) {
     <Panel>
       <h2 className="font-display text-lg font-bold">Prévia</h2>
       <div className="relative mt-4 overflow-hidden rounded-2xl" style={{ background: preview.tile }}>
-        {preview.badge && <span className="absolute left-3 top-3 z-10 rounded-full bg-white px-2.5 py-1 text-[0.65rem] font-bold uppercase tracking-wider">{preview.badge}</span>}
+        {preview.badge && <span className="absolute left-3 top-3 z-10 rounded-full bg-white px-2.5 py-1 text-2xs font-bold uppercase tracking-wider">{preview.badge}</span>}
         <BarPackage product={preview} className={cn(preview.soldOut && 'opacity-60')} />
       </div>
       <p className="mt-3 font-display font-bold">{preview.name} {preview.cacao}%</p>

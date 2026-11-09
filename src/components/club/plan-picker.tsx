@@ -29,7 +29,7 @@ export function PlanPicker() {
             className={cn('flex h-10 items-center gap-2 rounded-full px-4 text-sm font-semibold transition-colors md:px-5', period.id === option.id ? 'bg-foreground text-background' : 'hover:bg-background')}
           >
             {option.label}
-            {option.discount > 0 && <span className={cn('rounded-full px-1.5 py-0.5 text-[0.65rem] font-bold', period.id === option.id ? 'bg-flavor-yellow text-foreground' : 'bg-success/15 text-success')}>{option.note}</span>}
+            {option.discount > 0 && <span className={cn('rounded-full px-1.5 py-0.5 text-2xs font-bold', period.id === option.id ? 'bg-flavor-yellow text-foreground' : 'bg-success/15 text-success')}>{option.note}</span>}
           </button>
         ))}
       </div>
@@ -39,7 +39,7 @@ export function PlanPicker() {
           const price = planPrice(plan, period)
           const featured = Boolean(plan.featured)
           return (
-            <article key={plan.id} className={cn('relative flex flex-col rounded-[1.75rem] border-2 p-6 transition-colors md:p-8', featured ? 'border-foreground' : 'border-border')}>
+            <article key={plan.id} className={cn('relative flex flex-col rounded-card border-2 p-6 transition-colors md:p-8', featured ? 'border-foreground' : 'border-border')}>
               {featured && <span className="absolute -top-3 left-6 rounded-full bg-foreground px-3 py-1 text-xs font-bold uppercase tracking-wider text-background">Mais escolhido</span>}
               <div className="flex items-center gap-3">
                 <span className="grid grid-cols-3 gap-0.5" aria-hidden="true">

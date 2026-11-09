@@ -19,7 +19,7 @@ export function OrderProgress({ status }: { status: OrderStatus }) {
       {STEPS.map((step, index) => (
         <li key={step} className="flex flex-col gap-2">
           <span className={cn('h-1.5 rounded-full', index <= current ? 'bg-foreground' : 'bg-border')} />
-          <span className={cn('text-[0.7rem] leading-tight sm:text-xs', index <= current ? 'font-semibold' : 'text-muted-foreground')} aria-current={index === current ? 'step' : undefined}>{ORDER_STATUS[step].label}</span>
+          <span className={cn('text-2xs leading-tight sm:text-xs', index <= current ? 'font-semibold' : 'text-muted-foreground')} aria-current={index === current ? 'step' : undefined}>{ORDER_STATUS[step].label}</span>
         </li>
       ))}
     </ol>

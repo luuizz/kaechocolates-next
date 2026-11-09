@@ -30,7 +30,7 @@ export function OrdersTab() {
       <TabTitle>Pedidos</TabTitle>
       <FormMessage>{error}</FormMessage>
       {orders === null ? (
-        <div className="flex flex-col gap-3">{[0, 1].map((index) => <div key={index} className="h-24 animate-pulse rounded-[1.5rem] bg-secondary" />)}</div>
+        <div className="flex flex-col gap-3">{[0, 1].map((index) => <div key={index} className="h-24 animate-pulse rounded-tile bg-secondary" />)}</div>
       ) : orders.length === 0 ? (
         <EmptyState
           size="panel"
@@ -53,7 +53,7 @@ function OrderLink({ order }: { order: CustomerOrderRow }) {
   const count = order.order_items.reduce((total, item) => total + item.quantity, 0)
   return (
     <li>
-      <Link href={`/pedido/${order.code}`} className="flex flex-wrap items-center gap-x-6 gap-y-2 rounded-[1.5rem] border p-5 transition-colors hover:border-foreground">
+      <Link href={`/pedido/${order.code}`} className="flex flex-wrap items-center gap-x-6 gap-y-2 rounded-tile border p-5 transition-colors hover:border-foreground">
         <span className="min-w-32">
           <span className="block font-display text-lg font-extrabold">{order.code}</span>
           <span className="text-sm text-muted-foreground">{formatDateTime(order.created_at)}</span>

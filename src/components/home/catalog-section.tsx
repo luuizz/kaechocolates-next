@@ -24,7 +24,7 @@ export function CatalogSection() {
     <section className="mx-auto max-w-7xl px-5 py-16 md:px-8 md:py-24">
       <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
         <div>
-          <h2 className="font-display text-4xl font-extrabold tracking-[-0.03em] md:text-5xl">Nossos chocolates</h2>
+          <h2 className="font-display text-4xl font-extrabold tracking-display md:text-5xl">Nossos chocolates</h2>
           <p className="mt-2 text-muted-foreground">Bean to bar, do grão à barra, com cacau da Bahia.</p>
         </div>
         <div role="tablist" aria-label="Filtrar por linha" className="flex flex-wrap gap-2">

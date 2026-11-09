@@ -34,7 +34,7 @@ export default function AboutPage() {
 
       <section className="mx-auto grid max-w-7xl items-center gap-10 px-5 py-14 md:px-8 lg:grid-cols-2 lg:gap-16">
         <Reveal>
-          <Image src="/images/home/hero.png" alt="Duas pessoas sorrindo com barras de chocolate Kaê nas mãos" width={694} height={486} className="w-full rounded-[2rem] object-cover" />
+          <Image src="/images/home/hero.png" alt="Duas pessoas sorrindo com barras de chocolate Kaê nas mãos" width={694} height={486} className="w-full rounded-feature object-cover" />
         </Reveal>
         <Reveal delay={0.1} className="text-lg leading-relaxed text-muted-foreground">
           <p>Sem clichês, sem falsas promessas: só poucos ingredientes e o objetivo de sempre buscar o melhor chocolate do mundo.</p>
@@ -46,7 +46,7 @@ export default function AboutPage() {
         <div className="mx-auto grid max-w-7xl items-center gap-12 px-5 py-16 md:px-8 md:py-24 lg:grid-cols-2">
           <Reveal>
             <p className="text-sm font-bold uppercase tracking-[0.2em] text-flavor-yellow">Bean to bar</p>
-            <h2 className="mt-3 font-display text-5xl font-extrabold leading-[0.95] tracking-[-0.03em]">27 dias por uma barra</h2>
+            <h2 className="mt-3 font-display text-5xl font-extrabold leading-display tracking-display">27 dias por uma barra</h2>
             <p className="mt-5 max-w-lg text-lg text-background/70">Da colheita do fruto até virar uma barra de chocolate, trabalhamos em média 27 dias seguidos, em 3 etapas.</p>
             <ol className="mt-8 flex flex-col gap-3">
               {steps.map((step, index) => (
@@ -58,17 +58,17 @@ export default function AboutPage() {
             </ol>
           </Reveal>
           <Reveal delay={0.1}>
-            <Image src="/images/home/do-grao-a-barra.png" alt="Barra de chocolate Kaê quebrada: menos açúcar, menos ingredientes, muito mais sabor" width={592} height={580} className="mx-auto w-full max-w-lg rounded-[2rem] bg-background p-6" />
+            <Image src="/images/home/do-grao-a-barra.png" alt="Barra de chocolate Kaê quebrada: menos açúcar, menos ingredientes, muito mais sabor" width={592} height={580} className="mx-auto w-full max-w-lg rounded-feature bg-background p-6" />
           </Reveal>
         </div>
       </section>
 
       <section className="mx-auto max-w-7xl px-5 py-16 md:px-8 md:py-24">
-        <h2 className="font-display text-4xl font-extrabold tracking-[-0.03em] md:text-5xl">Qualidade sempre</h2>
+        <h2 className="font-display text-4xl font-extrabold tracking-display md:text-5xl">Qualidade sempre</h2>
         <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {values.map(({ icon: Icon, color, title, text }, index) => (
             <Reveal key={title} delay={index * 0.06}>
-              <article className="h-full rounded-[1.75rem] border p-6">
+              <article className="h-full rounded-card border p-6">
                 <span className="grid size-14 place-items-center rounded-2xl" style={{ background: color }}><Icon size={28} weight="duotone" /></span>
                 <h3 className="mt-5 font-display text-xl font-bold">{title}</h3>
                 <p className="mt-2 text-muted-foreground">{text}</p>
@@ -79,10 +79,10 @@ export default function AboutPage() {
       </section>
 
       <section id="premios" className="scroll-mt-36 px-5 pb-20 md:px-8">
-        <div className="mx-auto flex max-w-7xl flex-col gap-8 rounded-[2rem] bg-[#a9d8ef] p-8 md:flex-row md:items-center md:justify-between md:p-12">
+        <div className="mx-auto flex max-w-7xl flex-col gap-8 rounded-feature bg-sky p-8 md:flex-row md:items-center md:justify-between md:p-12">
           <div>
             <Medal size={48} weight="duotone" />
-            <h2 className="mt-3 font-display text-4xl font-extrabold tracking-[-0.03em] md:text-5xl">13 prêmios internacionais</h2>
+            <h2 className="mt-3 font-display text-4xl font-extrabold tracking-display md:text-5xl">13 prêmios internacionais</h2>
             <p className="mt-3 max-w-md text-foreground/75">Levando nosso sabor e nossa cultura para todos os cantos do planeta.</p>
           </div>
           <ul className="grid gap-3 sm:grid-cols-3 md:grid-cols-1">
