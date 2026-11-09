@@ -10,6 +10,7 @@ export const dynamic = 'force-dynamic'
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const access = await getAdminAccess()
   if (access.status === 'anonymous') redirect('/entrar?volta=/admin')
+  if (access.status === 'unavailable') return <AccessBlocked title="Painel indisponível" text={access.reason} />
   if (access.status === 'forbidden')
     return (
       <AccessBlocked
