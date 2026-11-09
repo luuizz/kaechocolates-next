@@ -1,5 +1,8 @@
 import 'server-only'
+import { after } from 'next/server'
+import type { Profile } from '@/types/account'
 import { db } from './db'
+import { notifyOrder } from './email'
 import { getMpOrder, paymentSnapshot } from './mercadopago'
 import { normalizeOrder } from '@/lib/orders'
 import type { OrderView } from '@/types/order'
@@ -50,4 +53,18 @@ export function publicOrder(order: Awaited<ReturnType<typeof loadOrder>>) {
   void _user
   void _mp
   return rest
+}
+
+// Pedido do cliente (ou de qualquer um, para admin). Enquanto o pagamento estiver
+// pendente, confere o status direto no Mercado Pago (funciona mesmo sem webhook).
+export async function orderForUser(user: Profile, code: string) {
+  let order = await loadOrder(code).catch(() => null)
+  if (!order || (order.user_id !== user.id && user.role !== 'admin')) return null
+
+  if (order.status === 'pending_payment' && order.mp_order_id) {
+    await syncWithMercadoPago(code, order.mp_order_id).catch((error) => console.error('[pedido] sync', error))
+    order = (await loadOrder(code)) ?? order
+    if (order.status !== 'pending_payment') after(() => notifyOrder(code))
+  }
+  return publicOrder(order)
 }

@@ -28,3 +28,6 @@ export const subscriptionActionSchema = z.object({
   action: z.enum(['pause', 'resume', 'cancel']),
   id: z.coerce.number().int().positive().optional().catch(undefined),
 })
+
+export type SubscribeInput = z.output<typeof subscribeSchema>
+export type SubscriptionActionInput = z.output<typeof subscriptionActionSchema>

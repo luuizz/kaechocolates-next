@@ -1,6 +1,5 @@
 import { del, put } from '@vercel/blob'
-import { neonEnv } from '@/lib/env'
-import { isAdminRequest } from '@/lib/server/admin-guard'
+import { getAdminAccess } from '@/lib/server/session'
 import { IMAGE_FOLDER, IMAGE_MAX_BYTES, IMAGE_TYPES } from '@/constants/limits'
 
 // Upload e remoção das fotos de produto no Vercel Blob (só admin).
@@ -13,7 +12,6 @@ import { IMAGE_FOLDER, IMAGE_MAX_BYTES, IMAGE_TYPES } from '@/constants/limits'
 const json = (status: number, body: unknown) => Response.json(body, { status })
 
 function configError() {
-  if (!neonEnv().dataApiUrl) return 'Upload indisponível: falta NEXT_PUBLIC_NEON_DATA_API_URL.'
   if (!process.env.BLOB_READ_WRITE_TOKEN) return 'Upload indisponível: conecte um Blob Store ao projeto na Vercel.'
   return null
 }
@@ -33,9 +31,9 @@ function isOwnBlob(url: string) {
 }
 
 export async function POST(request: Request) {
+  if ((await getAdminAccess()).status !== 'admin') return json(403, { error: 'Acesso restrito a administradores.' })
   const misconfigured = configError()
   if (misconfigured) return json(503, { error: misconfigured })
-  if (!(await isAdminRequest(request))) return json(403, { error: 'Acesso restrito a administradores.' })
 
   const type = (request.headers.get('content-type') ?? '').split(';')[0]?.trim() ?? ''
   const ext = IMAGE_TYPES[type]
@@ -64,9 +62,9 @@ export async function POST(request: Request) {
 }
 
 export async function DELETE(request: Request) {
+  if ((await getAdminAccess()).status !== 'admin') return json(403, { error: 'Acesso restrito a administradores.' })
   const misconfigured = configError()
   if (misconfigured) return json(503, { error: misconfigured })
-  if (!(await isAdminRequest(request))) return json(403, { error: 'Acesso restrito a administradores.' })
 
   const { url } = (await request.json().catch(() => ({}))) as { url?: unknown }
   if (typeof url !== 'string' || !isOwnBlob(url))

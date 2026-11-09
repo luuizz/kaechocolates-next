@@ -27,12 +27,6 @@ export function getNeon(): NeonClient {
   return client
 }
 
-// JWT do usuário logado (o mesmo que a Data API recebe), para as rotas /api do site
-export async function getAccessToken() {
-  const { data } = await getNeon().auth.getSession()
-  return data.session?.access_token ?? null
-}
-
 // Devolve `data` ou lança o erro já traduzido
 export function unwrap<T>(result: { data: T; error: unknown }): T {
   if (result.error) throw new Error(friendlyError(result.error))

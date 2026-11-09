@@ -35,7 +35,8 @@ src/
   app/            rotas e páginas (finas: buscam dados e compõem componentes)
     (loja)/       layout raiz da loja: catálogo, sacola, cabeçalho e rodapé
     (painel)/     layout raiz do painel (/admin), com tokens próprios em painel.css
-    api/          só para chamadas externas: webhooks, integrações, rotas consumidas pelo cliente
+    api/          só o que não pode ser action: login (/api/auth), webhook do Mercado Pago e upload de foto
+  actions/        Server Actions ('use server'), um arquivo por domínio: checkout, orders, club, admin
     global-not-found.tsx  404 de URL inexistente (há dois layouts raiz)
   components/
     ui/           primitivos genéricos e sem regra de negócio (padrão shadcn/ui)
@@ -91,6 +92,14 @@ Para dúvidas de estrutura, consultar as skills `nextjs-arquitetura` e `nextjs-q
 - Sem `any`; preferir `unknown` + validação nas bordas (requests, webhooks, respostas de API).
 - Corpo de requisição sempre validado com Zod (`src/lib/validation/`), com `parseWith` para devolver a mensagem do primeiro campo inválido. Tipo da entrada derivado do schema (`z.output`), não escrito à mão.
 - Linhas do banco têm tipo próprio (`OrderRow`, `ProductRow`...) e são convertidas na borda; sem `as unknown as`.
+
+## Server Actions
+
+- Gravações e consultas do próprio site que precisam do servidor são Server Actions em `src/actions/<domínio>.ts`. Rota em `app/api` só para quem chama de fora (webhook), para o login e para upload de arquivo grande.
+- Toda action: recebe `unknown`, valida com o schema de `lib/validation`, confere a sessão (`getCurrentProfile` ou `getAdminAccess`), chama o serviço de `lib/server` e devolve `ActionResult` (`{ ok: true, data } | { ok: false, error }`, helpers `ok`/`fail` de `lib/result`). Exceção só para erro inesperado.
+- A action fica fina; a regra mora no serviço de `lib/server` (ex.: `checkout.ts`, `club-subscription.ts`).
+- No cliente, `expectOk(await action(...))` devolve os dados ou lança o erro para o try/catch.
+- No e2e, chame a action com `action(page.request, 'nomeExportado', ...args)` (lê o id do manifesto do build).
 
 ## Sessão e acesso
 

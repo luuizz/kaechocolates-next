@@ -1,6 +1,6 @@
-import { expect, test } from './helpers'
+import { action, expect, signUp, test, uniqueEmail } from './helpers'
 
-// Regras de acesso: o banco (RLS) e as rotas do site barram quem não pode
+// Regras de acesso: o banco (RLS), o proxy e as Server Actions barram quem não pode
 test.describe('Segurança', () => {
   test('visitante só lê o catálogo', async ({ request }) => {
     const { token } = await (await request.get('http://localhost:54321/neondb/auth/token/anonymous')).json()
@@ -18,11 +18,25 @@ test.describe('Segurança', () => {
     expect((await request.post(`${rest}/rpc/place_order`, { headers, data: {} })).ok()).toBe(false)
   })
 
-  test('rotas do site exigem login ou admin', async ({ request }) => {
-    expect((await request.post('/api/revalidate')).status()).toBe(403)
-    expect((await request.post('/api/checkout', { data: {} })).status()).toBe(401)
-    expect((await request.post('/api/club/subscribe', { data: {} })).status()).toBe(401)
-    expect((await request.get('/api/orders/KAE-1001')).status()).toBe(401)
+  test('áreas e ações do site exigem login ou admin', async ({ request, page }) => {
+    // Sem sessão, o proxy manda para o login antes de a página ou a action rodar
+    for (const route of ['/admin', '/conta', '/checkout', '/pedido/KAE-1001', '/clube/assinar']) {
+      const response = await request.get(route, { maxRedirects: 0 })
+      expect(response.status(), route).toBe(307)
+      expect(response.headers()['location'], route).toContain(`/entrar?volta=${encodeURIComponent(route)}`)
+    }
+    for (const name of ['placeOrder', 'subscribeToClub', 'refreshStore']) {
+      expect((await action(request, name, {})).status, name).toBe(307)
+    }
+
+    // Cliente logado não executa ações do painel nem abre o painel
+    await signUp(page, { name: 'Ana Souza', email: uniqueEmail('seguranca') })
+    expect((await action(page.request, 'refreshStore')).result).toMatchObject({ ok: false })
+    expect((await action(page.request, 'notifyOrderUpdate', 'KAE-1001')).result).toMatchObject({ ok: false })
+    await page.goto('/admin')
+    await expect(page.getByRole('heading', { name: 'Acesso restrito' })).toBeVisible()
+    expect((await page.request.post('/api/images', { data: {} })).status()).toBe(403)
+
     // Webhook com id que não existe no Mercado Pago: ignora com 200
     const webhook = await request.post('/api/mercadopago/webhook?data.id=123456&type=order', { data: {} })
     expect(webhook.status()).toBe(200)
