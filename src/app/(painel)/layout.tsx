@@ -4,6 +4,7 @@ import { AuthProvider } from '@/components/auth/auth-provider'
 import { RootDocument } from '@/components/layout/root-document'
 import { brand } from '@/config/brand'
 import './painel.css'
+import React from 'react'
 
 export const metadata: Metadata = {
   metadataBase: new URL(brand.url),
