@@ -27,6 +27,9 @@ export type Product = {
   /** vazio = estoque não controlado */
   stock?: number
   image?: string
+  packageNote?: string
+  highSugar?: boolean
+  highFat?: boolean
 }
 
 export type ProductRow = {
@@ -48,6 +51,9 @@ export type ProductRow = {
   sold_out: boolean
   image: string | null
   stock?: number | null
+  package_note?: string | null
+  high_sugar?: boolean
+  high_fat?: boolean
 }
 
 // soldOut = marcada OU estoque zerado; soldOutFlag = só a marcação manual

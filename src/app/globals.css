@@ -104,9 +104,12 @@
   --text-2xs: 0.6875rem;
 
   --aspect-package: 311 / 405;
+  --drop-shadow-package: -4px 6px 10px rgb(17 17 17 / 0.3);
 
   --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
   --font-display: 'Plus Jakarta Sans Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-package: var(--font-wotfard), 'Helvetica Neue', Arial, sans-serif;
+  --font-package-display: var(--font-recoleta), Georgia, serif;
 
   --animate-marquee: marquee 28s linear infinite;
   --animate-float: float 6s ease-in-out infinite;

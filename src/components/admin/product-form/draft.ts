@@ -22,6 +22,9 @@ export type Draft = {
   soldOut: boolean
   sortOrder: string
   stock: string
+  packageNote: string
+  highSugar: boolean
+  highFat: boolean
 }
 
 export type SetField = <K extends keyof Draft>(key: K, value: Draft[K]) => void
@@ -46,6 +49,9 @@ export const EMPTY_DRAFT: Draft = {
   soldOut: false,
   sortOrder: '',
   stock: '',
+  packageNote: '',
+  highSugar: true,
+  highFat: true,
 }
 
 const money = (value: string) => Number(value.replace(/\./g, '').replace(',', '.'))
@@ -72,6 +78,9 @@ export const draftFromProduct = (product: AdminProduct): Draft => ({
   soldOut: product.soldOutFlag,
   sortOrder: String(product.sortOrder),
   stock: product.stock === undefined ? '' : String(product.stock),
+  packageNote: product.packageNote ?? '',
+  highSugar: product.highSugar ?? true,
+  highFat: product.highFat ?? true,
 })
 
 export function validateDraft(draft: Draft) {
@@ -107,6 +116,9 @@ export function previewFromDraft(draft: Draft) {
     badge: (draft.badge || undefined) as ProductInput['badge'],
     soldOut: draft.soldOut,
     image: draft.image || undefined,
+    packageNote: draft.packageNote.trim() || undefined,
+    highSugar: draft.highSugar,
+    highFat: draft.highFat,
   }
 }
 
