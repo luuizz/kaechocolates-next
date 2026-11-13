@@ -48,6 +48,7 @@ export const FALLBACK_PRODUCTS: Product[] = [
     labelText: 'light',
     short: '55% ao leite com cumaru, sem adição de açúcar.',
     badge: 'Zero açúcar',
+    highSugar: false,
   },
   {
     ...base,
@@ -123,6 +124,7 @@ export const FALLBACK_PRODUCTS: Product[] = [
     tile: '#6c7f31',
     labelText: 'light',
     short: 'Intenso com café, para depois do almoço.',
+    packageNote: 'com café',
   },
   {
     ...base,

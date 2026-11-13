@@ -10,6 +10,8 @@ const twMerge = extendTailwindMerge({
       tracking: ['display', 'heading', 'eyebrow'],
       leading: ['display'],
       aspect: ['package'],
+      font: ['package', 'package-display'],
+      'drop-shadow': ['package'],
     },
   },
 })

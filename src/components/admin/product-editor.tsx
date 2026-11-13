@@ -8,7 +8,7 @@ import { AdminHeader } from './admin-page'
 import { InfoPanel, PricePanel } from './product-form/details-panels'
 import { previewFromDraft } from './product-form/draft'
 import { PhotoPanel } from './product-form/photo-panel'
-import { PreviewPanel, StorePanel } from './product-form/side-panels'
+import { LabelingPanel, PreviewPanel, StorePanel } from './product-form/side-panels'
 import { useProductEditor } from './product-form/use-product-editor'
 
 export function ProductEditor({ id }: { id: number | null }) {
@@ -58,6 +58,7 @@ export function ProductEditor({ id }: { id: number | null }) {
 
         <div className="flex flex-col gap-6 lg:sticky lg:top-8 lg:self-start">
           <StorePanel draft={draft} set={set} />
+          <LabelingPanel draft={draft} set={set} />
           <PreviewPanel preview={previewFromDraft(draft)} />
           {draft.id && (
             <Button type="button" variant="ghost" className="self-start text-destructive" onClick={remove}>

@@ -47,6 +47,33 @@ export function StorePanel({ draft, set }: { draft: Draft; set: SetField }) {
   )
 }
 
+export function LabelingPanel({ draft, set }: { draft: Draft; set: SetField }) {
+  return (
+    <Panel>
+      <h2 className="font-display text-lg font-bold">Rotulagem</h2>
+      <p className="mt-1 text-sm text-muted-foreground">Selo “ALTO EM” no topo da embalagem desenhada.</p>
+      <div className="mt-4 flex flex-col gap-4">
+        <label className="flex items-center justify-between gap-3 text-sm font-semibold">
+          Alto em açúcar adicionado{' '}
+          <Switch
+            checked={draft.highSugar}
+            onChange={(value) => set('highSugar', value)}
+            label="Alto em açúcar adicionado"
+          />
+        </label>
+        <label className="flex items-center justify-between gap-3 text-sm font-semibold">
+          Alto em gordura saturada{' '}
+          <Switch
+            checked={draft.highFat}
+            onChange={(value) => set('highFat', value)}
+            label="Alto em gordura saturada"
+          />
+        </label>
+      </div>
+    </Panel>
+  )
+}
+
 export function PreviewPanel({ preview }: { preview: DraftPreview }) {
   return (
     <Panel>
