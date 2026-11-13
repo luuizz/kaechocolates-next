@@ -5,7 +5,6 @@ export type LegalSection = { id: string; title: string; body: React.ReactNode }
 
 const date = new Intl.DateTimeFormat('pt-BR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' })
 
-// Página de texto legal: índice fixo ao lado e seções numeradas
 export function LegalPage({
   title,
   intro,
@@ -68,7 +67,6 @@ export function LegalPage({
   )
 }
 
-// Identificação da empresa (CNPJ só aparece quando preenchido em brand.ts)
 export function CompanyLine() {
   return (
     <>

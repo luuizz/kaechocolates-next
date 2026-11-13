@@ -10,7 +10,6 @@ import { IMAGE_MAX_BYTES, IMAGE_TYPES } from '@/constants/limits'
 
 const message = (err: unknown, fallback: string) => (err instanceof Error ? err.message : fallback)
 
-// Estado e ações do editor de barra: carregar, editar, enviar foto, salvar e excluir
 export function useProductEditor(id: number | null) {
   const router = useRouter()
   const [draft, setDraft] = useState<Draft | null>(id ? null : EMPTY_DRAFT)
@@ -37,7 +36,6 @@ export function useProductEditor(id: number | null) {
       .catch((err) => toast.error(err.message))
   }, [id, router])
 
-  // Avisa antes de sair com mudanças não salvas
   const dirty = Boolean(draft && original && JSON.stringify(draft) !== JSON.stringify(original))
   useEffect(() => {
     if (!dirty) return
@@ -50,7 +48,6 @@ export function useProductEditor(id: number | null) {
     setDraft((current) => {
       if (!current) return current
       const next = { ...current, [key]: value }
-      // O endereço da página acompanha nome e % de cacau até ser editado à mão
       if (!slugTouched && (key === 'name' || key === 'cacao')) next.slug = slugify(`${next.name} ${next.cacao}`)
       return next
     })
@@ -86,7 +83,6 @@ export function useProductEditor(id: number | null) {
     setSaving(true)
     try {
       const saved = await saveProduct(inputFromDraft(draft))
-      // Fotos trocadas antes de salvar (e a antiga, se mudou) saem do armazenamento
       const stale = [...uploaded.current, original?.image].filter(
         (url): url is string => Boolean(url) && url !== saved.image,
       )

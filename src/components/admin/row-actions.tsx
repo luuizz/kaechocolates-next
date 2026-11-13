@@ -15,7 +15,6 @@ type RowActionsProps = {
   className?: string
 }
 
-// Botões de reordenar e remover uma linha das listas editáveis do painel
 export function RowActions({
   direction = 'vertical',
   isFirst,

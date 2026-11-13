@@ -1,4 +1,4 @@
-// Perguntas frequentes. Respostas provisórias: conferir prazos e políticas com a Kaê.
+// Respostas provisórias: conferir prazos e políticas com a Kaê
 export const FAQ = [
   {
     topic: 'Chocolates',

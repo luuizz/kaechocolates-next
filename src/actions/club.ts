@@ -15,7 +15,6 @@ export async function subscribeToClub(input: unknown) {
   return startSubscription(user, parsed.data)
 }
 
-// Pausar, retomar ou cancelar (o admin pode informar o id de qualquer assinatura)
 export async function manageSubscription(input: unknown) {
   const user = await getCurrentProfile()
   if (!user) return fail('Entre na sua conta.')
@@ -24,7 +23,6 @@ export async function manageSubscription(input: unknown) {
   return changeSubscription(user, parsed.data)
 }
 
-// Confere no Mercado Pago a assinatura que ainda está pendente
 export async function syncMySubscription() {
   const user = await getCurrentProfile()
   if (!user) return fail('Entre na sua conta.')

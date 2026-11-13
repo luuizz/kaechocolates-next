@@ -70,7 +70,6 @@ export function OrderDetail({ code }: { code: string }) {
     setSaving(false)
   }
 
-  // Confere o pagamento direto no Mercado Pago (útil sem webhook configurado)
   const sync = async () => {
     setSyncing(true)
     try {

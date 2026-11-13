@@ -12,7 +12,6 @@ import { expectOk } from '@/lib/result'
 
 export type PaymentMethod = 'pix' | 'card'
 
-// Estado do checkout: endereço, prévia calculada no servidor e pagamento
 export function useCheckout() {
   const auth = useAuth()
   const cart = useCart()
@@ -33,7 +32,6 @@ export function useCheckout() {
     if (auth.configured && !auth.loading && !auth.user) router.replace('/entrar?volta=/checkout')
   }, [auth.configured, auth.loading, auth.user, router])
 
-  // Recalcula no servidor sempre que a sacola ou o estado de entrega mudam
   const state = address?.state ?? null
   const itemsKey = JSON.stringify(items)
   useEffect(() => {
@@ -59,7 +57,6 @@ export function useCheckout() {
     const { code } = expectOk(await placeOrder({ items, addressId, ...payload }))
     setDone(true)
     cart.clear()
-    // Se o status ainda está sendo gravado, a página do pedido acompanha
     router.push(`/pedido/${code}`)
   }
 

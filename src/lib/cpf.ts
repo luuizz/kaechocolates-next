@@ -1,4 +1,3 @@
-// Dígitos verificadores do CPF
 export function validCpf(cpf: string) {
   if (!/^\d{11}$/.test(cpf) || /^(\d)\1{10}$/.test(cpf)) return false
   const digit = (length: number) => {

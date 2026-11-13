@@ -17,7 +17,6 @@ export function SignInForm() {
   const [error, setError] = useState('')
   const [busy, setBusy] = useState(false)
 
-  // Já logado: segue direto
   useEffect(() => {
     if (!auth.loading && auth.user) router.replace(next)
   }, [auth.loading, auth.user, next, router])

@@ -10,7 +10,6 @@ import { getNeon, unwrap } from '@/lib/neon'
 import { cn } from '@/lib/utils'
 import type { Address } from '@/types/account'
 
-// Escolha do endereço de entrega (checkout e clube), com cadastro na hora
 export function AddressPicker({
   value,
   onChange,

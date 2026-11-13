@@ -19,8 +19,6 @@ const FALLBACK: Catalog = {
   source: 'fallback',
 }
 
-// O visitante não tem login: o Neon Auth entrega um token "anonymous", que só
-// lê o que as políticas do banco liberam (itens ativos do catálogo).
 async function anonymousToken(authUrl: string) {
   const response = await fetch(`${authUrl}/token/anonymous`, { cache: 'no-store' })
   if (!response.ok) throw new Error(`token anônimo: HTTP ${response.status}`)
@@ -65,11 +63,9 @@ async function loadCatalog(): Promise<Catalog> {
       source: 'db',
     }
   } catch (error) {
-    // Sem banco o site continua de pé com o catálogo do código
     console.error('[catálogo] usando a lista reserva:', error instanceof Error ? error.message : error)
     return FALLBACK
   }
 }
 
-// Guardado em cache por 5 minutos; o painel limpa na hora ao salvar (/api/revalidate)
 export const getCatalog = unstable_cache(loadCatalog, ['catalog-v1'], { tags: [CATALOG_TAG], revalidate: 300 })

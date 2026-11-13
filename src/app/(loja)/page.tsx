@@ -20,7 +20,6 @@ export default async function Home() {
       <CatalogSection />
       <About />
       <ClubTeaser products={products} />
-      {/* Avaliações entram quando houver dados reais */}
       <Reviews reviews={[]} />
     </>
   )

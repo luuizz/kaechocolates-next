@@ -1,7 +1,4 @@
-// Mercado Pago simulado (API de Orders e assinaturas) e Resend simulado (POST /emails).
-// Regras: Pix com payer.first_name "APRO" é aprovado na primeira consulta (como no sandbox);
-// cartão com token "rejeitar" é recusado; o resto é aprovado.
-// GET /__log devolve as requisições recebidas (para os testes conferirem o que o site mandou).
+// Pix com first_name "APRO" é aprovado; cartão com token "rejeitar" é recusado
 import http from 'node:http'
 
 const QR = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg=='

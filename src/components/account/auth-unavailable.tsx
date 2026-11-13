@@ -1,6 +1,5 @@
 import { Plugs } from '@phosphor-icons/react'
 
-// Ambiente sem as variáveis do Neon (ex.: build de CI)
 export function AuthUnavailable() {
   return (
     <div className="flex items-start gap-3 rounded-2xl bg-secondary p-5 text-sm">

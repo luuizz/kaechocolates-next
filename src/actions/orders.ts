@@ -4,7 +4,6 @@ import { fail, ok } from '@/lib/result'
 import { orderForUser } from '@/lib/server/orders'
 import { getCurrentProfile } from '@/lib/server/session'
 
-// Pedido do cliente logado, com o status do pagamento conferido no Mercado Pago
 export async function getMyOrder(code: unknown) {
   const user = await getCurrentProfile()
   if (!user) return fail('Entre na sua conta.')

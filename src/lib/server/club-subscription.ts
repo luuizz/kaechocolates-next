@@ -16,8 +16,6 @@ type StartedSubscription = {
   period: { label: string; months: number }
 }
 
-// Assina o clube: o banco calcula o valor e cria a assinatura; o Mercado Pago
-// autoriza o cartão e passa a cobrar a cada período.
 export async function startSubscription(user: Profile, input: SubscribeInput) {
   const { plan, period, addressId, cpf, card, notes } = input
   let sub: StartedSubscription
@@ -32,7 +30,7 @@ export async function startSubscription(user: Profile, input: SubscribeInput) {
     ])
     sub = rows[0]
   } catch (error) {
-    // Recusas de regra (estoque, CPF, endereço…) são esperadas; só registra o que é falha
+    // Recusas de regra (estoque, CPF, endereço) são esperadas; só registra falha
     if ((error as { code?: string })?.code !== 'P0001') console.error('[clube] start_subscription', error)
     return fail(dbMessage(error, 'Não foi possível criar a assinatura.'))
   }
@@ -62,7 +60,6 @@ export async function startSubscription(user: Profile, input: SubscribeInput) {
 
 const MP_STATUS = { pause: 'paused', resume: 'authorized', cancel: 'cancelled' } as const
 
-// O assinante gerencia a própria assinatura; o admin pode passar o id de qualquer uma
 export async function changeSubscription(user: Profile, { action, id }: SubscriptionActionInput) {
   const isAdmin = user.role === 'admin'
   const sub: SubscriptionRow | null =

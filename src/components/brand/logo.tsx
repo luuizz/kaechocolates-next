@@ -2,7 +2,6 @@ import Image from 'next/image'
 import { brand } from '@/config/brand'
 import { cn } from '@/lib/utils'
 
-// Logo em SVG: versão escura (fundo claro) ou negativa (fundo escuro)
 export function Logo({ className, inverted = false }: { className?: string; inverted?: boolean }) {
   return (
     <Image

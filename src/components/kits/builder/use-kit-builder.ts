@@ -4,7 +4,6 @@ import { useMemo, useState } from 'react'
 import { useCart } from '@/components/cart/cart-provider'
 import { useCatalog } from '@/components/catalog/catalog-provider'
 
-// Estado do montador de kit: caixa, barras escolhidas, recado e envio para a sacola
 export function useKitBuilder() {
   const { addKit } = useCart()
   const { products, boxes, findBox, kitTotals } = useCatalog()

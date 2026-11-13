@@ -3,10 +3,9 @@ import { AccessBlocked } from '@/components/admin/access-blocked'
 import { AdminShell } from '@/components/admin/admin-shell'
 import { getAdminAccess } from '@/lib/server/session'
 
-// Lê a sessão do cookie a cada requisição: o painel nunca é gerado como página estática
+// Lê a sessão do cookie a cada requisição: o painel nunca vira página estática
 export const dynamic = 'force-dynamic'
 
-// O proxy já exige login; aqui o banco confirma se a conta é admin
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const access = await getAdminAccess()
   if (access.status === 'anonymous') redirect('/entrar?volta=/admin')

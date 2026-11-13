@@ -1,9 +1,6 @@
 import { roundMoney } from '@/lib/utils'
 import type { Period, Plan } from '@/types/club'
 
-// Planos e períodos do clube (tabelas club_plans e club_periods, editáveis em /admin/clube).
-// As listas abaixo são a reserva para quando o banco não está configurado.
-// Na fase do Mercado Pago, cada combinação plano + período vira um plano de assinatura.
 export const FALLBACK_PLANS: Plan[] = [
   {
     id: 'degustacao',

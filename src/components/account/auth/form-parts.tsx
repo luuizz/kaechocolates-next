@@ -5,7 +5,7 @@ import { CircleNotch, Eye, EyeSlash } from '@phosphor-icons/react'
 import { Field, Input } from '@/components/ui/field'
 import { Button } from '@/components/ui/button'
 
-// Só volta para caminhos internos (evita redirecionar para outro site)
+// Só caminhos internos: evita redirecionar para outro site
 export function safeNext(value: string | null, fallback = '/conta') {
   return value && value.startsWith('/') && !value.startsWith('//') ? value : fallback
 }
@@ -27,7 +27,6 @@ function PasswordInput(props: React.ComponentProps<typeof Input>) {
   )
 }
 
-// Field passa id/aria para o filho direto; aqui o filho é o wrapper do campo de senha
 export function PasswordField({
   label,
   value,

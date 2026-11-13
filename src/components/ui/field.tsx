@@ -1,7 +1,6 @@
 import * as React from 'react'
 import { cn } from '@/lib/utils'
 
-// Campos de formulário no padrão do site (mesmo foco do formulário de contato)
 export const fieldClass =
   'h-12 w-full rounded-xl border bg-background px-4 text-base outline-none transition-[border-color,box-shadow] placeholder:text-muted-foreground focus:border-foreground focus:ring-4 focus:ring-foreground/10 disabled:opacity-60 aria-invalid:border-destructive aria-invalid:ring-destructive/15 md:text-sm'
 
@@ -17,7 +16,6 @@ export function Select({ className, ...props }: React.ComponentProps<'select'>) 
   return <select className={cn(fieldClass, 'pr-8', className)} {...props} />
 }
 
-// Rótulo + campo + ajuda/erro, já ligados por id para leitores de tela
 export function Field({
   label,
   hint,
@@ -56,7 +54,6 @@ export function Field({
   )
 }
 
-// Aviso de erro/sucesso de formulário
 export function FormMessage({ tone = 'error', children }: { tone?: 'error' | 'success'; children: React.ReactNode }) {
   if (!children) return null
   return (

@@ -1,6 +1,3 @@
-// Tudo o que identifica a marca fica aqui (e nas cores de src/app/globals.css).
-// Para publicar como projeto genérico, basta trocar este arquivo, o logo em
-// /public/brand e as fotos de produto.
 export const brand = {
   name: 'Kaê Chocolates',
   shortName: 'Kaê',
@@ -24,10 +21,10 @@ export const brand = {
     whatsapp: '5535984773733',
     email: 'contato@kaechocolates.com.br',
   },
-  // Dados da empresa nas páginas de privacidade e termos. Confirmar com a Kaê.
+  // Confirmar com a Kaê
   legal: {
     company: 'Kaê Chocolates',
-    cnpj: '', // preencher; a linha some das páginas enquanto estiver vazio
+    cnpj: '',
     updatedAt: '2026-11-06',
   },
   commerce: {
@@ -35,7 +32,6 @@ export const brand = {
     freeShippingFrom: 300,
     maxInstallments: 7,
   },
-  // Enquanto o projeto for conceito: sem indexação no Google
   indexable: process.env.NEXT_PUBLIC_INDEXABLE === 'true',
 } as const
 

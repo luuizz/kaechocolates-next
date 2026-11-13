@@ -1,4 +1,3 @@
-// Imita os endereços do Neon num lugar só (localhost:54321), com CORS e cookies como no Neon
 import http from 'node:http'
 
 const routes = [

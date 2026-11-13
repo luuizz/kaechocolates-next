@@ -5,9 +5,7 @@ type Context = { params: Promise<{ path: string[] }> }
 const unavailable = () =>
   Response.json({ error: 'Login indisponível: falta NEON_AUTH_COOKIE_SECRET no projeto da Vercel.' }, { status: 503 })
 
-// O navegador lê o JWT da Data API do cabeçalho set-auth-jwt do get-session. A resposta
-// vinda do cache do cookie não traz esse cabeçalho, então o get-session do navegador
-// sempre consulta o Neon Auth (proxy e layouts no servidor continuam usando o cache).
+// Só a resposta do Neon traz o set-auth-jwt (JWT da Data API); a do cache do cookie não
 async function withoutSessionCache(request: Request, context: Context) {
   const path = (await context.params).path.join('/')
   if (request.method !== 'GET' || path !== 'get-session') return request
@@ -16,7 +14,6 @@ async function withoutSessionCache(request: Request, context: Context) {
   return new Request(url, request)
 }
 
-// Login, cadastro, sessão e token do Neon Auth passando pelo domínio da loja
 async function handle(request: Request, context: Context) {
   const auth = getNeonAuth()
   if (!auth) return unavailable()

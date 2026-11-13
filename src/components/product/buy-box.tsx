@@ -9,7 +9,6 @@ import { formatBRL } from '@/data/products'
 import type { Product } from '@/types/product'
 import { MAX_PER_ITEM } from '@/constants/limits'
 
-// Quantidade + adicionar à sacola na página do produto
 export function BuyBox({ product }: { product: Product }) {
   const { add } = useCart()
   const [quantity, setQuantity] = useState(1)

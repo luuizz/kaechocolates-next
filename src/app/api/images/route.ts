@@ -2,13 +2,6 @@ import { del, put } from '@vercel/blob'
 import { getAdminAccess } from '@/lib/server/session'
 import { IMAGE_FOLDER, IMAGE_MAX_BYTES, IMAGE_TYPES } from '@/constants/limits'
 
-// Upload e remoção das fotos de produto no Vercel Blob (só admin).
-//
-// POST   /api/images  (corpo = o arquivo, Content-Type = tipo da imagem) → { url }
-// DELETE /api/images  (corpo = { "url": "..." })                         → { ok: true }
-//
-// Na Vercel: conecte um Blob Store (público) ao projeto; ele cria BLOB_READ_WRITE_TOKEN.
-
 const json = (status: number, body: unknown) => Response.json(body, { status })
 
 function configError() {
@@ -16,7 +9,6 @@ function configError() {
   return null
 }
 
-// Só apaga arquivos do Blob da loja, dentro da pasta do painel
 function isOwnBlob(url: string) {
   try {
     const { protocol, hostname, pathname } = new URL(url)
@@ -50,7 +42,7 @@ export async function POST(request: Request) {
     cacheControlMaxAge: 60 * 60 * 24 * 365,
   })
 
-  // Confere se a imagem abre sem login (Blob Store criado como privado não serve)
+  // Blob Store privado não serve: a imagem precisa abrir sem login
   const check = await fetch(blob.url, { method: 'HEAD' }).catch(() => null)
   if (!check?.ok) {
     await del(blob.url).catch(() => {})

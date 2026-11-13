@@ -13,11 +13,7 @@ import {
   validWebhookSignature,
 } from '@/lib/server/mercadopago'
 
-// Avisos do Mercado Pago. Não confiamos no corpo do aviso: buscamos o recurso
-// na API deles e gravamos o status que vier de lá.
-// Configure em Suas integrações → Webhooks: https://<site>/api/mercadopago/webhook
-// com os eventos "Order", "Planos e assinaturas" (subscription_preapproval)
-// e "Pagamentos recorrentes" (subscription_authorized_payment).
+// Não confia no corpo do aviso: o status vem da API do Mercado Pago
 const webhookBody = z.object({
   type: z.string().optional(),
   data: z.object({ id: z.coerce.string() }).optional(),
@@ -27,7 +23,7 @@ export async function POST(request: Request) {
   const url = new URL(request.url)
   const body = webhookBody.safeParse(await request.json().catch(() => null)).data
   const dataId = url.searchParams.get('data.id') ?? body?.data?.id
-  if (!dataId) return Response.json({ ok: true }) // aviso de outro tipo: só confirma
+  if (!dataId) return Response.json({ ok: true })
 
   if (!validWebhookSignature(request, dataId)) return Response.json({ error: 'Assinatura inválida.' }, { status: 401 })
 
@@ -58,7 +54,6 @@ export async function POST(request: Request) {
           date: charge.debit_date,
         }),
       ])
-      // A próxima cobrança muda depois de cada pagamento
       const pre = await getPreapproval(charge.preapproval_id)
       const id = pre.external_reference?.match(/^KAE-CLUBE-(\d+)$/)?.[1]
       if (id)
@@ -75,8 +70,7 @@ export async function POST(request: Request) {
     after(() => notifyOrder(mpOrder.external_reference))
     return Response.json({ ok: true })
   } catch (error) {
-    // Recurso que não existe no Mercado Pago (ex.: "Simular notificação" com um id
-    // de exemplo): não é nosso, responde 200 para não ficar recebendo de novo
+    // Id que não existe no Mercado Pago (ex.: "Simular notificação"): 200 para não reenviar
     if (error instanceof MpError && (error.status === 404 || error.status === 400)) {
       console.warn('[webhook] ignorado:', topic || 'order', dataId)
       return Response.json({ ok: true, ignored: true })

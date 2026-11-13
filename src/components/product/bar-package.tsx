@@ -2,9 +2,7 @@ import Image from 'next/image'
 import { cn } from '@/lib/utils'
 import type { Product } from '@/types/product'
 
-// Embalagem da barra desenhada em código (nítida em qualquer tamanho).
-// Quando o produto tem foto, a foto é usada no lugar.
-// Tamanhos em "cqw" (largura do próprio componente): escala junto com o bloco.
+// Tamanhos em cqw: escalam com a largura do próprio componente
 export function BarPackage({
   product,
   className,

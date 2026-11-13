@@ -22,7 +22,6 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = { themeColor: '#ffffff' }
 
-// Layout raiz da loja: catálogo, sacola, cabeçalho e rodapé
 export default async function StoreLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const catalog = await getCatalog()
   return (

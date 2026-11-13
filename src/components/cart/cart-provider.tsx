@@ -32,8 +32,6 @@ const CartContext = createContext<CartContextValue | null>(null)
 
 const kitId = (kit: KitSpec) => `kit:${kit.box}:${[...kit.slugs].sort().join(',')}:${kit.message ?? ''}`
 
-// Lê o que estava salvo, aceitando o formato antigo ({ slug, quantity })
-// Itens que saíram do catálogo somem da sacola na hora de montar a lista (value).
 function restore(raw: unknown): Line[] {
   if (!Array.isArray(raw)) return []
   return raw.flatMap((line): Line[] => {
@@ -45,7 +43,7 @@ function restore(raw: unknown): Line[] {
   })
 }
 
-// Sacola salva no navegador. Preços sempre do catálogo atual (nunca do que ficou salvo).
+// Preço vem sempre do catálogo atual, nunca do que ficou salvo
 export function CartProvider({ children }: { children: ReactNode }) {
   const catalog = useCatalog()
   const { findProduct, findBox, kitTotals } = catalog
@@ -149,7 +147,6 @@ export function useCart() {
   return context
 }
 
-// Formato que o checkout manda para o servidor (sem preços: o banco recalcula)
 export const toCheckoutItems = (items: CartItem[]) =>
   items.map((item) =>
     item.kind === 'product'

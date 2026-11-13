@@ -25,8 +25,7 @@ export async function applyPayment(code: string, snapshot: PaymentSnapshot) {
   await db().query('select public.apply_payment($1, $2::jsonb)', [code, JSON.stringify(snapshot)])
 }
 
-// Grava a resposta de uma cobrança que já saiu no Mercado Pago. Tenta duas vezes;
-// se o banco continuar falhando, o pedido fica pendente e o webhook acerta o status.
+// Se o banco falhar duas vezes, o pedido fica pendente e o webhook acerta o status
 export async function recordCharge(code: string, snapshot: PaymentSnapshot) {
   for (let attempt = 1; attempt <= 2; attempt++) {
     try {
@@ -39,14 +38,12 @@ export async function recordCharge(code: string, snapshot: PaymentSnapshot) {
   return false
 }
 
-// Busca o status atual no Mercado Pago e grava no pedido
 export async function syncWithMercadoPago(code: string, mpOrderId: string) {
   const mpOrder = await getMpOrder(mpOrderId)
   if (mpOrder.external_reference !== code) throw new Error('Pedido do Mercado Pago não confere.')
   await applyPayment(code, paymentSnapshot(mpOrder))
 }
 
-// Tira do retorno o que o cliente não precisa ver
 export function publicOrder(order: Awaited<ReturnType<typeof loadOrder>>) {
   if (!order) return null
   const { user_id: _user, mp_order_id: _mp, ...rest } = order
@@ -55,8 +52,6 @@ export function publicOrder(order: Awaited<ReturnType<typeof loadOrder>>) {
   return rest
 }
 
-// Pedido do cliente (ou de qualquer um, para admin). Enquanto o pagamento estiver
-// pendente, confere o status direto no Mercado Pago (funciona mesmo sem webhook).
 export async function orderForUser(user: Profile, code: string) {
   let order = await loadOrder(code).catch(() => null)
   if (!order || (order.user_id !== user.id && user.role !== 'admin')) return null

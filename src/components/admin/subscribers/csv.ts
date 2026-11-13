@@ -19,7 +19,6 @@ const HEADER = [
 
 const cell = (value: unknown) => `"${String(value ?? '').replace(/"/g, '""')}"`
 
-// Lista de envio do mês (abre no Excel/Sheets: separador ; e BOM para acentos)
 export function shippingListCsv(rows: Subscription[]) {
   const lines = rows.map((sub) => {
     const a = sub.shipping_address

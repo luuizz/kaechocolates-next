@@ -3,7 +3,6 @@ import Link from 'next/link'
 import { ArrowRight } from '@phosphor-icons/react/dist/ssr'
 import { Reveal } from '@/components/motion/reveal'
 
-// "Um Brasil em cada barra": texto da marca (do site atual) com a foto
 export function About() {
   return (
     <section className="bg-secondary">

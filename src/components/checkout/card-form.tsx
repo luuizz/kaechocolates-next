@@ -6,11 +6,9 @@ import { CircleNotch, Plugs } from '@phosphor-icons/react'
 import { brand } from '@/config/brand'
 
 const publicKey = process.env.NEXT_PUBLIC_MERCADOPAGO_PUBLIC_KEY ?? ''
-// Inicializa o SDK uma vez, só no navegador
 if (typeof window !== 'undefined' && publicKey) initMercadoPago(publicKey, { locale: 'pt-BR' })
 
-// Formulário de cartão do próprio Mercado Pago (Card Payment Brick): os dados do
-// cartão vão direto para eles e voltam como um token de uso único.
+// Os dados do cartão vão direto ao Mercado Pago e voltam como token de uso único
 export function CardForm({
   amount,
   email,
@@ -89,7 +87,7 @@ export function CardForm({
             )
           } catch (error) {
             onError(error instanceof Error ? error.message : 'O pagamento não foi aprovado.')
-            throw error // devolve o formulário ao estado de edição
+            throw error
           }
         }}
       />

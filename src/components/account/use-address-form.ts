@@ -5,7 +5,6 @@ import { addressRow, lookupCep, validateAddress } from '@/lib/address'
 import { getNeon, unwrap } from '@/lib/neon'
 import type { AddressDraft } from '@/types/account'
 
-// Estado do formulário de endereço: busca por CEP, validação e gravação
 export function useAddressForm(draft: AddressDraft, onSaved: (id: number) => void) {
   const [form, setForm] = useState<AddressDraft>(draft)
   const [tried, setTried] = useState(false)

@@ -15,7 +15,6 @@ const subjects = [
 const field =
   'h-12 w-full rounded-xl border bg-background px-4 outline-none transition-[border-color,box-shadow] focus:border-foreground focus:ring-4 focus:ring-foreground/10 aria-invalid:border-destructive'
 
-// Sem servidor por enquanto: o formulário monta a mensagem e abre o WhatsApp da Kaê
 export function ContactForm() {
   const [form, setForm] = useState({ name: '', subject: subjects[0], order: '', message: '' })
   const [tried, setTried] = useState(false)

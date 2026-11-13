@@ -18,8 +18,7 @@ const whatsapp = (
 const brl = (value: number) =>
   value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 })
 
-// Texto-base seguindo o Código de Defesa do Consumidor e o Decreto 7.962/2013 (comércio eletrônico).
-// Revisar com a Kaê (prazos, regiões de entrega, política de trocas) antes de usar em produção.
+// Revisar com a Kaê (prazos, regiões de entrega, trocas) antes de usar em produção
 const sections: LegalSection[] = [
   {
     id: 'sobre',

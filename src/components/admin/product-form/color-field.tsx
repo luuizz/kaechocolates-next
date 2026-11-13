@@ -8,7 +8,6 @@ type ColorFieldProps = { label: string; value: string; onChange: (value: string)
 export function ColorField({ label, value, onChange }: ColorFieldProps) {
   const [textValue, setTextValue] = useState(value)
   const [lastValue, setLastValue] = useState(value)
-  // Mantém o campo de texto em sincronia quando a cor muda pelo seletor
   if (value !== lastValue) {
     setLastValue(value)
     setTextValue(value)
