@@ -14,7 +14,6 @@ import { ORDER_STATUS } from '@/constants/orders'
 import { getMyOrder } from '@/actions/orders'
 import { expectOk } from '@/lib/result'
 
-// Página do pedido: Pix para pagar (com atualização automática) ou o andamento
 export function OrderPage({ code }: { code: string }) {
   const auth = useAuth()
   const router = useRouter()
@@ -37,7 +36,6 @@ export function OrderPage({ code }: { code: string }) {
     load().catch((err) => setError(err.message))
   }, [auth.user, load])
 
-  // Enquanto o Pix não é pago, confere a cada 5 segundos
   const pending = order?.status === 'pending_payment'
   useEffect(() => {
     if (!pending) return

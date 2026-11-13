@@ -17,7 +17,6 @@ import { PageLoader } from '@/components/ui/page-loader'
 import { subscribeToClub } from '@/actions/club'
 import { expectOk } from '@/lib/result'
 
-// Assinatura do clube: plano + período, endereço das caixas e cartão
 export function SubscribePage() {
   const auth = useAuth()
   const router = useRouter()

@@ -69,7 +69,6 @@ function Search({ className }: { className?: string }) {
 
 export function SiteHeader() {
   const pathname = usePathname()
-  // O menu do celular fica aberto só na página em que foi aberto
   const [openOn, setOpenOn] = useState<string | null>(null)
   const open = openOn === pathname
   const [scrolled, setScrolled] = useState(false)
@@ -145,7 +144,6 @@ export function SiteHeader() {
           </div>
         </div>
 
-        {/* Barra de categorias */}
         <nav aria-label="Categorias" className="hidden bg-foreground text-background lg:block">
           <ul className="mx-auto flex max-w-7xl items-center justify-center gap-1 px-8">
             {nav.map((item) => (

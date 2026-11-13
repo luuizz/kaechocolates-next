@@ -4,8 +4,6 @@ import { useCallback, useEffect, useState } from 'react'
 import { toast } from 'sonner'
 import { refreshStore, saveRows } from '@/lib/admin-api'
 
-// Estado comum das telas que editam uma lista inteira (caixas, planos, períodos):
-// carrega, guarda o que foi removido, valida e grava tudo de uma vez.
 export function useListEditor<T extends { id: string; sort_order: number }>(
   table: 'kit_boxes' | 'club_plans' | 'club_periods' | 'shipping_zones',
   load: () => Promise<T[]>,

@@ -3,8 +3,6 @@ import { findProduct } from './products'
 import type { Box, KitSpec } from '@/types/kit'
 import type { Product } from '@/types/product'
 
-// Caixas do "Monte seu kit" (tabela kit_boxes, editável em /admin/kits).
-// A lista abaixo é a reserva para quando o banco não está configurado.
 export const FALLBACK_BOXES: Box[] = [
   { id: 'p', name: 'Caixa P', size: 3, discount: 0.05, note: 'Para provar' },
   { id: 'm', name: 'Caixa M', size: 6, discount: 0.08, note: 'A mais pedida' },
@@ -15,8 +13,6 @@ export const findBox = (boxes: Box[], id: string) => boxes.find((box) => box.id 
 
 const round = roundMoney
 
-// Soma as barras do kit e aplica o desconto da caixa (barras que saíram do
-// catálogo são ignoradas; caixa que saiu do catálogo fica sem desconto)
 export function kitTotals(spec: Pick<KitSpec, 'box' | 'slugs'>, catalog: { products: Product[]; boxes: Box[] }) {
   const products = spec.slugs.map((slug) => findProduct(catalog.products, slug)).filter(Boolean) as Product[]
   const subtotal = round(products.reduce((total, product) => total + product.price, 0))
@@ -24,7 +20,6 @@ export function kitTotals(spec: Pick<KitSpec, 'box' | 'slugs'>, catalog: { produ
   return { products, subtotal, discount, total: round(subtotal - discount) }
 }
 
-// Kit pronto com as barras mais premiadas (seleção provisória)
 export const AWARD_KIT: KitSpec = {
   name: 'Kit dos premiados',
   box: 'm',

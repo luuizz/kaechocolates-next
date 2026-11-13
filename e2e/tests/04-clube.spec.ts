@@ -11,8 +11,6 @@ import {
   action,
 } from './helpers'
 
-// O formulário de cartão é do Mercado Pago (carrega de fora); aqui a assinatura é
-// feita pela rota do site com um token de cartão simulado.
 test.describe('Clube', () => {
   test('assinar, ver na conta, regras de pausa e cancelamento', async ({ page }) => {
     await page.goto('/clube')
@@ -61,20 +59,19 @@ test.describe('Clube', () => {
       .toContain('Boas-vindas ao Clube Kaê!')
 
     ;({ result } = await subscribe('familia', 'mensal'))
-    expect(result?.ok).toBe(false) // uma assinatura em andamento por cliente
+    expect(result?.ok).toBe(false)
 
     await page.goto('/conta?aba=clube')
     await expect(page.locator('main')).toContainText('Chocólatra')
     await expect(page.locator('main')).toContainText('Ativa')
     await expect(page.locator('main')).toContainText('final 6351')
-    await expect(page.getByRole('button', { name: 'Pausar' })).toHaveCount(0) // trimestral não pausa
+    await expect(page.getByRole('button', { name: 'Pausar' })).toHaveCount(0)
     expect((await action(page.request, 'manageSubscription', { action: 'pause' })).result?.ok).toBe(false)
 
     page.once('dialog', (dialog) => dialog.accept())
     await page.getByRole('button', { name: 'Cancelar renovação' }).click()
     await expect(page.getByText('Caixas até')).toBeVisible()
 
-    // Mensal: pausar e retomar
     expect((await subscribe('degustacao', 'mensal')).result?.ok).toBe(true)
     await page.reload()
     await page.getByRole('button', { name: 'Pausar' }).click()

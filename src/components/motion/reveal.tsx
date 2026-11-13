@@ -3,7 +3,6 @@
 import { motion, useReducedMotion } from 'motion/react'
 import type { ReactNode } from 'react'
 
-// Entrada suave ao rolar a página (some para quem pede menos movimento)
 export function Reveal({
   children,
   delay = 0,

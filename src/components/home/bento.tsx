@@ -5,7 +5,6 @@ import { formatBRL } from '@/data/products'
 import { cn } from '@/lib/utils'
 import type { Product } from '@/types/product'
 
-// Mosaico do topo (mesma ideia do site atual), com preço e compra no bloco
 function ProductTile({ product, className, priority }: { product?: Product; className?: string; priority?: boolean }) {
   if (!product) return null
   return (
@@ -31,11 +30,9 @@ function ProductTile({ product, className, priority }: { product?: Product; clas
   )
 }
 
-// Os 14 primeiros do catálogo (ordem definida no painel) preenchem o mosaico
 export function Bento({ products }: { products: Product[] }) {
   const list = products.slice(0, 14)
   const [a, b, c, d, e, f, g, h, i, j, k, l, m, n] = list
-  // Barras decorativas dos blocos do clube e do kit (as que têm foto primeiro)
   const pool = [
     ...products.filter((product) => product.image),
     ...products.filter((product) => !product.image && !product.soldOut),
@@ -46,7 +43,6 @@ export function Bento({ products }: { products: Product[] }) {
   return (
     <section aria-label="Destaques" className="mx-auto max-w-7xl px-5 pt-6 md:px-8 md:pt-8">
       <div className="grid auto-rows-[11rem] grid-cols-2 gap-3 sm:auto-rows-[13rem] md:grid-cols-4 md:gap-4 lg:auto-rows-[14.5rem] xl:grid-cols-5">
-        {/* Clube */}
         <Link href="/clube" className="group relative col-span-2 overflow-hidden rounded-2xl bg-mint p-5 sm:p-6 md:p-8">
           <Sparkle
             size={140}
@@ -77,7 +73,6 @@ export function Bento({ products }: { products: Product[] }) {
         <ProductTile product={a} priority />
         <ProductTile product={b} priority className="hidden xl:block" />
 
-        {/* Monte seu kit */}
         <Link
           href="/kits#monte-seu-kit"
           className="group relative row-span-2 overflow-hidden rounded-2xl bg-foreground p-6 text-background"
@@ -121,7 +116,6 @@ export function Bento({ products }: { products: Product[] }) {
         <ProductTile product={m} className="hidden md:block" />
         <ProductTile product={n} className="hidden md:block" />
 
-        {/* Premiações */}
         <Link
           href="/quem-somos#premios"
           className="group relative col-span-2 overflow-hidden rounded-2xl bg-sky p-6 md:p-8 xl:col-span-2"

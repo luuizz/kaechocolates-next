@@ -11,8 +11,7 @@ export const metadata: Metadata = {
 
 const email = <a href={`mailto:${brand.contact.email}`}>{brand.contact.email}</a>
 
-// Texto-base alinhado à LGPD (Lei 13.709/2018), descrevendo o que o site faz hoje.
-// Revisar com a Kaê (e, se possível, com um advogado) antes de usar em produção.
+// Revisar com a Kaê (e, se possível, com um advogado) antes de usar em produção
 const sections: LegalSection[] = [
   {
     id: 'quem-somos',

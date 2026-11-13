@@ -14,7 +14,6 @@ type CatalogValue = Catalog & {
 
 const CatalogContext = createContext<CatalogValue | null>(null)
 
-// Catálogo carregado no servidor (layout) e compartilhado com os componentes do navegador
 export function CatalogProvider({ catalog, children }: { catalog: Catalog; children: React.ReactNode }) {
   const value = useMemo<CatalogValue>(
     () => ({

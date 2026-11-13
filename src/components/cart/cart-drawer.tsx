@@ -10,7 +10,6 @@ import { CartLine } from './cart-line'
 import { FreeShipping } from './free-shipping'
 import { EmptyState } from '@/components/ui/empty-state'
 
-// Sacola lateral: abre ao adicionar um produto ou ao clicar no ícone
 export function CartDrawer() {
   const { items, count, subtotal, open, setOpen } = useCart()
   const close = () => setOpen(false)

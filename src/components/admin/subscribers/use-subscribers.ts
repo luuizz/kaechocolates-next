@@ -9,7 +9,6 @@ import type { Subscription } from '@/types/club'
 export type SubscriberFilter = 'caixa' | 'active' | 'paused' | 'canceled' | 'todos'
 export type SubscriptionAction = 'pause' | 'resume' | 'cancel'
 
-// Assinantes do painel: carga, filtro por status, busca, totais e ações
 export function useSubscribers() {
   const [subs, setSubs] = useState<Subscription[] | null>(null)
   const [now, setNow] = useState(0)

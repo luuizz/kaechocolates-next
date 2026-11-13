@@ -1,7 +1,6 @@
-// Normalização e textos de pedidos (usados na loja, na conta e no painel)
 import type { OrderItemRow, OrderRow, OrderView } from '@/types/order'
 
-// numeric do Postgres chega como texto: converte os campos de valor
+// numeric do Postgres chega como texto
 export function normalizeOrder(row: OrderRow, items: OrderItemRow[]): OrderView {
   const num = (value: unknown) => Number(value ?? 0)
   return {
@@ -14,7 +13,6 @@ export function normalizeOrder(row: OrderRow, items: OrderItemRow[]): OrderView 
   }
 }
 
-// Mensagens do Mercado Pago para cartão recusado (status_detail)
 export function paymentProblem(detail: string | null) {
   const messages: Record<string, string> = {
     rejected_by_issuer: 'O banco emissor recusou o pagamento. Tente outro cartão.',

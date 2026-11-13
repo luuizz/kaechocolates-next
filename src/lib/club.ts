@@ -1,4 +1,3 @@
-// Normalização e regras das assinaturas do clube (conta e painel)
 import type { Subscription } from '@/types/club'
 
 export const normalizeSubscription = (row: Subscription): Subscription => ({
@@ -8,7 +7,7 @@ export const normalizeSubscription = (row: Subscription): Subscription => ({
   subscription_payments: row.subscription_payments?.map((payment) => ({ ...payment, amount: Number(payment.amount) })),
 })
 
-// Recebe caixa neste mês? Ativa, ou cancelada mas com período pago até depois de hoje
+// Cancelada também recebe enquanto o período pago não termina
 export const receivesBox = (sub: Pick<Subscription, 'status' | 'ends_at'>, now: number) =>
   sub.status === 'active' ||
   (sub.status === 'canceled' && Boolean(sub.ends_at) && new Date(sub.ends_at!).getTime() > now)

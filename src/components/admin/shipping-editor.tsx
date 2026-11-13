@@ -15,7 +15,6 @@ import { STATES } from '@/constants/address'
 
 const money = (value: string) => Number(value.replace(/\./g, '').replace(',', '.')) || 0
 
-// Frete por região: preço e prazo por grupo de estados
 export function ShippingEditor() {
   const list = useListEditor<AdminZone>('shipping_zones', listZones)
   const used = new Map<string, string>()

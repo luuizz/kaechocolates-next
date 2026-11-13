@@ -21,10 +21,8 @@ export const ORDER_STATUS: Record<OrderStatus, { label: string; tone: string; te
   canceled: { label: 'Cancelado', tone: 'bg-destructive text-white', text: 'Este pedido foi cancelado.' },
 }
 
-// Linha do tempo mostrada ao cliente (cancelado fica de fora)
 export const ORDER_STEPS: OrderStatus[] = ['pending_payment', 'paid', 'preparing', 'shipped', 'delivered']
 
-// Próximo passo sugerido no painel para cada status
 export const ORDER_NEXT_STATUS: Partial<Record<OrderStatus, OrderStatus>> = {
   paid: 'preparing',
   preparing: 'shipped',

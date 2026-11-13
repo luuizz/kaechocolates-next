@@ -28,21 +28,16 @@ async function ensureProfile() {
   return unwrap(await getNeon().rpc('ensure_profile')) as Profile
 }
 
-// Depois do login a biblioteca guarda a sessão da resposta, com o token interno do
-// Better Auth (não o JWT que a Data API aceita). Buscar a sessão de novo, sem cache,
-// troca esse token pelo JWT. Sem isso, a primeira consulta falha até recarregar.
+// O login devolve o token do Better Auth; buscar a sessão sem cache troca pelo JWT da Data API
 async function refreshSessionJwt() {
   const auth = getNeon().auth
   try {
     await auth.getBetterAuthInstance().getSession({ fetchOptions: { headers: { 'X-Force-Fetch': 'true' } } })
-  } catch {
-    // Segue com a sessão atual; o próximo carregamento busca de novo
-  }
+  } catch {}
   const { data } = await auth.getSession()
   return data.session as Session | null
 }
 
-// Métodos do Better Auth (motor do Neon Auth) que não existem na API estilo Supabase
 async function callBetterAuth(
   method: 'resetPassword' | 'changePassword',
   args: Record<string, unknown>,
@@ -66,8 +61,6 @@ async function callBetterAuth(
   }
 }
 
-// Login com o Neon Auth. A sessão fica no navegador; o perfil (com o papel de
-// admin) vem do banco pela função ensure_profile, chamada a cada login.
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null)
   const [profile, setProfile] = useState<Profile | null>(null)
@@ -87,7 +80,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       })
       .catch(() => active && setLoading(false))
 
-    // Mantém abas sincronizadas (login/logout em outra aba)
     const { data: listener } = auth.onAuthStateChange((_event: string, next: unknown) => {
       if (!active) return
       setSession(next as Session | null)

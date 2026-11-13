@@ -7,7 +7,6 @@ export const alt = `${brand.name} · ${brand.tagline}`
 export const size = OG_SIZE
 export const contentType = 'image/png'
 
-// Imagem padrão ao compartilhar o site: frase da marca e quatro barras com foto
 export default async function Image() {
   const withPhoto = FALLBACK_PRODUCTS.filter((product) => product.image).slice(0, 4)
   const [fonts, logo, ...photos] = await Promise.all([

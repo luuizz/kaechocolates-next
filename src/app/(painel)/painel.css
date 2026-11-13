@@ -1,7 +1,3 @@
-/*
- * Tokens do painel. Só existem no layout raiz do painel; os componentes de
- * src/components/admin usam as classes panel-* (registradas em globals.css).
- */
 :root {
   --panel-canvas: #f4f4f2;
   --panel-surface: #ffffff;

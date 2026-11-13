@@ -1,12 +1,6 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
-/*
- * Tokens da marca. Componentes usam só os nomes semânticos (primary, muted,
- * flavor-*...), então trocar a identidade é mexer aqui e em src/config/brand.ts.
- * Base: branco + preto (identidade atual da Kaê) e as cores das
- * embalagens como paleta de destaque, uma por sabor.
- */
 :root {
   --radius: 1.25rem;
 
@@ -37,7 +31,6 @@
   --input: #dedede;
   --ring: #111111;
 
-  /* Cores das embalagens (uma por sabor) */
   --flavor-yellow: #e8b630;
   --flavor-blue: #008bc0;
   --flavor-pink: #e2708e;
@@ -45,7 +38,6 @@
   --flavor-red: #d01b2e;
   --cocoa: #5a3426;
 
-  /* Cores de apoio (blocos da home, painel e embalagem desenhada) */
   --sky: #a9d8ef;
   --mint: #5fc2b0;
   --ink: #1d1d1b;
@@ -85,7 +77,6 @@
   --color-paper: var(--paper);
   --color-pix: var(--pix);
 
-  /* Painel: valores em src/app/(painel)/painel.css */
   --color-panel-canvas: var(--panel-canvas);
   --color-panel-surface: var(--panel-surface);
   --color-panel-sidebar: var(--panel-sidebar);
@@ -101,20 +92,17 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 8px);
 
-  /* Raios por papel do bloco */
   --radius-tile: 1.5rem;
   --radius-card: 1.75rem;
   --radius-feature: 2rem;
   --radius-hero: 2.5rem;
 
-  /* Tipografia de títulos e rótulos */
   --tracking-display: -0.03em;
   --tracking-heading: -0.02em;
   --tracking-eyebrow: 0.18em;
   --leading-display: 0.95;
   --text-2xs: 0.6875rem;
 
-  /* Proporção da foto/embalagem de barra (311 × 405) */
   --aspect-package: 311 / 405;
 
   --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
@@ -177,7 +165,6 @@
   }
 }
 
-/* Listas e links dentro dos textos legais */
 .legal-body ul {
   list-style: disc;
   padding-left: 1.25rem;

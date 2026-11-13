@@ -2,7 +2,6 @@ import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import type { Product } from '@/types/product'
 
-// Peças comuns das imagens de compartilhamento (Open Graph), geradas com next/og
 export const OG_SIZE = { width: 1200, height: 630 }
 
 const root = process.cwd()
@@ -18,7 +17,6 @@ export async function ogFonts() {
   ]
 }
 
-// Arquivo de /public (lido do disco) ou imagem externa (Blob), como data URL
 export async function ogAsset(src: string) {
   try {
     if (src.startsWith('http')) {
@@ -35,7 +33,6 @@ export async function ogAsset(src: string) {
   }
 }
 
-// Embalagem desenhada (mesma ideia do BarPackage), para barras sem foto
 export function OgPackage({ product, logo, width = 330 }: { product: Product; logo: string | null; width?: number }) {
   const unit = width / 100
   const light = product.labelText === 'light'

@@ -2,7 +2,6 @@ import Link from 'next/link'
 import { BarPackage } from '@/components/product/bar-package'
 import type { Product } from '@/types/product'
 
-// Moldura das telas de login e cadastro: formulário de um lado, barras do outro
 export function AuthShell({
   title,
   description,

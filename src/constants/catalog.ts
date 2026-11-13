@@ -18,5 +18,4 @@ export const SORTS = {
   'menos-cacau': 'Menos cacau',
 } as const
 
-// Tag do cache do catálogo; o painel limpa ao salvar
 export const CATALOG_TAG = 'catalog'

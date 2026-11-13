@@ -29,7 +29,6 @@ export type Product = {
   image?: string
 }
 
-// Linhas como vêm da Data API (snake_case, numeric chega como número ou texto)
 export type ProductRow = {
   id: number
   slug: string
@@ -51,7 +50,7 @@ export type ProductRow = {
   stock?: number | null
 }
 
-// soldOut = marcada como esgotada OU estoque zerado; soldOutFlag = só a marcação manual
+// soldOut = marcada OU estoque zerado; soldOutFlag = só a marcação manual
 export type AdminProduct = Product & {
   id: number
   active: boolean

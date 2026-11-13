@@ -11,12 +11,8 @@ import {
 } from './email-templates'
 import { loadOrder } from './orders'
 
-// E-mails automáticos pelo Resend (resend.com). Sem RESEND_API_KEY, nada é enviado
-// (o site funciona igual). Cada aviso sai uma vez só: a tabela email_log guarda o que foi.
-// RESEND_API_URL só existe para os testes, com um servidor simulado.
 const API = `${process.env.RESEND_API_URL ?? 'https://api.resend.com'}/emails`
 const FROM = process.env.EMAIL_FROM ?? `${brand.name} <pedidos@${new URL(brand.url).hostname}>`
-// Para onde vão as respostas do cliente. O remetente não precisa ter caixa de entrada.
 const REPLY_TO = process.env.EMAIL_REPLY_TO ?? brand.contact.email
 
 type Kind = 'order_received' | 'order_paid' | 'order_shipped' | 'club_welcome'
@@ -25,7 +21,7 @@ async function send(kind: Kind, ref: string, to: string, email: Email) {
   const key = process.env.RESEND_API_KEY
   if (!key || !to) return
 
-  // Reserva o envio; se outra chamada já reservou (webhook e página ao mesmo tempo), para aqui
+  // Webhook e página do pedido podem chamar ao mesmo tempo: só um envia
   const { rowCount } = await db().query(
     'insert into public.email_log (kind, ref, recipient) values ($1, $2, $3) on conflict (kind, ref) do nothing',
     [kind, ref, to],
@@ -51,7 +47,6 @@ async function send(kind: Kind, ref: string, to: string, email: Email) {
     })
     if (!response.ok) throw new Error(`Resend ${response.status}: ${await response.text()}`)
   } catch (error) {
-    // Libera a reserva para tentar de novo no próximo aviso
     await db()
       .query('delete from public.email_log where kind = $1 and ref = $2', [kind, ref])
       .catch(() => {})
@@ -59,8 +54,6 @@ async function send(kind: Kind, ref: string, to: string, email: Email) {
   }
 }
 
-// Manda os avisos que o pedido ainda não recebeu, conforme o status atual.
-// Chamado depois de cada mudança de pagamento e quando o painel marca como enviado.
 export async function notifyOrder(code: string) {
   try {
     const order = await loadOrder(code)

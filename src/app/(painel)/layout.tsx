@@ -13,7 +13,6 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = { themeColor: '#111111' }
 
-// Layout raiz do painel: sem catálogo, sacola nem cabeçalho da loja
 export default function PanelLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <RootDocument area="painel" className="bg-panel-canvas">

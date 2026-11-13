@@ -15,7 +15,6 @@ export function StatusBadge({ status, className }: { status: OrderStatus; classN
   )
 }
 
-// Linha do tempo do pedido
 export function OrderProgress({ status }: { status: OrderStatus }) {
   if (status === 'canceled') return null
   const current = ORDER_STEPS.indexOf(status)

@@ -2,7 +2,6 @@ import { Truck } from '@phosphor-icons/react/dist/ssr'
 import { brand } from '@/config/brand'
 import { formatBRL } from '@/data/products'
 
-// Barra de progresso até o frete grátis
 export function FreeShipping({ subtotal }: { subtotal: number }) {
   const goal = brand.commerce.freeShippingFrom
   const missing = Math.max(0, goal - subtotal)

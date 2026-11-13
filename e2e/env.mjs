@@ -1,4 +1,3 @@
-// Variáveis do site durante os testes (todas apontam para o ambiente simulado; nada é secreto)
 export const e2eEnv = {
   NEXT_PUBLIC_NEON_AUTH_URL: 'http://localhost:54321/neondb/auth',
   NEXT_PUBLIC_NEON_DATA_API_URL: 'http://localhost:54321/neondb/rest/v1',

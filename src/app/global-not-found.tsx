@@ -9,7 +9,6 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 }
 
-// 404 de URLs que não existem em nenhum dos layouts raiz (loja e painel)
 export default function GlobalNotFound() {
   return (
     <RootDocument area="loja">

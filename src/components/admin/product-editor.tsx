@@ -11,7 +11,6 @@ import { PhotoPanel } from './product-form/photo-panel'
 import { PreviewPanel, StorePanel } from './product-form/side-panels'
 import { useProductEditor } from './product-form/use-product-editor'
 
-// Formulário de barra com prévia ao vivo da embalagem e do card da vitrine
 export function ProductEditor({ id }: { id: number | null }) {
   const { draft, original, dirty, saving, uploading, set, editSlug, error, uploadPhoto, save, remove } =
     useProductEditor(id)

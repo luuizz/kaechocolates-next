@@ -12,7 +12,6 @@ const items = [
   { icon: ShieldCheck, title: 'Compra segura', text: 'Pagamento pelo Mercado Pago' },
 ]
 
-// Faixa de benefícios da loja
 export function Benefits() {
   return (
     <section aria-label="Benefícios" className="mx-auto max-w-7xl px-5 pt-6 md:px-8">

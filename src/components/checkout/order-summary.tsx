@@ -9,7 +9,6 @@ import type { Quote } from '@/types/shipping'
 
 type OrderSummaryProps = { items: CartItem[]; quote: Quote | null; quoting: boolean; problems: string[] }
 
-// Resumo lateral do checkout com os valores calculados pelo servidor
 export function OrderSummary({ items, quote, quoting, problems }: OrderSummaryProps) {
   return (
     <aside className="lg:sticky lg:top-36 lg:self-start">

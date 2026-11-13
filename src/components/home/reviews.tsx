@@ -1,7 +1,6 @@
 import { Star } from '@phosphor-icons/react/dist/ssr'
 
-// Avaliações reais de clientes (ex.: importadas do Reclame Aqui ou do pós-compra).
-// A seção só aparece quando houver avaliações cadastradas: nada de depoimento inventado.
+// Só aparece com avaliações reais cadastradas
 export type Review = { author: string; date: string; rating: number; text: string; source?: string }
 
 export function Reviews({ reviews }: { reviews: Review[] }) {

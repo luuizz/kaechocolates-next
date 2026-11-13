@@ -16,7 +16,6 @@ const loaderVariants = cva('grid place-items-center', {
 
 type PageLoaderProps = VariantProps<typeof loaderVariants> & { className?: string }
 
-// Indicador de carregamento centralizado na área que ainda vai aparecer
 export function PageLoader({ height, className }: PageLoaderProps) {
   return (
     <div className={cn(loaderVariants({ height }), className)}>

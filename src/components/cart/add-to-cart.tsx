@@ -3,7 +3,6 @@
 import { Plus } from '@phosphor-icons/react'
 import { useCart } from './cart-provider'
 
-// Botão redondo "+" dos cartões da vitrine
 export function AddToCartIcon({ slug, name, disabled }: { slug: string; name: string; disabled?: boolean }) {
   const { add } = useCart()
   return (

@@ -2,12 +2,10 @@ import { brand } from '@/config/brand'
 import type { Product } from '@/types/product'
 import { LINES } from '@/constants/catalog'
 
-// Dados estruturados (schema.org) para o Google entender loja, produtos e perguntas
-
 export const absolute = (path: string) => (path.startsWith('http') ? path : `${brand.url}${path}`)
 
 export function JsonLd({ data }: { data: Record<string, unknown> | Record<string, unknown>[] }) {
-  // "<" escapado para o JSON nunca fechar a tag <script> antes da hora
+  // "<" escapado para o JSON não fechar a tag <script>
   return (
     <script
       type="application/ld+json"

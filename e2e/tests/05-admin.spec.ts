@@ -55,7 +55,6 @@ test.describe('Painel', () => {
     await visitor.goto('/produtos/jabuticaba-50')
     await expect(visitor.locator('h1')).toContainText('Jabuticaba')
 
-    // Volta ao estado inicial para os outros testes
     await sql(
       "update public.products set price = 32.70, compare_at_price = 35.00, sold_out = false where slug in ('pao-de-mel-64', 'pingado-55')",
     )
@@ -103,7 +102,6 @@ test.describe('Painel', () => {
   })
 
   test('pedidos: separar, enviar com rastreio; assinantes e lista de envio', async ({ page, browser }) => {
-    // Um cliente compra com cartão
     const customer = await browser.newPage()
     await customer.route(/viacep\.com\.br/, (route) => route.abort())
     const email = uniqueEmail('cliente')
