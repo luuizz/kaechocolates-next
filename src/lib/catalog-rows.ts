@@ -19,4 +19,7 @@ export const productFromRow = (row: ProductRow): Product => ({
   soldOut: row.sold_out || row.stock === 0,
   stock: row.stock ?? undefined,
   image: row.image ?? undefined,
+  packageNote: row.package_note ?? undefined,
+  highSugar: row.high_sugar ?? true,
+  highFat: row.high_fat ?? true,
 })

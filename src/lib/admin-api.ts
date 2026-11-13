@@ -58,6 +58,9 @@ const toRow = (product: ProductInput) => ({
   sort_order: product.sortOrder,
   stock: product.stock ?? null,
   active: product.active,
+  package_note: product.packageNote?.trim() || null,
+  high_sugar: product.highSugar ?? true,
+  high_fat: product.highFat ?? true,
 })
 
 export async function saveProduct(product: ProductInput) {

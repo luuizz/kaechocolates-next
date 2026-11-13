@@ -14,8 +14,9 @@ type InfoPanelProps = PanelProps & { onSlugChange: (value: string) => void }
 type TextEvent = React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
 
 export function InfoPanel({ draft, set, error, onSlugChange }: InfoPanelProps) {
-  const text = (key: 'name' | 'line' | 'badge' | 'short' | 'description' | 'ingredients') => (event: TextEvent) =>
-    set(key, event.target.value as Draft[typeof key])
+  const text =
+    (key: 'name' | 'line' | 'badge' | 'short' | 'description' | 'ingredients' | 'packageNote') => (event: TextEvent) =>
+      set(key, event.target.value as Draft[typeof key])
   return (
     <Panel>
       <h2 className="font-display text-lg font-bold">Informações</h2>
@@ -60,6 +61,13 @@ export function InfoPanel({ draft, set, error, onSlugChange }: InfoPanelProps) {
         error={error('short')}
       >
         <Input value={draft.short} onChange={text('short')} maxLength={140} />
+      </Field>
+      <Field
+        className="mt-4"
+        label="Descrição da embalagem"
+        hint='Segunda linha do painel, abaixo de "Chocolate 64%". Ex.: "com café". Vazio = só a primeira linha.'
+      >
+        <Input value={draft.packageNote} onChange={text('packageNote')} maxLength={40} />
       </Field>
       <Field
         className="mt-4"
