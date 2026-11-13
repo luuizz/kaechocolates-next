@@ -1,11 +1,6 @@
 import type { Product } from '@/types/product'
 import { LINES } from '@/constants/catalog'
 
-// Regras do catálogo de barras.
-// O catálogo de verdade vem do banco (tabela products, editável em /admin).
-// A lista abaixo é a reserva: usada quando o site roda sem banco configurado
-// (CI, primeiro `yarn dev`) ou se a Data API estiver fora do ar.
-
 const base = { price: 32.7, compareAt: 35, weight: '70 g' }
 
 export const FALLBACK_PRODUCTS: Product[] = [
@@ -174,7 +169,6 @@ export const installment = (value: number, times = 7) => formatBRL(value / times
 
 const normalize = (text: string) => text.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
 
-// Filtro do catálogo: linha, busca por texto e ordenação (esgotados por último)
 export function filterProducts(
   products: Product[],
   { line, search, sort = 'relevancia' }: { line?: string; search?: string; sort?: string },

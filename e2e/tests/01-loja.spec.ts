@@ -51,7 +51,7 @@ test.describe('Loja', () => {
     await page.getByRole('button', { name: 'Adicionar kit à sacola' }).click()
     const drawer = await text(page, '[role=dialog]')
     expect(drawer).toContain('Feliz aniversário!')
-    expect(drawer).toContain('93,19') // 98,10 com 5% de desconto
+    expect(drawer).toContain('93,19')
   })
 
   test('celular sem rolagem lateral', async ({ browser }) => {
@@ -74,7 +74,6 @@ test.describe('Loja', () => {
     expect(JSON.parse(ld!)[0]).toMatchObject({ '@type': 'Product', offers: { priceCurrency: 'BRL' } })
     await expect(page.locator('link[rel=canonical]')).toHaveAttribute('href', /\/produtos\/cupuacu-64$/)
 
-    // O endereço da imagem tem sufixo gerado pelo Next (rota dentro de um route group): vem da meta tag
     const ogUrl = await page.locator('meta[property="og:image"]').first().getAttribute('content')
     expect(ogUrl).toContain('/produtos/cupuacu-64/opengraph-image')
     const og = await request.get(new URL(ogUrl!).pathname)

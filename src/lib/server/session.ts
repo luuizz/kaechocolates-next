@@ -1,9 +1,8 @@
 import 'server-only'
-import { db } from './db'
+import { db, DatabaseConfigError } from './db'
 import { getNeonAuth } from './neon-auth'
 import type { Profile } from '@/types/account'
 
-// Usuário da sessão atual (cookie do Neon Auth) ou null
 export async function getSessionUser() {
   const auth = getNeonAuth()
   if (!auth) return null
@@ -12,7 +11,6 @@ export async function getSessionUser() {
   return user?.id ? { id: user.id, email: user.email ?? null } : null
 }
 
-// Perfil da loja (nome, telefone, papel). O ensure_profile cria a linha no primeiro login.
 export async function getProfile(userId: string): Promise<Profile | null> {
   const { rows } = await db().query<Profile>(
     'select id, email, full_name, phone, role from public.profiles where id = $1',
@@ -21,19 +19,25 @@ export async function getProfile(userId: string): Promise<Profile | null> {
   return rows[0] ?? null
 }
 
-// Perfil de quem está logado (usado pelas Server Actions da loja)
 export async function getCurrentProfile() {
   const user = await getSessionUser()
   return user ? getProfile(user.id) : null
 }
 
 export type SessionAccess =
-  { status: 'anonymous' } | { status: 'forbidden'; profile: Profile | null } | { status: 'admin'; profile: Profile }
+  | { status: 'anonymous' }
+  | { status: 'unavailable'; reason: string }
+  | { status: 'forbidden'; profile: Profile | null }
+  | { status: 'admin'; profile: Profile }
 
-// Quem pode abrir o painel: só perfis com papel admin
 export async function getAdminAccess(): Promise<SessionAccess> {
   const user = await getSessionUser()
   if (!user) return { status: 'anonymous' }
-  const profile = await getProfile(user.id)
-  return profile?.role === 'admin' ? { status: 'admin', profile } : { status: 'forbidden', profile }
+  try {
+    const profile = await getProfile(user.id)
+    return profile?.role === 'admin' ? { status: 'admin', profile } : { status: 'forbidden', profile }
+  } catch (error) {
+    if (error instanceof DatabaseConfigError) return { status: 'unavailable', reason: error.message }
+    throw error
+  }
 }

@@ -13,7 +13,6 @@ import { cn } from '@/lib/utils'
 import { AdminHeader, Panel } from './admin-page'
 import type { AdminOrderRow, OrderStatus } from '@/types/order'
 
-// Abas na ordem do trabalho do dia: o que precisa de ação primeiro
 const FILTERS: Array<{ value: OrderStatus | 'todos' | 'abertos'; label: string }> = [
   { value: 'abertos', label: 'Para enviar' },
   { value: 'pending_payment', label: 'Aguardando pagamento' },

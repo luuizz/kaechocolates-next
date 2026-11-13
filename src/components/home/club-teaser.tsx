@@ -11,7 +11,6 @@ const perks = [
   { icon: CalendarCheck, title: 'Sem fidelidade', text: 'Pause, troque de plano ou cancele quando quiser, pelo site.' },
 ]
 
-// Chamada para o clube de assinatura
 export function ClubTeaser({ products }: { products: Product[] }) {
   const bars = products.filter((product) => !product.soldOut).slice(1, 4)
   return (

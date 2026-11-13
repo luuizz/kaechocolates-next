@@ -2,7 +2,6 @@
 
 import { cn } from '@/lib/utils'
 
-// Interruptor liga/desliga acessível (role=switch)
 export function Switch({
   checked,
   onChange,

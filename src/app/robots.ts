@@ -1,7 +1,6 @@
 import type { MetadataRoute } from 'next'
 import { brand } from '@/config/brand'
 
-// Enquanto for projeto conceito (NEXT_PUBLIC_INDEXABLE != true), nada de indexação
 export default function robots(): MetadataRoute.Robots {
   return brand.indexable
     ? {

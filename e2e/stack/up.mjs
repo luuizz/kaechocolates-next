@@ -1,13 +1,3 @@
-// Sobe um "Neon de mentira" para os testes de ponta a ponta, sem nenhuma conta externa:
-//
-//   Postgres (o do CI ou o seu)  ← banco kae_e2e, recriado do zero a cada execução
-//   Auth   :4000  Better Auth (o motor do Neon Auth) + JWT + token anônimo
-//   PostgREST :3001  (a Data API do Neon é um PostgREST)
-//   Proxy  :54321  imita os endereços do Neon: /neondb/auth e /neondb/rest/v1
-//   Mercado Pago simulado :4300  (API de Orders e assinaturas)
-//
-// Uso: E2E_DATABASE_URL=postgres://postgres:postgres@localhost:5432/postgres node e2e/stack/up.mjs
-// Fica rodando até receber Ctrl+C. Pronto quando http://localhost:54321/health responde 200.
 import { spawn } from 'node:child_process'
 import { mkdtempSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
@@ -34,7 +24,6 @@ async function resetDatabase() {
   await admin.query(`create database ${dbName}`)
   await admin.end()
 
-  // O que o Neon cria ao ativar Auth + Data API: papéis, auth.user_id() e permissões padrão
   const db = new pg.Client({ connectionString: dbUrl.toString() })
   await db.connect()
   await db.query(`
@@ -87,7 +76,6 @@ async function main() {
 
   await run('node', ['scripts/migrate.mjs'], { DATABASE_URL: dbUrl.toString() })
 
-  // PostgREST valida os JWTs com as chaves públicas do auth
   const jwks = await auth.jwks()
   const pgrstUrl = new URL(dbUrl)
   pgrstUrl.username = 'e2e_authenticator'

@@ -30,7 +30,6 @@ export async function applyPreapproval(
   return rows[0]
 }
 
-// Confere a assinatura no Mercado Pago e grava (usado quando o status ainda é pendente)
 export async function syncSubscription(sub: SubscriptionRow) {
   if (!sub.mp_preapproval_id) return
   const pre = await getPreapproval(sub.mp_preapproval_id)

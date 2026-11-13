@@ -5,7 +5,6 @@ import { BoxPicker } from './builder/box-picker'
 import { KitSummary } from './builder/kit-summary'
 import { useKitBuilder } from './builder/use-kit-builder'
 
-// Montador de kit: escolhe a caixa, as barras e o recado do cartão
 export function KitBuilder() {
   const kit = useKitBuilder()
   return (

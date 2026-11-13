@@ -3,8 +3,7 @@ import { brand } from '@/config/brand'
 import { formatBRL } from '@/data/products'
 import type { OrderView } from '@/types/order'
 
-// Modelos dos e-mails automáticos. HTML em tabelas e estilos inline, porque é o que os
-// programas de e-mail (Gmail, Outlook, Apple Mail) entendem; sempre com versão em texto.
+// Tabelas e estilos inline: é o que Gmail, Outlook e Apple Mail entendem
 
 export type Email = { subject: string; html: string; text: string }
 
@@ -99,7 +98,6 @@ const itemsText = (order: OrderView) =>
     `Total: ${formatBRL(order.total)}`,
   ].join('\n')
 
-// Pix gerado, aguardando pagamento
 export function orderReceived(order: OrderView): Email {
   const link = url(`/pedido/${order.code}`)
   return {

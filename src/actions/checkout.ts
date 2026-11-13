@@ -6,14 +6,12 @@ import { getCurrentProfile } from '@/lib/server/session'
 import { CHECKOUT_ERRORS, checkoutSchema, quoteSchema } from '@/lib/validation/checkout'
 import { parseWith } from '@/lib/validation/parse'
 
-// Prévia com preços, descontos e frete calculados pelo banco (sem login)
 export async function getQuote(input: unknown) {
   const parsed = quoteSchema.safeParse(input)
   if (!parsed.success) return fail('Sacola inválida.')
   return quoteOrder(parsed.data.items, parsed.data.state)
 }
 
-// Fecha a compra do cliente logado (Pix ou cartão)
 export async function placeOrder(input: unknown) {
   const user = await getCurrentProfile()
   if (!user) return fail('Entre na sua conta para finalizar a compra.')

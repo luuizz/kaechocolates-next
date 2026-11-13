@@ -1,5 +1,3 @@
-// Neon Auth simulado: o Neon Auth é um Better Auth gerenciado, com o plugin de JWT
-// (o token que a Data API aceita) e um endpoint de token anônimo para visitantes.
 import http from 'node:http'
 import pg from 'pg'
 import { betterAuth } from 'better-auth'
@@ -16,7 +14,7 @@ export async function startAuth(databaseUrl) {
     secret: 'e2e-secret-only-for-local-tests-0123456789',
     trustedOrigins: ['http://localhost:3100', 'http://127.0.0.1:3100'],
     emailAndPassword: { enabled: true, sendResetPassword: async () => {} },
-    // Mesmo nome de cookie do Neon Auth (__Secure-neon-auth.*): o proxy do site só repassa esses
+    // Mesmo prefixo de cookie do Neon Auth: o proxy do site só repassa esses
     advanced: {
       database: { generateId: 'uuid' },
       cookiePrefix: 'neon-auth',
@@ -47,7 +45,6 @@ export async function startAuth(databaseUrl) {
     .listen(4000, '127.0.0.1')
 
   return {
-    // Gera a chave (se ainda não existe) e devolve as chaves públicas
     async jwks() {
       await auth.api.signJWT({ body: { payload: { role: 'anonymous' } } })
       const response = await fetch('http://127.0.0.1:4000/neondb/auth/jwks', { headers: { host: '127.0.0.1:4000' } })

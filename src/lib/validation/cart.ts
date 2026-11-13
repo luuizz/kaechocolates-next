@@ -2,8 +2,7 @@ import { z } from 'zod'
 import { CART_MAX_LINES, KIT_MAX_BARS, KIT_MESSAGE_MAX, KIT_NAME_MAX, MAX_PER_ITEM } from '@/constants/limits'
 import { SLUG_PATTERN } from '@/constants/patterns'
 
-// Formato da sacola que chega do navegador. Os preços NÃO vêm daqui:
-// o banco recalcula tudo em quote_order/place_order.
+// Preços não vêm daqui: o banco recalcula em quote_order/place_order
 const slug = z.string().regex(SLUG_PATTERN)
 const quantity = z
   .unknown()

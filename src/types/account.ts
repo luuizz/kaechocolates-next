@@ -31,7 +31,6 @@ export type AddressDraft = Omit<Address, 'id' | 'is_default' | 'label' | 'comple
   is_default: boolean
 }
 
-// Endereço gravado no pedido e na assinatura (cópia do momento da compra)
 export type ShippingAddress = Pick<
   Address,
   'recipient' | 'cep' | 'street' | 'number' | 'complement' | 'district' | 'city' | 'state'

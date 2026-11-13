@@ -1,8 +1,7 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import { getNeonAuth } from '@/lib/server/neon-auth'
 
-// Áreas que exigem login: o proxy confere a sessão (e a renova) antes da página.
-// O papel de admin é conferido no layout do painel, que consulta o banco.
+// O papel de admin é conferido no layout do painel, que consulta o banco
 export async function proxy(request: NextRequest) {
   const auth = getNeonAuth()
   if (!auth) return NextResponse.next()

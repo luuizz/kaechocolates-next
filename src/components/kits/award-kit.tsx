@@ -8,14 +8,12 @@ import { AWARD_KIT } from '@/data/kits'
 import { useCatalog } from '@/components/catalog/catalog-provider'
 import { formatBRL, installment } from '@/data/products'
 
-// Kit pronto com as barras premiadas
 export function AwardKit() {
   const { addKit } = useCart()
   const catalog = useCatalog()
   const { products: all, subtotal, total } = catalog.kitTotals(AWARD_KIT)
   const products = all.filter((product) => !product.soldOut)
   const box = catalog.findBox(AWARD_KIT.box)
-  // Some barra do kit saiu do catálogo ou a caixa foi desativada: não mostra o kit pronto
   if (!box || products.length !== AWARD_KIT.slugs.length) return null
 
   return (

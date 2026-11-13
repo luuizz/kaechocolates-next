@@ -14,7 +14,6 @@ const filters: Array<{ value: Line | 'todos'; label: string }> = [
   ...Object.entries(LINES).map(([value, label]) => ({ value: value as Line, label })),
 ]
 
-// Vitrine com filtro rápido por linha
 export function CatalogSection() {
   const { products } = useCatalog()
   const [line, setLine] = useState<Line | 'todos'>('todos')

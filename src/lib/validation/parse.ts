@@ -2,8 +2,7 @@ import type { z } from 'zod'
 
 export type Parsed<T> = { ok: true; data: T } | { ok: false; error: string }
 
-// Valida e devolve a mensagem do primeiro campo inválido, na ordem de `messages`
-// (a ordem define qual erro o cliente vê quando há mais de um).
+// A ordem de `messages` define qual erro aparece quando há mais de um
 export function parseWith<S extends z.ZodType>(
   schema: S,
   input: unknown,

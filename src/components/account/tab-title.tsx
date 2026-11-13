@@ -1,6 +1,5 @@
 type TabTitleProps = { children: React.ReactNode; description?: string }
 
-// Título da aba ativa; o id é referenciado pela <section> da página da conta
 export function TabTitle({ children, description }: TabTitleProps) {
   return (
     <header className="mb-6">

@@ -11,7 +11,6 @@ import { AdminNav, AdminUser } from './admin-nav'
 
 type AdminShellProps = { name: string; email: string; children: React.ReactNode }
 
-// Moldura do painel (o acesso de admin já foi conferido no servidor)
 export function AdminShell({ name, email, children }: AdminShellProps) {
   const auth = useAuth()
   const router = useRouter()

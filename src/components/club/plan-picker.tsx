@@ -9,7 +9,6 @@ import { useCatalog } from '@/components/catalog/catalog-provider'
 import { formatBRL } from '@/data/products'
 import { cn } from '@/lib/utils'
 
-// Escolha de plano e período, com o preço por mês e o total do período
 export function PlanPicker() {
   const { plans, periods } = useCatalog()
   const [periodId, setPeriod] = useState(periods[0]?.id ?? '')

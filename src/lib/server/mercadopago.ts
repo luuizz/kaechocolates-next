@@ -1,9 +1,6 @@
 import 'server-only'
 import { createHmac, randomUUID, timingSafeEqual } from 'node:crypto'
 
-// Integração com a API de Orders do Mercado Pago (Checkout Transparente).
-// Docs: mercadopago.com.br/developers/pt/docs/checkout-api-orders
-// MERCADOPAGO_API_URL só existe para testes locais com um servidor simulado
 const API = `${process.env.MERCADOPAGO_API_URL ?? 'https://api.mercadopago.com'}/v1/orders`
 
 export type MpPayment = {
@@ -123,7 +120,6 @@ export async function createMpOrder({
 
 export const getMpOrder = (id: string) => call<MpOrder>(`${API}/${encodeURIComponent(id)}`, { method: 'GET' })
 
-// Resumo do pagamento no formato que a função apply_payment do banco espera
 export function paymentSnapshot(order: MpOrder) {
   const payment = order.transactions?.payments?.[0]
   return {
@@ -138,7 +134,6 @@ export function paymentSnapshot(order: MpOrder) {
   }
 }
 
-// Confere a assinatura do webhook (cabeçalho x-signature: "ts=...,v1=...")
 // Manifesto: id:<data.id>;request-id:<x-request-id>;ts:<ts>;
 export function validWebhookSignature(request: Request, dataId: string) {
   const secret = process.env.MERCADOPAGO_WEBHOOK_SECRET
@@ -156,14 +151,11 @@ export function validWebhookSignature(request: Request, dataId: string) {
   }
 }
 
-// ---- Assinaturas (preapproval) ---------------------------------------------
-// Assinatura sem plano associado, com cartão autorizado na hora.
-// Docs: mercadopago.com.br/developers/pt/docs/subscriptions
 const BASE = process.env.MERCADOPAGO_API_URL ?? 'https://api.mercadopago.com'
 
 export type MpPreapproval = {
   id: string
-  status: string // pending | authorized | paused | cancelled
+  status: string
   external_reference?: string
   next_payment_date?: string
   card_id?: string

@@ -12,7 +12,6 @@ test.describe('Conta', () => {
     await expect(page.locator('header.sticky')).toContainText('Olá, Ana')
     expect(await sql('select 1 from public.profiles where email = $1', [email])).toHaveLength(1)
 
-    // Endereço
     await page.goto('/conta?aba=enderecos')
     await page.getByRole('button', { name: 'Novo endereço' }).click()
     await page.getByRole('button', { name: 'Salvar endereço' }).click()
@@ -21,7 +20,6 @@ test.describe('Conta', () => {
     await expect(page.locator('main')).toContainText('Praça Marechal Deodoro, 130')
     await expect(page.getByText('Padrão')).toBeVisible()
 
-    // Dados
     await page.goto('/conta?aba=dados')
     await page.locator('input[autocomplete="tel-national"]').fill('35984773733')
     await page.getByRole('button', { name: 'Salvar' }).click()
@@ -30,11 +28,9 @@ test.describe('Conta', () => {
       '35984773733',
     )
 
-    // Cliente não entra no painel
     await page.goto('/admin')
     await expect(page.getByText('Acesso restrito')).toBeVisible()
 
-    // Sair e entrar
     await page.goto('/conta')
     await page.getByRole('button', { name: 'Sair' }).click()
     await page.waitForURL('/')

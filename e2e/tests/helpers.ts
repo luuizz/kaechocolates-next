@@ -3,7 +3,6 @@ import { test as base, expect, type APIRequestContext, type Page } from '@playwr
 import pg from 'pg'
 import { e2eEnv } from '../env.mjs'
 
-// Página com o ViaCEP bloqueado: o endereço é preenchido à mão e o teste não depende de rede
 export const test = base.extend({
   page: async ({ page }, provide) => {
     await page.route(/viacep\.com\.br/, (route) => route.abort())
@@ -17,7 +16,6 @@ export async function sql<T = Record<string, unknown>>(query: string, params: un
   return (await pool.query(query, params)).rows as T[]
 }
 
-// Primeira linha da consulta; falha o teste se não vier nenhuma
 export async function sqlOne<T = Record<string, unknown>>(query: string, params: unknown[] = []) {
   const [row] = await sql<T>(query, params)
   if (!row) throw new Error(`Consulta sem resultado: ${query}`)
@@ -26,7 +24,6 @@ export async function sqlOne<T = Record<string, unknown>>(query: string, params:
 
 export const uniqueEmail = (name: string) => `${name}-${Date.now()}-${Math.random().toString(36).slice(2, 6)}@kae.test`
 
-// Texto com espaço comum no lugar do espaço fixo do Intl (R$ 32,70)
 export const text = async (page: Page, selector = 'main') =>
   (await page.locator(selector).first().innerText()).replace(/ /g, ' ')
 
@@ -66,9 +63,7 @@ export async function fillAddress(
   await page.getByRole('button', { name: 'Salvar endereço' }).click()
 }
 
-// Chama uma Server Action como o navegador faz: POST na página onde ela está
-// registrada, com o cabeçalho Next-Action e os cookies da sessão de `request`.
-// O id vem do manifesto do build. Devolve o status HTTP e o resultado da action.
+// Chama a action como o navegador: POST na página registrada, cabeçalho Next-Action, cookies de `request`
 type ActionEntry = { workers: Record<string, unknown>; exportedName: string }
 type ActionCall<T> = { status: number; location: string | null; result: T | null }
 
@@ -80,7 +75,6 @@ function findAction(name: string) {
   const found = Object.entries(manifest).find(([, entry]) => entry.exportedName === name)
   if (!found) throw new Error(`Server Action não encontrada: ${name}`)
   const [id, entry] = found
-  // 'app/(loja)/checkout/page' → '/checkout' (sem grupos; ignora páginas com segmento dinâmico)
   const route = Object.keys(entry.workers)
     .map(
       (worker) =>
@@ -106,7 +100,6 @@ function decodeActionResponse(body: string) {
   return ref && rows.has(ref) ? JSON.parse(rows.get(ref)!) : null
 }
 
-// Campos que os testes leem dos resultados (pedido e assinatura)
 export type ActionOutcome = {
   ok: boolean
   error?: string
@@ -132,7 +125,6 @@ export async function action<T = ActionOutcome>(
   }
 }
 
-// O que o site mandou para o Mercado Pago simulado
 type MercadoPagoRequest = {
   type: 'order' | 'preapproval' | 'email'
   body: {
@@ -150,7 +142,6 @@ export async function mercadoPagoLog() {
   return (await (await fetch('http://127.0.0.1:4300/__log')).json()) as MercadoPagoRequest[]
 }
 
-// E-mails que o site mandou (Resend simulado)
 export async function emailsTo(address: string) {
   return (await mercadoPagoLog())
     .filter((entry) => entry.type === 'email' && entry.body.to?.includes(address))

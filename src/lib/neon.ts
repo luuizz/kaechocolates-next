@@ -4,11 +4,6 @@ import { createClient } from '@neon/neon-js/supabase'
 import { PASSWORD_MIN } from '@/constants/limits'
 import { neonEnv } from '@/lib/env'
 
-// Cliente do Neon no navegador: `neon.auth` (login, no estilo Supabase) e
-// `neon.from()` / `neon.rpc()` (Data API, com o token do usuário logado).
-// O login passa por /api/auth (mesmo domínio), que guarda a sessão em cookie
-// para o servidor também enxergar. Visitantes sem login usam um token anônimo,
-// que só lê o catálogo.
 const { authUrl, dataApiUrl } = neonEnv()
 
 export const isNeonConfigured = Boolean(authUrl && dataApiUrl)
@@ -27,7 +22,6 @@ export function getNeon(): NeonClient {
   return client
 }
 
-// Devolve `data` ou lança o erro já traduzido
 export function unwrap<T>(result: { data: T; error: unknown }): T {
   if (result.error) throw new Error(friendlyError(result.error))
   return result.data
@@ -35,7 +29,6 @@ export function unwrap<T>(result: { data: T; error: unknown }): T {
 
 type ErrorLike = { code?: string; message?: string } | string | null | undefined
 
-// Converte erros do Neon Auth/Postgres em mensagens amigáveis
 export function friendlyError(error: unknown): string {
   if (!error) return ''
   const err = error as ErrorLike

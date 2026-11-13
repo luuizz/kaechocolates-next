@@ -1,7 +1,6 @@
 import type { AdminProduct, Line, ProductInput } from '@/types/product'
 import { SLUG_PATTERN } from '@/constants/patterns'
 
-// Rascunho do formulário de barra: tudo em texto, como o admin digita
 export type Draft = {
   id?: number
   name: string
@@ -91,7 +90,6 @@ export function validateDraft(draft: Draft) {
 
 export type DraftErrors = ReturnType<typeof validateDraft>
 
-// Produto como aparece na vitrine enquanto é editado
 export function previewFromDraft(draft: Draft) {
   const cacao = Number(draft.cacao)
   return {

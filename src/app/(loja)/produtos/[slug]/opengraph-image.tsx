@@ -14,7 +14,6 @@ export async function generateStaticParams() {
   return products.map((product) => ({ slug: product.slug }))
 }
 
-// Imagem de compartilhamento de cada barra: cor do sabor, nome, preço e a embalagem
 export default async function Image({ params }: { params: Promise<{ slug: string }> }) {
   const product = findProduct((await getCatalog()).products, (await params).slug)
   const [fonts, logo, photo] = await Promise.all([

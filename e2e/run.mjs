@@ -1,5 +1,3 @@
-// Roda os testes de ponta a ponta do zero: sobe o ambiente simulado, faz o build com as
-// variáveis de teste e roda o Playwright.  yarn e2e  (precisa de um Postgres; veja e2e/README.md)
 import { spawn } from 'node:child_process'
 import { rmSync } from 'node:fs'
 import { e2eEnv } from './env.mjs'
@@ -27,7 +25,6 @@ try {
     if (i > 120) throw new Error('O ambiente simulado não subiu.')
     await new Promise((resolve) => setTimeout(resolve, 1000))
   }
-  // O cache do catálogo sobrevive entre builds; o banco de teste é novo a cada execução
   rmSync('.next/cache/fetch-cache', { recursive: true, force: true })
   if (!process.argv.includes('--sem-build')) await run('yarn', ['build'])
   await run('yarn', ['playwright', 'test', ...process.argv.slice(2).filter((arg) => arg !== '--sem-build')])

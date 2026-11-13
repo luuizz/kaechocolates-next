@@ -1,6 +1,5 @@
 import Link from 'next/link'
 
-// Topo padrão das páginas internas: trilha, título e texto de apoio
 export function PageHeader({ title, description, crumb }: { title: string; description?: string; crumb?: string }) {
   return (
     <header className="mx-auto max-w-7xl px-5 pt-8 md:px-8 md:pt-12">

@@ -19,7 +19,6 @@ async function callClub(method: 'GET' | 'POST', body?: unknown) {
   expectOk(method === 'GET' ? await syncMySubscription() : await manageSubscription(body))
 }
 
-// Aba Clube da conta: assinatura atual, ações e cobranças
 export function MySubscription({ justSubscribed }: { justSubscribed?: boolean }) {
   const [sub, setSub] = useState<Subscription | null | undefined>(undefined)
   const [error, setError] = useState('')
@@ -33,7 +32,6 @@ export function MySubscription({ justSubscribed }: { justSubscribed?: boolean })
         .order('created_at', { ascending: false })
         .limit(5),
     ) as Subscription[]
-    // A em andamento primeiro; se só houver canceladas, mostra a mais recente
     const current = rows.find((row) => row.status !== 'canceled') ?? rows[0] ?? null
     setSub(current ? normalizeSubscription(current) : null)
     return current
@@ -41,7 +39,6 @@ export function MySubscription({ justSubscribed }: { justSubscribed?: boolean })
 
   useEffect(() => {
     let active = true
-    // Se acabou de assinar e ainda está confirmando, consulta o Mercado Pago
     // eslint-disable-next-line react-hooks/set-state-in-effect -- busca inicial da assinatura
     load()
       .then(async (current) => {

@@ -14,12 +14,9 @@ import { notifyOrderUpdate, refreshStore as refreshStoreAction } from '@/actions
 import { manageSubscription as manageSubscriptionAction } from '@/actions/club'
 import { expectOk } from '@/lib/result'
 
-// Acesso do painel ao banco. Todas as chamadas vão com o token do admin;
-// quem barra quem não é admin são as políticas (RLS) do banco.
+// Quem barra quem não é admin são as políticas (RLS) do banco
 
 const neon = () => getNeon()
-
-// ---- produtos -------------------------------------------------------------
 
 type Row = Parameters<typeof productFromRow>[0] & { active: boolean; sort_order: number; updated_at: string }
 const adminProduct = (row: Row): AdminProduct => ({
@@ -83,8 +80,6 @@ export async function deleteProduct(id: number) {
   unwrap(await neon().from('products').delete().eq('id', id))
 }
 
-// ---- caixas e clube ------------------------------------------------------
-
 const numeric = <T extends { discount?: number | string; price?: number | string }>(row: T) => ({
   ...row,
   ...(row.discount !== undefined && { discount: Number(row.discount) }),
@@ -109,13 +104,10 @@ export async function listPeriods() {
 
 type Table = 'kit_boxes' | 'club_plans' | 'club_periods' | 'shipping_zones'
 
-// Grava a lista inteira: atualiza/insere as linhas e apaga as que saíram
 export async function saveRows<T extends { id: string }>(table: Table, rows: T[], removed: string[]) {
   if (removed.length) unwrap(await neon().from(table).delete().in('id', removed))
   if (rows.length) unwrap(await neon().from(table).upsert(rows, { onConflict: 'id' }))
 }
-
-// ---- clientes ------------------------------------------------------------
 
 export async function listCustomers() {
   return unwrap(
@@ -125,8 +117,6 @@ export async function listCustomers() {
       .order('created_at', { ascending: false }),
   ) as Customer[]
 }
-
-// ---- fotos (rota /api/images, com a sessão do admin) ----------------------
 
 async function callSite(path: string, init: RequestInit) {
   const response = await fetch(path, init)
@@ -150,12 +140,9 @@ export async function deleteImage(url: string) {
   }).catch(() => {})
 }
 
-// Avisa a loja para recarregar o catálogo (sem esperar o cache de 5 minutos)
 export async function refreshStore() {
   expectOk(await refreshStoreAction())
 }
-
-// ---- pedidos e frete -----------------------------------------------------
 
 export async function listOrders() {
   const rows = unwrap(
@@ -185,7 +172,6 @@ export async function updateOrder(id: number, status: string, tracking: string) 
   unwrap(await neon().rpc('admin_update_order', { p_id: id, p_status: status, p_tracking: tracking }))
 }
 
-// Avisa o cliente por e-mail do novo andamento (ex.: enviado com rastreio)
 export async function notifyOrderChange(code: string) {
   expectOk(await notifyOrderUpdate(code))
 }
@@ -196,8 +182,6 @@ export async function listZones() {
     price: Number(zone.price),
   }))
 }
-
-// ---- clube: assinantes ----------------------------------------------------
 
 export async function listSubscriptions() {
   const rows = unwrap(

@@ -1,12 +1,3 @@
-// Aplica as migrations de database/migrations no banco do Neon.
-//
-//   yarn db:migrate              aplica as pendentes
-//   yarn db:migrate --status     só lista o que está pendente
-//   yarn db:migrate --baseline   marca todas como aplicadas sem rodar
-//                                (para bancos montados antes pelo SQL Editor)
-//
-// Lê DATABASE_URL do ambiente ou do .env.local. Cada arquivo roda numa
-// transação: se der erro, nada daquele arquivo fica no banco.
 import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -41,7 +32,7 @@ const client = new pg.Client({ connectionString: url, ssl: isLocal ? false : { r
 
 await client.connect()
 try {
-  // Tabela de controle fora do schema public, para não aparecer na Data API
+  // Fora do schema public, para não aparecer na Data API
   await client.query(`
         create schema if not exists app_migrations;
         create table if not exists app_migrations.applied (

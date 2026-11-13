@@ -21,12 +21,11 @@ test.describe('Checkout', () => {
     await page.getByRole('button', { name: 'Adicionar à sacola' }).first().click()
     await page.keyboard.press('Escape')
 
-    // Sem login → cadastro → volta ao checkout
     await page.goto('/checkout')
     await page.waitForURL(/\/entrar/)
     const email = uniqueEmail('bruno')
     await signUp(page, { name: 'Bruno Lima', email, next: '/checkout' })
-    await expect(page.getByRole('button', { name: 'Salvar endereço' })).toBeVisible() // sem endereço: abre o formulário
+    await expect(page.getByRole('button', { name: 'Salvar endereço' })).toBeVisible()
     await fillAddress(page, { cep: '40010000', street: 'Rua Chile', number: '22', city: 'Salvador', state: 'BA' })
 
     // Intenso 32,70 + kit dos premiados (6 × 32,70 − 8%) = 32,70 + 180,50; frete Nordeste 29,90
@@ -42,7 +41,6 @@ test.describe('Checkout', () => {
     await page.waitForURL(/\/pedido\/KAE-/)
     const code = page.url().split('/').pop()!
     await expect(page.locator('header button[aria-label^="Abrir sacola"]')).toContainText('0')
-    // No modo de teste o Pix é aprovado sozinho e a página se atualiza
     await expect(page.getByText('Obrigado pela compra!')).toBeVisible({ timeout: 20_000 })
     expect(
       (
@@ -54,7 +52,6 @@ test.describe('Checkout', () => {
     expect(sent.body.total_amount).toBe('243.10')
     expect(sent.body.payer?.first_name).toBe('APRO')
 
-    // E-mails: pedido recebido (com o Pix) e pagamento aprovado, cada um uma vez só
     await expect
       .poll(async () => (await emailsTo(email)).map((mail) => mail.subject))
       .toEqual(expect.arrayContaining([`Recebemos seu pedido ${code}`, `Pagamento aprovado · pedido ${code}`]))
@@ -99,7 +96,6 @@ test.describe('Checkout', () => {
     }))
     expect(result?.ok).toBe(false)
     expect(result?.error).toContain('limite')
-    // Recusado: o estoque reservado volta
     expect(
       (await sqlOne<{ stock: number }>("select stock from public.products where slug = 'cafezinho-64'")).stock,
     ).toBe(2)

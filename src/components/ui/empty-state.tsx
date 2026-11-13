@@ -27,7 +27,6 @@ type EmptyStateProps = VariantProps<typeof emptyVariants> & {
   className?: string
 }
 
-// Estado vazio de lista ou página: ícone, título, texto e uma ação
 export function EmptyState({
   icon,
   title,

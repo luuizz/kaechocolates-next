@@ -57,7 +57,6 @@ export type AdminOrderRow = {
   order_items: { quantity: number }[]
 }
 
-// Como vêm do banco: numeric do Postgres chega como texto
 type Numeric = number | string
 export type OrderItemRow = Omit<OrderItem, 'unit_price' | 'total'> & { unit_price: Numeric; total: Numeric }
 export type OrderRow = Omit<OrderView, 'subtotal' | 'discount' | 'shipping' | 'total' | 'items'> & {

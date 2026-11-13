@@ -12,7 +12,6 @@ import { OrderSummary } from './order-summary'
 import { PaymentStep } from './payment-step'
 import { useCheckout } from './use-checkout'
 
-// Checkout em uma página: endereço → entrega → pagamento, com o resumo calculado pelo servidor
 export function CheckoutPage() {
   const checkout = useCheckout()
 

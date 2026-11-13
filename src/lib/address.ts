@@ -32,7 +32,6 @@ export function validateAddress(form: AddressDraft) {
   }
 }
 
-// Linha da tabela addresses a partir do formulário (campos opcionais vazios viram null)
 export const addressRow = (form: AddressDraft) => ({
   label: form.label.trim() || null,
   recipient: form.recipient.trim(),
@@ -45,7 +44,6 @@ export const addressRow = (form: AddressDraft) => ({
   state: form.state,
 })
 
-// Preenche rua, bairro, cidade e estado pelo CEP (ViaCEP, chamado do navegador)
 export async function lookupCep(cep: string) {
   const response = await fetch(`https://viacep.com.br/ws/${cep}/json/`)
   if (!response.ok) return null
