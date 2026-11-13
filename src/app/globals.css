@@ -1,195 +1,201 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
 
-/*
- * Tokens da marca. Componentes usam só os nomes semânticos (primary, muted,
- * flavor-*...), então trocar a identidade é mexer aqui e em src/config/brand.ts.
- * Base: branco + preto (identidade atual da Kaê) e as cores das
- * embalagens como paleta de destaque, uma por sabor.
- */
 :root {
-  --radius: 1.25rem;
+    --radius: 1.25rem;
 
-  --background: #ffffff;
-  --foreground: #111111;
+    --background: #ffffff;
+    --foreground: #111111;
 
-  --card: #ffffff;
-  --card-foreground: var(--foreground);
-  --popover: #ffffff;
-  --popover-foreground: var(--foreground);
+    --card: #ffffff;
+    --card-foreground: var(--foreground);
+    --popover: #ffffff;
+    --popover-foreground: var(--foreground);
 
-  --primary: #111111;
-  --primary-foreground: #ffffff;
+    --primary: #111111;
+    --primary-foreground: #ffffff;
 
-  --secondary: #f4f4f2;
-  --secondary-foreground: #111111;
+    --secondary: #f4f4f2;
+    --secondary-foreground: #111111;
 
-  --muted: #f4f4f2;
-  --muted-foreground: #5a5a58;
+    --muted: #f4f4f2;
+    --muted-foreground: #5a5a58;
 
-  --accent: #e8b630;
-  --accent-foreground: #111111;
+    --accent: #e8b630;
+    --accent-foreground: #111111;
 
-  --destructive: #d01b2e;
-  --success: #2f8a4c;
+    --destructive: #d01b2e;
+    --success: #2f8a4c;
 
-  --border: #ebebeb;
-  --input: #dedede;
-  --ring: #111111;
+    --border: #ebebeb;
+    --input: #dedede;
+    --ring: #111111;
 
-  /* Cores das embalagens (uma por sabor) */
-  --flavor-yellow: #e8b630;
-  --flavor-blue: #008bc0;
-  --flavor-pink: #e2708e;
-  --flavor-orange: #e47a24;
-  --flavor-red: #d01b2e;
-  --cocoa: #5a3426;
+    /* Cores das embalagens (uma por sabor) */
+    --flavor-yellow: #e8b630;
+    --flavor-blue: #008bc0;
+    --flavor-pink: #e2708e;
+    --flavor-orange: #e47a24;
+    --flavor-red: #d01b2e;
+    --cocoa: #5a3426;
 
-  /* Cores de apoio (blocos da home, painel e embalagem desenhada) */
-  --sky: #a9d8ef;
-  --mint: #5fc2b0;
-  --ink: #1d1d1b;
-  --paper: #f4f3f1;
-  --pix: #32bcad;
+    /* Cores de apoio (blocos da home, painel e embalagem desenhada) */
+    --sky: #a9d8ef;
+    --mint: #5fc2b0;
+    --ink: #1d1d1b;
+    --paper: #f4f3f1;
+    --pix: #32bcad;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-card: var(--card);
-  --color-card-foreground: var(--card-foreground);
-  --color-popover: var(--popover);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-primary: var(--primary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-secondary: var(--secondary);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-destructive: var(--destructive);
-  --color-success: var(--success);
-  --color-border: var(--border);
-  --color-input: var(--input);
-  --color-ring: var(--ring);
-  --color-flavor-yellow: var(--flavor-yellow);
-  --color-flavor-blue: var(--flavor-blue);
-  --color-flavor-pink: var(--flavor-pink);
-  --color-flavor-orange: var(--flavor-orange);
-  --color-flavor-red: var(--flavor-red);
-  --color-cocoa: var(--cocoa);
-  --color-sky: var(--sky);
-  --color-mint: var(--mint);
-  --color-ink: var(--ink);
-  --color-paper: var(--paper);
-  --color-pix: var(--pix);
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-destructive: var(--destructive);
+    --color-success: var(--success);
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+    --color-flavor-yellow: var(--flavor-yellow);
+    --color-flavor-blue: var(--flavor-blue);
+    --color-flavor-pink: var(--flavor-pink);
+    --color-flavor-orange: var(--flavor-orange);
+    --color-flavor-red: var(--flavor-red);
+    --color-cocoa: var(--cocoa);
+    --color-sky: var(--sky);
+    --color-mint: var(--mint);
+    --color-ink: var(--ink);
+    --color-paper: var(--paper);
+    --color-pix: var(--pix);
 
-  /* Painel: valores em src/app/(painel)/painel.css */
-  --color-panel-canvas: var(--panel-canvas);
-  --color-panel-surface: var(--panel-surface);
-  --color-panel-sidebar: var(--panel-sidebar);
-  --color-panel-sidebar-foreground: var(--panel-sidebar-foreground);
-  --color-panel-sidebar-muted: var(--panel-sidebar-muted);
-  --color-panel-sidebar-hover: var(--panel-sidebar-hover);
-  --color-panel-sidebar-border: var(--panel-sidebar-border);
-  --color-panel-active: var(--panel-active);
-  --color-panel-active-foreground: var(--panel-active-foreground);
+    /* Painel: valores em src/app/(painel)/painel.css */
+    --color-panel-canvas: var(--panel-canvas);
+    --color-panel-surface: var(--panel-surface);
+    --color-panel-sidebar: var(--panel-sidebar);
+    --color-panel-sidebar-foreground: var(--panel-sidebar-foreground);
+    --color-panel-sidebar-muted: var(--panel-sidebar-muted);
+    --color-panel-sidebar-hover: var(--panel-sidebar-hover);
+    --color-panel-sidebar-border: var(--panel-sidebar-border);
+    --color-panel-active: var(--panel-active);
+    --color-panel-active-foreground: var(--panel-active-foreground);
 
-  --radius-sm: calc(var(--radius) - 8px);
-  --radius-md: calc(var(--radius) - 4px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 8px);
+    --radius-sm: calc(var(--radius) - 8px);
+    --radius-md: calc(var(--radius) - 4px);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) + 8px);
 
-  /* Raios por papel do bloco */
-  --radius-tile: 1.5rem;
-  --radius-card: 1.75rem;
-  --radius-feature: 2rem;
-  --radius-hero: 2.5rem;
+    /* Raios por papel do bloco */
+    --radius-tile: 1.5rem;
+    --radius-card: 1.75rem;
+    --radius-feature: 2rem;
+    --radius-hero: 2.5rem;
 
-  /* Tipografia de títulos e rótulos */
-  --tracking-display: -0.03em;
-  --tracking-heading: -0.02em;
-  --tracking-eyebrow: 0.18em;
-  --leading-display: 0.95;
-  --text-2xs: 0.6875rem;
+    /* Tipografia de títulos e rótulos */
+    --tracking-display: -0.03em;
+    --tracking-heading: -0.02em;
+    --tracking-eyebrow: 0.18em;
+    --leading-display: 0.95;
+    --text-2xs: 0.6875rem;
 
-  /* Proporção da foto/embalagem de barra (311 × 405) */
-  --aspect-package: 311 / 405;
+    /* Proporção da foto/embalagem de barra (311 × 405) */
+    --aspect-package: 311 / 405;
 
-  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
-  --font-display: 'Plus Jakarta Sans Variable', ui-sans-serif, system-ui, sans-serif;
+    --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+    --font-display: 'Plus Jakarta Sans Variable', ui-sans-serif, system-ui, sans-serif;
 
-  --animate-marquee: marquee 28s linear infinite;
-  --animate-float: float 6s ease-in-out infinite;
-  --animate-spin-slow: spin 18s linear infinite;
+    --animate-marquee: marquee 28s linear infinite;
+    --animate-float: float 6s ease-in-out infinite;
+    --animate-spin-slow: spin 18s linear infinite;
 
-  @keyframes marquee {
-    from {
-      transform: translateX(0);
+    @keyframes marquee {
+        from {
+            transform: translateX(0);
+        }
+        to {
+            transform: translateX(-50%);
+        }
     }
-    to {
-      transform: translateX(-50%);
+    @keyframes float {
+        0%,
+        100% {
+            transform: translateY(0) rotate(var(--tilt, 0deg));
+        }
+        50% {
+            transform: translateY(-14px) rotate(var(--tilt, 0deg));
+        }
     }
-  }
-  @keyframes float {
-    0%,
-    100% {
-      transform: translateY(0) rotate(var(--tilt, 0deg));
-    }
-    50% {
-      transform: translateY(-14px) rotate(var(--tilt, 0deg));
-    }
-  }
 }
 
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  html {
-    scroll-behavior: smooth;
-  }
-  body {
-    @apply bg-background text-foreground antialiased;
-  }
-  h1,
-  h2,
-  h3,
-  h4 {
-    @apply font-display tracking-tight text-balance;
-  }
-  ::selection {
-    @apply bg-accent text-accent-foreground;
-  }
+    * {
+        @apply border-border outline-ring/50;
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        @apply bg-background text-foreground antialiased;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+        @apply font-display tracking-tight text-balance;
+    }
+
+    ::selection {
+        @apply bg-accent text-accent-foreground;
+    }
+
+    button:not(:disabled),
+    [role="button"]:not(:disabled) {
+        cursor: pointer;
+    }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-  }
+    html {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
 }
 
 /* Listas e links dentro dos textos legais */
 .legal-body ul {
-  list-style: disc;
-  padding-left: 1.25rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
+    list-style: disc;
+    padding-left: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
 }
+
 .legal-body a {
-  font-weight: 600;
-  text-decoration: underline;
-  text-underline-offset: 3px;
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 3px;
 }
+
 .legal-body strong {
-  color: var(--foreground);
+    color: var(--foreground);
 }

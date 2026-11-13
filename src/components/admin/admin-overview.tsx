@@ -103,7 +103,7 @@ export function AdminOverview() {
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {cards.map(({ href, label, value, note, icon: Icon, color }) => (
           <Link
-            key={href}
+            key={label}
             href={href}
             className="group rounded-tile bg-panel-surface p-5 transition-shadow hover:shadow-lg"
           >
