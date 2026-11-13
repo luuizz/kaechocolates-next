@@ -150,6 +150,10 @@
   ::selection {
     @apply bg-accent text-accent-foreground;
   }
+  button:not(:disabled),
+  [role='button']:not(:disabled) {
+    cursor: pointer;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
